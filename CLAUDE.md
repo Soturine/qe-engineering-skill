@@ -11,10 +11,30 @@ Before code:
 - identify milestone/exit criterion;
 - inspect current tree/schemas/tests/evals;
 - identify affected trust/security contracts;
+- identify which operating modes are affected;
 - state only assumptions that cannot be resolved from repository evidence;
 - implement the smallest coherent slice.
 
 Do not use or request a real customer/project as the design baseline. Build against generic contracts and synthetic fixtures.
+
+## Product behavior to preserve
+
+The engine is general and must support:
+
+- greenfield Test Plan generation from project evidence;
+- brownfield/legacy audit of existing requirements/tests/executions;
+- clone/migration/reuse audit without trusting the source plan blindly;
+- later incremental change/regression analysis.
+
+Across every mode:
+
+- manual step-by-step Test Models may be generated or proposed;
+- analysis must work without Azure DevOps/MCP/TMS connectivity;
+- existing historical evidence is preserved by default;
+- generation/audit/rewrites are proposals only;
+- no external CRUD occurs without explicit human approval scoped to the exact proposal/snapshot;
+- destructive operations are disabled by default;
+- project/domain-specific rules must never leak into the generic engine or fixtures.
 
 ## When auditing
 
@@ -35,15 +55,19 @@ Audit at least:
 11. deterministic-vs-model responsibility;
 12. domain/fixture leakage;
 13. provider lock-in;
-14. manual executability;
+14. manual executability and step-by-step authoring;
 15. atomic coverage and duplicate inflation;
 16. security/privacy/secrets;
 17. supply chain;
 18. reproducibility;
 19. observability/explainability;
 20. TMS publication safety/idempotency;
-21. schema compatibility/migrations;
-22. self-audit behavior.
+21. existing-asset/history preservation;
+22. human-approval enforcement and stale-approval invalidation;
+23. greenfield/brownfield/clone mode isolation;
+24. operation without TMS/MCP connectivity;
+25. schema compatibility/migrations;
+26. self-audit behavior.
 
 ## Finding format
 
@@ -73,6 +97,11 @@ When `skill/qe-engineering/SKILL.md` becomes functional, review separately:
 - context pressure;
 - source-discovery completeness;
 - provider/runtime portability;
+- operating-mode dispatch;
+- TMS independence;
+- human-approval gating;
+- non-destructive existing-asset handling;
+- manual step-by-step quality;
 - recursive/self-audit safety.
 
 If required engine validation is unavailable, the skill must not claim guarantees were enforced.
