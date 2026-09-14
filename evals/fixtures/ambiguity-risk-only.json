@@ -1,0 +1,1147 @@
+{
+  "expected_error_codes": [],
+  "model": {
+    "approvals": [],
+    "claims": [
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "claim",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "The synthetic record is retained."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-1",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Open the synthetic record endpoint with the prepared identifier."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-2",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Use the isolated synthetic environment."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-3",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Prepare one synthetic record in the intermediate state."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-4",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Use the prepared record identifier."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-5",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Record the identifier during preparation."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-6",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Discard the isolated synthetic environment after the test."
+      },
+      {
+        "confidence": 1.0,
+        "conflict": "none",
+        "derived_from": [],
+        "evidence": [
+          {
+            "location": "clause 1",
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "extraction": {
+          "method": "synthetic",
+          "model": null,
+          "prompt_version": null,
+          "provider": null,
+          "version": "1"
+        },
+        "id": "instruction-7",
+        "inferred": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "Use a fresh isolated synthetic environment for every run."
+      }
+    ],
+    "id": "model",
+    "ledger": {
+      "id": "ledger",
+      "manifest": {
+        "authority_policy": "approved-contract-only",
+        "completeness": "COMPLETE",
+        "containers": [
+          "synthetic-contract"
+        ],
+        "created_at": "2026-01-01T00:00:00Z",
+        "id": "run",
+        "inventory_complete": true,
+        "mode": "GREENFIELD",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "scope": [
+          {
+            "decision_reason": null,
+            "in_scope": true,
+            "required": true,
+            "source": {
+              "id": "source",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            }
+          }
+        ],
+        "scope_description": "Synthetic contract",
+        "snapshot_id": "v1",
+        "tool_version": "synthetic-1"
+      },
+      "project_id": "synthetic",
+      "schema_version": "1.0",
+      "snapshot_id": "v1",
+      "sources": [
+        {
+          "authority_class": "CONTRACT",
+          "collected_at": "2026-01-01T00:00:00Z",
+          "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "extraction": {
+            "method": "synthetic",
+            "model": null,
+            "prompt_version": null,
+            "provider": null,
+            "version": "1"
+          },
+          "handling": "local",
+          "hash_unavailable_reason": null,
+          "id": "source",
+          "in_scope": true,
+          "lifecycle": "approved",
+          "locator": "synthetic://contract",
+          "primary": true,
+          "project_id": "synthetic",
+          "read_integrity": "COMPLETE",
+          "reason": null,
+          "required": true,
+          "schema_version": "1.0",
+          "sensitivity": "public-synthetic",
+          "snapshot_id": "v1",
+          "source_type": "specification",
+          "study_status": "STUDIED",
+          "version": "1"
+        }
+      ]
+    },
+    "nodes": [
+      {
+        "category": "business",
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "constraints": [],
+        "fields": [
+          {
+            "id": "field",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "entity-a",
+        "kind": "entity",
+        "name": "entity-a",
+        "project_id": "synthetic",
+        "relationships": [
+          {
+            "id": "relationship",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "states": [
+          {
+            "id": "state-0",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          },
+          {
+            "id": "state-1",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          },
+          {
+            "id": "state-2",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ]
+      },
+      {
+        "category": "technical",
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "constraints": [],
+        "fields": [],
+        "id": "entity-b",
+        "kind": "entity",
+        "name": "entity-b",
+        "project_id": "synthetic",
+        "relationships": [],
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "states": []
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "constraint",
+        "kind": "constraint",
+        "name": "constraint",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "The synthetic identifier is required."
+      },
+      {
+        "aliases": [],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "constraints": [
+          {
+            "id": "constraint",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "data_type": "string",
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "id": "field",
+        "kind": "field",
+        "name": "field",
+        "project_id": "synthetic",
+        "required": true,
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "cardinality": null,
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "constraints": [],
+        "from_entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "id": "relationship",
+        "kind": "relationship",
+        "name": "relationship",
+        "project_id": "synthetic",
+        "relationship_type": "references",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "to_entity": {
+          "id": "entity-b",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "actor",
+        "kind": "actor",
+        "name": "actor",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "role",
+        "kind": "role",
+        "name": "role",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "group",
+        "kind": "group",
+        "name": "group",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "actor": {
+          "id": "actor",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "groups": [
+          {
+            "id": "group",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "mapping",
+        "kind": "actor_mapping",
+        "name": "mapping",
+        "project_id": "synthetic",
+        "roles": [
+          {
+            "id": "role",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "status": "confirmed"
+      },
+      {
+        "action": {
+          "id": "action",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "conditions": [],
+        "effect": "allow",
+        "id": "permission",
+        "kind": "permission",
+        "name": "permission",
+        "project_id": "synthetic",
+        "resource": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "schema_version": "1.0",
+        "scope": "synthetic project",
+        "snapshot_id": "v1",
+        "subject": {
+          "id": "role",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "id": "state-0",
+        "kind": "state",
+        "name": "state-0",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "terminal": false
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "id": "state-1",
+        "kind": "state",
+        "name": "state-1",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "terminal": false
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "id": "state-2",
+        "kind": "state",
+        "name": "state-2",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "terminal": true
+      },
+      {
+        "actors": [
+          {
+            "id": "actor",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "action",
+        "input_constraints": [],
+        "kind": "action",
+        "name": "action",
+        "output_claims": [],
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "side_effects": [],
+        "snapshot_id": "v1"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "consumer": "synthetic consumer",
+        "delivery_claim": null,
+        "id": "event",
+        "kind": "event",
+        "name": "event",
+        "ordering_claim": null,
+        "producer": "synthetic producer",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "actors": [
+          {
+            "id": "actor",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "channels": [
+          {
+            "id": "api",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "classification": "normal",
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "exceptions": [
+          {
+            "id": "exception",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "from_state": {
+          "id": "state-0",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "guards": [],
+        "id": "normal",
+        "kind": "transition",
+        "name": "normal",
+        "postconditions": [],
+        "preconditions": [],
+        "project_id": "synthetic",
+        "roles": [],
+        "schema_version": "1.0",
+        "side_effects": [],
+        "snapshot_id": "v1",
+        "to_state": {
+          "id": "state-1",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "trigger": {
+          "id": "action",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "actors": [],
+        "channels": [],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "classification": "exception",
+        "entity": {
+          "id": "entity-a",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "exceptions": [],
+        "from_state": {
+          "id": "state-1",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "guards": [],
+        "id": "exception",
+        "kind": "transition",
+        "name": "exception",
+        "postconditions": [],
+        "preconditions": [],
+        "project_id": "synthetic",
+        "roles": [],
+        "schema_version": "1.0",
+        "side_effects": [],
+        "snapshot_id": "v1",
+        "to_state": {
+          "id": "state-2",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "trigger": {
+          "id": "event",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "channel_type": "api",
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "api",
+        "interfaces": [
+          {
+            "id": "interface",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "kind": "channel",
+        "name": "api",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "channel_type": "cli",
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "cli",
+        "interfaces": [],
+        "kind": "channel",
+        "name": "cli",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "authentication": null,
+        "authorization": null,
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "consumer": "synthetic consumer",
+        "contract_sources": [
+          {
+            "id": "source",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "failure_behavior": null,
+        "id": "interface",
+        "idempotency": null,
+        "implementation_symbols": [],
+        "interface_type": "http_api",
+        "kind": "interface",
+        "name": "interface",
+        "ordering": null,
+        "producer": "synthetic producer",
+        "project_id": "synthetic",
+        "retry": null,
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "timeout": null
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "consumer": "synthetic consumer",
+        "id": "integration",
+        "interfaces": [
+          {
+            "id": "interface",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "kind": "integration",
+        "name": "integration",
+        "producer": "synthetic producer",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "requirement",
+        "kind": "requirement",
+        "lifecycle": "approved",
+        "name": "requirement",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1"
+      },
+      {
+        "actors": [
+          {
+            "id": "actor",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "boundaries": [],
+        "channels": [
+          {
+            "id": "api",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "failure_modes": [],
+        "id": "atom",
+        "kind": "atomic_criterion",
+        "name": "atom",
+        "project_id": "synthetic",
+        "requirement": {
+          "id": "requirement",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "The synthetic record is retained.",
+        "states": [
+          {
+            "id": "state-1",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "timing": []
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "invariant",
+        "kind": "invariant",
+        "name": "invariant",
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "scope": "synthetic record",
+        "snapshot_id": "v1",
+        "statement": "The synthetic record is retained."
+      },
+      {
+        "affected": [
+          {
+            "id": "entity-a",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "category": "data",
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "derivation": "Synthetic failure-mode analysis",
+        "description": "Synthetic loss risk",
+        "id": "risk",
+        "kind": "risk",
+        "name": "risk",
+        "project_id": "synthetic",
+        "scale": "low/medium/high/critical",
+        "schema_version": "1.0",
+        "severity": "medium",
+        "snapshot_id": "v1"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "scenario",
+        "kind": "scenario",
+        "name": "scenario",
+        "oracle": {
+          "id": "oracle",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "origin": "CONTRACT",
+        "preconditions": [
+          {
+            "id": "state-1",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "project_id": "synthetic",
+        "risks": [
+          {
+            "id": "risk",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "schema_version": "1.0",
+        "selected_for_test": true,
+        "selection_reason": "Covers the synthetic atomic criterion",
+        "snapshot_id": "v1",
+        "stimulus": {
+          "id": "action",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "risk-scenario",
+        "kind": "scenario",
+        "name": "risk-scenario",
+        "oracle": null,
+        "origin": "RISK",
+        "preconditions": [],
+        "project_id": "synthetic",
+        "risks": [
+          {
+            "id": "risk",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "schema_version": "1.0",
+        "selected_for_test": false,
+        "selection_reason": "Missing failure oracle; retain as exploratory question",
+        "snapshot_id": "v1",
+        "stimulus": {
+          "id": "event",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        }
+      },
+      {
+        "affected": [
+          {
+            "id": "risk-scenario",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "ambiguity",
+        "kind": "ambiguity",
+        "name": "ambiguity",
+        "project_id": "synthetic",
+        "question": "What occurs on the synthetic failure?",
+        "resolution_claim": null,
+        "risk_of_guessing": "Unsupported failure behavior",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "status": "open"
+      },
+      {
+        "claims": [
+          {
+            "id": "claim",
+            "project_id": "synthetic",
+            "snapshot_id": "v1"
+          }
+        ],
+        "id": "path",
+        "kind": "verified_path",
+        "name": "path",
+        "path_type": "api",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "steps": [
+          {
+            "claim": {
+              "id": "instruction-1",
+              "project_id": "synthetic",
+              "snapshot_id": "v1"
+            },
+            "instruction": "Open the synthetic record endpoint with the prepared identifier."
+          }
+        ],
+        "verification_status": "verified"
+      }
+    ],
+    "oracles": [
+      {
+        "approval_id": null,
+        "claim": {
+          "id": "claim",
+          "project_id": "synthetic",
+          "snapshot_id": "v1"
+        },
+        "confidence": 1.0,
+        "id": "oracle",
+        "inferred": false,
+        "invariant_claim": null,
+        "normative": false,
+        "origin": "CONTRACT",
+        "project_id": "synthetic",
+        "schema_version": "1.0",
+        "snapshot_id": "v1",
+        "statement": "The synthetic record is retained.",
+        "usage": "acceptance"
+      }
+    ],
+    "project_id": "synthetic",
+    "proposals": [],
+    "schema_version": "1.0",
+    "snapshot_id": "v1",
+    "tests": {
+      "id": "tests",
+      "project_id": "synthetic",
+      "proposal_only": true,
+      "schema_version": "1.0",
+      "snapshot_id": "v1",
+      "test_cases": []
+    }
+  }
+}

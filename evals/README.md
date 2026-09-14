@@ -1,6 +1,18 @@
 # Evaluation Fixtures
 
-Status: **M0 scaffold**
+Status: **M0 deterministic synthetic evals implemented**
+
+Run `python -m pytest evals`. Rebuild committed JSON using
+`python -m evals.build_fixtures`; tests reject drift. The eleven fixtures cover
+greenfield without TCs, executable manual model, vague/duplicate/stale brownfield
+assets, clone/reuse with conflicting historical oracles, rejected foreign oracle,
+blocked/partial evidence, rejected false completeness, unsupported oracle,
+ambiguity/risk-only scenarios, inert prompt injection and regression baseline shape.
+
+Each fixture declares expected error codes; valid partial evidence is accepted with
+visible warnings, while normative output depending on unavailable evidence fails.
+Validation must not mutate history. Mode dispatch, semantic audit, external write
+execution and live provider parity are deferred; mode fixtures test contract shapes.
 
 Committed fixtures must be synthetic and generic. Do not copy confidential requirements, production data, real customer repositories or proprietary artifacts into this directory.
 

@@ -3,7 +3,13 @@
 Status: partial. Package/tooling and version 1.0 typed/schema contracts implemented;
 provenance, completeness and exact-scope approval checks implemented.
 Project Model integrity and manual readiness checks are implemented.
-CLI and complete eval coverage are pending.
+Synthetic adversarial evals are implemented. CLI is pending.
+
+At this checkpoint 88 tests pass, including 22 evals. Prompt-injection content is
+inert data; validation preserves input/history. Risk promotion needs an exact
+authoritative invariant or separately attested human approval. Role mappings must
+be confirmed before use in READY execution. Unresolved conflicts block even a
+standalone normative oracle. Remote CI is green through the integrity checkpoint.
 
 Integrity checks cover typed references, duplicate IDs, entity/state ownership,
 unresolved affected conflicts, verified paths and executable READY prerequisites.

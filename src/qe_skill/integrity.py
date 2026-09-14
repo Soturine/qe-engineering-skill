@@ -277,7 +277,39 @@ def validate_test_case(
                     )
         if not any(step.required and step.oracle is not None for step in test.steps):
             result.add("READY_NO_VALIDATION", test, "Ready case has no required validation step.")
+        for permission_ref in test.permissions:
+            permission = index.get(permission_ref.id)
+            if isinstance(permission, d.Permission) and test.actor is not None:
+                mapped = permission.subject.id == test.actor.id or any(
+                    isinstance(node, d.ActorMapping)
+                    and node.actor == test.actor
+                    and node.status == "confirmed"
+                    and permission.subject in node.roles + node.groups
+                    for node in model.nodes
+                )
+                if not mapped:
+                    result.add(
+                        "READY_ACTOR_MAPPING",
+                        test,
+                        "Permission subject has no confirmed mapping to the test actor.",
+                    )
     dependencies = dependency_ids(test, index)
+    if ready:
+        for identifier in dependencies:
+            dependency = index.get(identifier)
+            if isinstance(dependency, d.Node) and not isinstance(
+                dependency, d.Risk | d.Scenario | d.Ambiguity | d.Conflict
+            ):
+                for claim_ref in dependency.claims:
+                    claim = index.get(claim_ref.id)
+                    if isinstance(claim, d.Claim) and (
+                        claim.inferred or not validate_claim(claim, model).valid
+                    ):
+                        result.add(
+                            "READY_INFERRED_MODEL",
+                            test,
+                            "Execution depends on unsupported or inferred model facts.",
+                        )
     for node in model.nodes:
         if isinstance(node, d.Conflict | d.Ambiguity):
             unresolved = node.status in {"open", "unresolved"}

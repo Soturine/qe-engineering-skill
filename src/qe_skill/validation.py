@@ -12,6 +12,7 @@ from qe_skill.domain import (
     Approval,
     Artifact,
     Claim,
+    Conflict,
     Oracle,
     ProjectModel,
     Proposal,
@@ -310,6 +311,9 @@ def validate_oracle(
     oracle: Oracle, model: ProjectModel, context: TrustContext = NO_APPROVALS
 ) -> Result:
     result = Result()
+    identities = [item.id for item in model.claims + model.oracles + model.ledger.sources]
+    if len(identities) != len(set(identities)):
+        result.add("MODEL_DUPLICATE_ID", oracle, "Oracle context contains ambiguous identifiers.")
     if not same_scope(oracle, model) or not same_scope(oracle.claim, model):
         result.add("SCOPE_NAMESPACE", oracle, "Oracle or claim reference is outside the namespace.")
     claim = next((item for item in model.claims if item.id == oracle.claim.id), None)
@@ -327,6 +331,12 @@ def validate_oracle(
         checked.add(current.id)
         result.issues.extend(validate_claim(current, model).issues)
         pending.extend(claims[r.id] for r in current.derived_from if r.id in claims)
+    if oracle.normative:
+        for node in model.nodes:
+            if isinstance(node, Conflict) and node.status == "unresolved":
+                affected = {ref.id for ref in node.affected + node.conflicting_claims}
+                if affected.intersection(checked | {oracle.id}):
+                    result.add("ORACLE_CONFLICT", oracle, "Unresolved conflict blocks this oracle.")
     if oracle.statement != claim.statement:
         result.add("ORACLE_STATEMENT", oracle, "Oracle statement differs from its supported claim.")
     if oracle.origin != claim.origin:

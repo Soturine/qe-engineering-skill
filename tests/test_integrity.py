@@ -74,6 +74,7 @@ def test_affected_conflict_blocks_ready_but_preserves_draft() -> None:
     model.nodes.append(conflict)
     assert "READY_CONFLICT" in {i.code for i in validate_project_model(model).issues}
     model.tests.test_cases[0].readiness = "AMBIGUOUS"
+    model.oracles[0].normative = False
     assert validate_project_model(model).valid
     conflict.status = "resolved"
     assert "MODEL_RESOLUTION" in {i.code for i in validate_project_model(model).issues}
