@@ -2,7 +2,14 @@
 
 Status: partial. Package/tooling and version 1.0 typed/schema contracts implemented;
 provenance, completeness and exact-scope approval checks implemented.
-Project Model integrity, manual readiness, CLI and complete eval coverage are pending.
+Project Model integrity and manual readiness checks are implemented.
+CLI and complete eval coverage are pending.
+
+Integrity checks cover typed references, duplicate IDs, entity/state ownership,
+unresolved affected conflicts, verified paths and executable READY prerequisites.
+The representative synthetic model contains two entities, actor/role/group mapping,
+three states, normal/exception transitions, two channels, an interface, atomic
+criterion, risk-only scenario, ambiguity and an evidence-backed manual case.
 
 Trust checks reject missing/mutated/superseded/non-primary evidence, source authority
 leakage, unsupported inference, scope reductions, false completeness and stale or
