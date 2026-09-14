@@ -2,6 +2,8 @@
 
 The roadmap is intentionally incremental. Later milestones must not bypass trust foundations. Real project data is not required to build or validate the generic engine; committed eval fixtures are synthetic.
 
+The product must remain general, TMS-independent at the core, manual-first, human-approved for external writes and non-destructive toward existing quality history.
+
 ## M0 — Foundations & Trust Model
 
 Deliver:
@@ -17,7 +19,8 @@ Deliver:
 - deterministic validators for hard trust invariants;
 - synthetic eval harness/fixtures;
 - Agent Skill scaffold only;
-- package/CI baseline.
+- package/CI baseline;
+- model hooks for proposal/approval state without implementing external writes.
 
 Exit criteria:
 
@@ -26,7 +29,8 @@ Exit criteria:
 - inferred claims cannot silently become normative;
 - project/snapshot isolation is validated;
 - validation failures are explainable;
-- no live model is required for deterministic-core tests.
+- no live model is required for deterministic-core tests;
+- no external write capability is required to exercise the core.
 
 ## M1 — Source Inventory & Parsing
 
@@ -39,19 +43,22 @@ Deliver:
 - code AST/symbol inventory for initial languages;
 - partial/truncation/failure reporting;
 - malicious/untrusted input safeguards;
-- prompt-injection-safe content handling.
+- prompt-injection-safe content handling;
+- TMS-independent ingestion contract for exported/manual test artifacts.
 
 ## M2 — Project Knowledge Model
 
 Deliver extraction/normalization for:
 
 - requirements/rules/use cases/acceptance criteria;
-- entities/fields/constraints;
-- actors/roles/permissions;
-- states/transitions/channels;
-- UI/API paths with verification provenance;
+- entities/fields/constraints/relationships;
+- actors/roles/groups/permissions;
+- states/transitions/channels/actions/events/guards/exceptions;
+- UI/API/manual paths with verification provenance;
 - API/integration/event relationships;
-- source conflicts, aliases, ambiguity and staleness.
+- invariants;
+- source conflicts, aliases, ambiguity and staleness;
+- existing test assets/results as evidence nodes.
 
 Optional semantic retrieval may be evaluated only after deterministic source accounting works.
 
@@ -59,13 +66,26 @@ Optional semantic retrieval may be evaluated only after deterministic source acc
 
 Deliver:
 
+- greenfield/brownfield/clone mode dispatch for audit behavior;
 - requirement atomicity decomposition;
 - criterion↔test coverage graph;
 - duplicate/conflict classification;
-- obsolete-path/grouped-oracle findings;
+- stale/obsolete-candidate classification;
+- grouped-oracle findings;
 - executability audit;
+- missing preconditions/data/cleanup findings;
+- unsupported Expected Result findings;
 - nominal vs atomic coverage report;
-- policy-to-test traceability.
+- policy-to-test traceability;
+- execution-history-aware findings when evidence is available;
+- non-destructive improvement proposals;
+- clone/migration revalidation against destination evidence.
+
+Exit expectation:
+
+- existing Test Cases/history remain unchanged by audit itself;
+- audit can run from local/exported evidence with no TMS/MCP connection;
+- proposed deltas are explicit and reviewable.
 
 ## M4 — Risk & Scenario Engine
 
@@ -78,35 +98,59 @@ Deliver:
 - pairwise/combinatorial selection;
 - security/concurrency/resilience/data/time/accessibility/observability packs;
 - optional human/physical-process pack;
-- scenario-universe map plus optimization rationale.
+- scenario-universe map plus optimization rationale;
+- explicit distinction between contractual, implementation-derived, policy-derived, risk-derived and exploratory scenarios;
+- missing-scenario proposals usable in both greenfield and audit modes.
 
-## M5 — Manual Test Case Generator
+## M5 — Manual Test Case Generator & Rewriter
 
-Deliver structured manual cases containing:
+Deliver structured manual cases/proposals containing:
 
 - objective;
 - origin/provenance;
 - preconditions;
-- test data;
-- operational action steps;
+- environment/build/snapshot assumptions;
+- actor/profile/permission requirements;
+- test data/parameters;
+- verified operational path when evidence supports it;
+- ordered manual action steps;
 - source-backed Expected Results;
 - Pass/Fail/Blocked semantics;
-- cleanup;
+- cleanup/isolation;
+- evidence expectations proportional to risk;
 - risks/requirements links;
 - readiness state;
 - Shared Step/parameter candidates without TMS coupling.
 
-## M6 — Azure DevOps Adapter
+This milestone must support:
+
+- generating a manual Test Plan from zero;
+- generating missing cases found during an audit;
+- proposing detailed step-by-step rewrites for existing cases;
+- regenerating/revalidating cloned case procedures for a destination project.
+
+No external system is required. Output must be renderable locally as structured JSON/YAML/Markdown or equivalent.
+
+## M6 — Optional TMS Integration / Azure DevOps First
 
 Deliver:
 
+- read/inventory adapter capabilities;
 - native Test Case rendering;
+- configurable requirement/work-item mapping;
 - Shared Steps suggestions;
 - Shared Parameters/data mapping;
+- `AUDIT_ONLY`, `PREVIEW`, and explicitly approved sync modes;
 - preview/dry-run/diff;
-- idempotent create/update mapping;
-- explicit approval before bulk writes;
-- execution-result ingestion.
+- stable mapping/idempotency;
+- optimistic-concurrency/stale-target detection;
+- explicit human approval scoped to exact operation set/snapshot;
+- non-destructive create/update/link/append behavior;
+- destructive operations disabled by default;
+- read-back verification;
+- execution-result/comment/evidence ingestion without deleting history.
+
+REST and/or MCP may be implemented behind adapters. The core must not require either.
 
 ## M7 — Production Agent Skill
 
@@ -114,6 +158,9 @@ Turn the stable engine into a portable Agent Skills interface for compatible run
 
 - progressive disclosure;
 - minimal tool permissions;
+- operating-mode selection;
+- TMS-independent audit/generation;
+- human-approval boundary before any external write;
 - packaged references/scripts/assets;
 - runtime failure transparency;
 - portability/provider-neutral tests.
