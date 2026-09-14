@@ -81,15 +81,33 @@ Before adapter publication:
 - links target valid work items;
 - render round-trip does not alter oracle semantics.
 
-## Gate I — Publication safety
+## Gate I — Existing-asset/history preservation
+
+For brownfield, legacy, cloned or previously executed assets:
+
+- existing external IDs are preserved;
+- test runs/results remain intact;
+- comments/screenshots/attachments are not removed;
+- bug/work-item links are not silently deleted;
+- requirement↔test history is not destroyed;
+- duplicate/stale/obsolete findings remain recommendations until reviewed;
+- semantic rewrites of executed tests are treated as revision/replacement decisions, not blind overwrite;
+- external assets changed since audit are detected before write;
+- destructive operations are disabled by default.
+
+Failure: reject the write plan or require explicit destructive-maintenance workflow outside normal sync.
+
+## Gate J — Publication safety
 
 - dry-run/preview/diff available for bulk changes;
 - target scope revalidated;
 - idempotency/mapping strategy prevents duplicates;
 - explicit approval captured when required;
-- external IDs/results logged.
+- external IDs/results logged;
+- write result read back and verified;
+- optimistic-concurrency/drift safeguards prevent clobbering human changes.
 
-## Gate J — Human review
+## Gate K — Human review
 
 Mandatory for:
 
@@ -98,6 +116,7 @@ Mandatory for:
 - high/critical security/safety cases;
 - destructive tests;
 - bulk publication/update;
+- semantic modification of previously executed Test Cases;
 - first use of a new domain pack/adapter;
 - material provider/model/prompt changes until eval confidence exists.
 
@@ -108,6 +127,7 @@ A release requires:
 - unit/component/integration tests green as applicable;
 - hard-invariant evals green;
 - mutation/deletion/contradiction/prompt-injection/isolation evals at accepted thresholds;
+- existing-asset preservation/idempotency/drift evals green when adapters are included;
 - no known CRITICAL/HIGH provenance, isolation or unsafe-publication defects;
 - schemas/docs synchronized;
 - provider/prompt changes evaluated;
