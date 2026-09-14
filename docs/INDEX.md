@@ -12,6 +12,12 @@ Use this page as the canonical reading map.
 6. `ROADMAP.md` — milestone sequence and exit criteria.
 7. `STATUS.md` — what is documented versus actually implemented.
 
+## Product operation modes
+
+- `OPERATING_MODES.md` — greenfield generation, brownfield audit, clone/migration reuse and incremental regression modes, all with human approval before external writes.
+- `EXISTING_ASSET_AUDIT_POLICY.md` — non-destructive audit and history-preservation rules for existing requirements/tests/runs/comments/screenshots/links.
+- `MANUAL_TEST_AUTHORING.md` — canonical operational step-by-step structure for human-executable manual Test Cases.
+
 ## Evidence and trust
 
 - `PROJECT_INPUT_CONTRACT.md` — scope, snapshots, study/read states and hostile-input boundary.
