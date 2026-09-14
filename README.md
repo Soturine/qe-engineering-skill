@@ -2,121 +2,145 @@
 
 Evidence-first, manual-first quality engineering for software, APIs, mobile, data, IoT and industrial systems.
 
-This repository defines a vendor-neutral Agent Skill and supporting contracts for auditing a project from its actual evidence, mapping behavior and risk, and generating high-confidence manual test cases with explicit provenance. Automation is a future output of the same test model, not the starting point.
+This repository specifies a vendor-neutral Agent Skill and supporting engine contracts for auditing a project from its actual evidence, mapping behavior and risk, and generating high-confidence manual test cases with explicit provenance. Automation is a later output of the same approved Test Model, not the starting point.
 
 ## Core principle
 
 > **No normative Expected Result without a traceable oracle. No claim of completeness without a verifiable source inventory. No silent inference.**
 
-The project is intentionally stricter than a prompt that says “read the requirements and generate test cases.” Its goal is to make the reasoning auditable and mechanically reject outputs that were built from incomplete, contradictory or unsupported evidence.
+The goal is not to produce the largest test suite. The goal is to produce the smallest defensible, executable set that covers relevant behavior and risk—and to explain exactly why every normative expectation exists.
 
-## What the system will do
+## Product contract
 
-1. Inventory every in-scope project source and freeze a reproducible snapshot.
-2. Record what was studied, blocked, intentionally excluded or not yet studied.
-3. Parse requirements, rules, use cases, ADRs, source code, database migrations, API contracts, UI assets, tests, configuration, integrations, tickets and operational documents.
-4. Build a normalized project knowledge model before generating tests.
-5. Separate contractual truth from observed implementation, organizational policy, risk-derived scenarios and exploratory hypotheses.
-6. Audit the existing test plan for atomic coverage, contradictions, duplicates, obsolete assumptions, missing context and non-executable steps.
-7. Expand coverage using state transitions, decision tables, boundaries, negative paths, permissions, security, concurrency, resilience, time, data integrity, accessibility and—when applicable—human/physical-process risks.
-8. Optimize the scenario set for coverage and risk instead of maximizing test count.
-9. Generate manual test cases with reproducible preconditions, test data, exact actions, objective expected results, Fail/Blocked semantics, cleanup and source traceability.
-10. Pass every generated case through quality gates and human review before TMS publication.
-11. Export to Azure DevOps Test Plans through an adapter without coupling the core model to Azure.
-12. Reuse the same approved intermediate model for future automation adapters.
+The system will eventually:
 
-## Trust classes
+1. declare analysis scope and inventory every discoverable in-scope source;
+2. freeze/version a reproducible snapshot where possible;
+3. record studied, partial, blocked, superseded and out-of-scope evidence honestly;
+4. parse requirements, rules, use cases, ADRs, code, migrations, API/event/data contracts, UI/design artifacts, tests, configuration, integrations, work items and operational docs;
+5. build a normalized Project Model **before** test generation;
+6. separate contractual truth, technical contracts, implementation observations, organizational policy, risk-derived scenarios and exploratory hypotheses;
+7. audit existing tests at atomic-criterion level for gaps, contradictions, duplicates, stale assumptions and non-executable steps;
+8. map the wider scenario/risk universe (state, decision, boundary, permissions, security, concurrency, resilience, time, data, accessibility and optional physical/human factors);
+9. optimize coverage rather than maximize test count;
+10. generate manual test cases with reproducible preconditions/data/actions, observable Expected Results, Fail/Blocked semantics, cleanup and provenance;
+11. validate every case through deterministic quality gates and configured human review;
+12. render approved cases to TMS adapters (Azure DevOps first) without coupling the core to one TMS;
+13. ingest execution feedback as operational evidence;
+14. later render the same approved Test Model to automation frameworks without changing oracle semantics.
+
+## Trust/origin classes
 
 | Origin | Meaning | Normative Pass/Fail? |
 |---|---|---:|
-| `CONTRACT` | Approved requirement, business rule, use case, acceptance criterion, protocol or equivalent authority | Yes |
-| `IMPLEMENTATION` | Behavior confirmed in source, schema, migration, runtime, tests or current manual | Yes for characterization/regression; not automatically a business requirement |
-| `ORGANIZATIONAL_POLICY` | Explicit engineering, security or quality policy | Yes within its declared scope |
-| `RISK` | Scenario derived from a credible failure mode | Only when a defensible invariant/oracle exists; otherwise review is required |
-| `EXPLORATORY` | Important hypothesis without a sufficient oracle | No; exploratory charter only |
+| `CONTRACT` | approved product/business/regulatory/technical obligation | Yes |
+| `IMPLEMENTATION` | behavior confirmed in code/schema/runtime/tests | Characterization/regression only unless separately approved |
+| `ORGANIZATIONAL_POLICY` | explicit engineering/security/quality policy | Yes within declared scope |
+| `RISK` | scenario derived from a credible failure mode | Only with a defensible invariant or explicit approval |
+| `EXPLORATORY` | important hypothesis without sufficient oracle | No; charter/question only |
 
-## Source completeness
+Authority, confidence and freshness are separate dimensions. See `docs/SOURCE_AUTHORITY.md`.
 
-Every run maintains a `SOURCE_LEDGER`. Each expected source must be one of:
+## Completeness
 
-- `STUDIED`
-- `NOT_STUDIED`
-- `BLOCKED`
-- `OUT_OF_SCOPE`
+Every run maintains a `SOURCE_LEDGER`. A required source may be `STUDIED`, `PARTIALLY_STUDIED`, `NOT_STUDIED`, `BLOCKED`, `OUT_OF_SCOPE` or `SUPERSEDED`, with independent read-integrity metadata.
 
-A run may continue with blocked sources, but it **must not call itself complete**. Missing access is surfaced explicitly.
+A run may continue when evidence is unavailable, but it must downgrade its completeness claim and surface the gap. “Complete” means all required sources in the explicit, discoverable/configured scope are accounted for—not omniscience about artifacts that were never discoverable.
 
 ## Manual-first execution model
 
-The first production target is a human tester. A READY case must answer without guesswork:
+A `READY` manual case must answer without guesswork:
 
-- What must already exist?
-- Which environment, user/profile and permissions are required?
-- Where is the action performed?
-- Which data must be prepared?
-- What exactly is done?
-- What objectively counts as correct?
-- What is Fail versus Blocked?
-- Which evidence is useful when a deviation occurs?
-- What must be cleaned up?
-- Which primary source supports every Expected Result?
-
-A normal Pass should remain lightweight. Evidence collection should be proportional to risk and primarily required for deviations, blocked cases, critical controls or explicit audit obligations.
+- what must already exist;
+- environment/build/snapshot;
+- actor/profile/permissions;
+- verified execution path;
+- data properties to prepare;
+- exact human action;
+- observable correct result;
+- what is Pass, Fail and Blocked;
+- evidence expectations proportional to risk;
+- cleanup/isolation;
+- which primary evidence supports every normative Expected Result.
 
 ## High-level architecture
 
 ```text
-Source inventory + immutable snapshot
+scope + deterministic source inventory
               ↓
-Deterministic parsing / code symbol analysis
+snapshot / identity / integrity
               ↓
-Authority + provenance + conflict detection
+parsers + AST/symbol analysis
               ↓
-Normalized project model
+authority + provenance + conflict detection
               ↓
-Existing-test audit + traceability graph
+normalized Project Model
               ↓
-Risk/state/decision/boundary expansion
+existing-test audit + atomic traceability
               ↓
-Scenario optimization + deduplication
+risk/scenario universe
               ↓
-Manual test-case generation
+optimization + deduplication
               ↓
-Quality gates + human review
+manual Test Model generation
               ↓
-TMS adapters (Azure DevOps first)
+quality gates + human review
               ↓
-Execution feedback / regression selection
+TMS renderers (Azure first)
               ↓
-Future automation adapters
+execution feedback / change impact
+              ↓
+future automation renderers
 ```
 
-RAG or GraphRAG may assist discovery on large corpora, but neither is a source of truth. Any claim used as a test oracle must resolve back to primary evidence.
+RAG/GraphRAG may assist discovery later. They never replace source inventory or primary-source verification.
 
 ## Repository map
 
-- `AGENTS.md` — implementation contract for coding agents such as Codex, Claude Code and Copilot.
-- `CLAUDE.md` — Claude-specific operating and audit instructions.
-- `docs/ARCHITECTURE.md` — target architecture and boundaries.
-- `docs/ENGINEERING_CONSTITUTION.md` — engineering rules for this repository.
-- `docs/TRUST_MODEL.md` — evidence, confidence, provenance and completeness model.
-- `docs/ORACLE_POLICY.md` — rules for Expected Results and ambiguities.
-- `docs/QUALITY_GATES.md` — mechanical and human release gates.
-- `docs/TEST_DESIGN_POLICY.md` — scenario design and optimization rules.
-- `docs/RISK_MODEL.md` — cross-project risk taxonomy.
-- `docs/HUMAN_PHYSICAL_FACTORS.md` — optional industrial/physical-operation pack.
-- `docs/BENCHMARKS.md` — public tools/skills studied and design lessons.
-- `docs/ROADMAP.md` — incremental milestones.
-- `docs/AUDIT_GUIDE.md` — how a reviewer or another agent audits this repository.
-- `docs/AI_IMPLEMENTATION_GUIDE.md` — how an implementation agent must continue the project.
-- `schemas/` — machine-verifiable contracts.
-- `skill/qe-engineering/SKILL.md` — Agent Skills interface; intentionally thin until the foundations are implemented.
-- `evals/` — golden, mutation, contradiction and anti-hallucination evaluation fixtures.
+Core guidance:
+- `AGENTS.md` — implementation contract for coding agents.
+- `CLAUDE.md` — Claude-specific implementation/audit instructions.
+- `docs/ENGINEERING_CONSTITUTION.md` — normative engineering rules.
+- `docs/IMPLEMENTATION_SPEC.md` — concrete build order for M0+.
+- `docs/ROADMAP.md` — milestones and exit criteria.
 
-## Current milestone
+Trust/evidence:
+- `docs/PROJECT_INPUT_CONTRACT.md`
+- `docs/SOURCE_AUTHORITY.md`
+- `docs/TRUST_MODEL.md`
+- `docs/ORACLE_POLICY.md`
+- `docs/PROJECT_MODEL.md`
+- `docs/QUALITY_GATES.md`
 
-**M0 — Foundations & Trust Model.**
+Test/risk:
+- `docs/TEST_DESIGN_POLICY.md`
+- `docs/RISK_MODEL.md`
+- `docs/HUMAN_PHYSICAL_FACTORS.md`
+- `docs/QUALITY_METRICS.md`
 
-No production test-case generator should be implemented until the source ledger, provenance model, oracle policy, schemas, validators and evaluation strategy are stable enough to reject unsupported output.
+Architecture/integration:
+- `docs/ARCHITECTURE.md`
+- `docs/RETRIEVAL_STRATEGY.md`
+- `docs/AGENT_SKILL_SPEC.md`
+- `docs/AZURE_DEVOPS_ADAPTER.md`
+- `docs/SECURITY_THREAT_MODEL.md`
 
-See [ROADMAP](docs/ROADMAP.md).
+Validation/research:
+- `docs/EVAL_STRATEGY.md`
+- `docs/AUDIT_GUIDE.md`
+- `docs/BENCHMARKS.md`
+- `docs/MARKET_LANDSCAPE.md`
+- `docs/AI_IMPLEMENTATION_GUIDE.md`
+
+Machine contracts/scaffolding:
+- `schemas/`
+- `evals/`
+- `skill/qe-engineering/SKILL.md`
+
+## Current implementation status
+
+**Foundation/specification stage.**
+
+The repository currently defines the trust architecture, research baseline and M0 implementation plan. A production test-case generator is intentionally **not** considered implemented until the Source Ledger, schemas, validators and hard-invariant evals are executable.
+
+Start with `AGENTS.md` and `docs/IMPLEMENTATION_SPEC.md`.
