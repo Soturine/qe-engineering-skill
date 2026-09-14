@@ -19,6 +19,9 @@ Follow `AGENTS.md`, then read:
 - `TRUST_MODEL.md`
 - `ORACLE_POLICY.md`
 - `PROJECT_MODEL.md`
+- `OPERATING_MODES.md`
+- `EXISTING_ASSET_AUDIT_POLICY.md`
+- `MANUAL_TEST_AUTHORING.md`
 - `QUALITY_GATES.md`
 - `EVAL_STRATEGY.md`
 - `SECURITY_THREAT_MODEL.md`
@@ -35,8 +38,27 @@ Do not rely on conversation history. The repository is the source of implementat
 - Do not implement a production test-case generator yet.
 - Do not add RAG, GraphRAG, vector databases or autonomous browser execution.
 - Do not couple domain logic to Claude/OpenAI/Copilot.
+- Do not require Azure DevOps, MCP or another TMS for any M0 test.
+- Do not implement external CRUD as part of M0.
 - Do not use real proprietary/customer/project artifacts as committed fixtures.
 - If an adjacent M1/M2 foundation is necessary to avoid a poor or destructive M0 design, implement the **smallest necessary subset** and document why. Do not broadly jump milestones.
+
+## Cross-cutting product invariants to preserve in the M0 model
+
+M0 does not implement greenfield/brownfield/clone workflows yet, but its schemas/domain contracts must not make them impossible later.
+
+The design must leave explicit room for:
+
+- operating mode metadata;
+- proposal/readiness states;
+- human approval records scoped to exact artifact(s), operation set and snapshot;
+- stale-approval invalidation;
+- existing external-asset identity/history references without destructive overwrite semantics;
+- TMS-independent Manual Test Models;
+- project/snapshot isolation;
+- generic Project Model nodes rather than domain-specific hard-coding.
+
+Do not add Azure-specific concepts to the core domain model just to satisfy future adapter needs.
 
 ## Required deliverables
 
@@ -82,7 +104,9 @@ Implement a Python package and CI-ready test suite containing:
    - valid readiness transitions;
    - verified-path claims requiring evidence;
    - references to missing semantic nodes;
-   - unsupported cross-snapshot links.
+   - unsupported cross-snapshot links;
+   - approval records missing exact scope/attribution/snapshot;
+   - stale or mismatched approval references where represented in M0.
 
 5. **Structured validation errors** with stable codes, severity and artifact references. Examples of error-code families:
    - `SRC_*`
@@ -118,7 +142,8 @@ At minimum prove that the implementation rejects or downgrades correctly:
 - a semantic reference to a missing node;
 - an implementation-origin claim silently relabeled as contract;
 - duplicate IDs within the same namespace;
-- invalid readiness promotion when a blocking conflict exists.
+- invalid readiness promotion when a blocking conflict exists;
+- approval scope that targets a different snapshot/artifact than the proposed operation, if represented in the implemented M0 contract.
 
 Also prove that valid minimal fixtures pass.
 
@@ -150,6 +175,8 @@ The names must be generic/synthetic and must not reproduce a real project.
 - No silent fallback from a failed source to stale or unrelated evidence.
 - Error messages must be diagnosable by a human or another agent.
 - Tests should verify properties and invariants, not brittle prose formatting.
+- Do not introduce any assumption that the core requires a live TMS/MCP connection.
+- Do not model external write authorization as an implicit side effect of generation/readiness.
 
 ## Git workflow for this task
 
@@ -181,7 +208,7 @@ Stop and report instead of guessing if:
 
 - normative docs conflict in a way that changes the trust model;
 - a requested invariant cannot be implemented without changing the architecture materially;
-- the chosen schema shape would make M1/M2 semantics impossible;
+- the chosen schema shape would make M1/M2/M3/M5 operating-mode semantics impossible;
 - a dependency introduces disproportionate supply-chain or licensing risk;
 - CI cannot be made green without weakening a gate.
 
