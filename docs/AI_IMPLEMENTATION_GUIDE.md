@@ -1,6 +1,6 @@
 # AI Implementation Guide
 
-This guide exists so an implementation agent can continue the repository without relying on conversational history.
+This guide exists so an implementation agent can continue the repository without relying on conversation history or a particular example project.
 
 ## Starting a task
 
@@ -10,52 +10,51 @@ This guide exists so an implementation agent can continue the repository without
 4. Inspect the current tree, tests, schemas and ADRs.
 5. State the smallest coherent change that advances an exit criterion.
 6. Implement code + tests + docs together.
-7. Run validations/evals.
+7. Run deterministic validations and relevant evals.
 8. Report exact status and remaining gaps.
+
+## Current directive: build M0 first
+
+Do **not** begin by implementing a fluent test-case generator.
+
+Implement in this order:
+
+1. package/tooling/CI;
+2. schemas;
+3. typed/validated domain contracts;
+4. Source Ledger + Run Manifest;
+5. oracle/provenance validators;
+6. completeness/readiness validators;
+7. synthetic hard-invariant evals;
+8. minimal CLI for real validators;
+9. only then advance to M1.
+
+See `docs/IMPLEMENTATION_SPEC.md`.
 
 ## Do not jump ahead
 
-Do not build a sophisticated generator, RAG stack, GraphRAG, Azure writer or browser automation before M0/M1 invariants can be tested. A fluent generator on weak trust foundations is a regression, not progress.
+Do not build a sophisticated generator, RAG stack, GraphRAG, bulk TMS writer or autonomous browser execution before M0/M1 invariants can be tested. Fluent output on weak trust foundations is a regression, not progress.
 
-## How to use language models
+## Language-model use
 
-Use models for:
+Use models for semantic extraction from unstructured text, relation/alias proposals, contradiction candidate detection, scenario ideation, wording after an oracle exists and risk brainstorming.
 
-- semantic extraction from unstructured text;
-- relation/alias proposals;
-- contradiction candidate detection;
-- scenario ideation;
-- test-step wording after the oracle exists;
-- risk brainstorming.
-
-Prefer deterministic code for:
-
-- inventory;
-- hashing/version identity;
-- schema validation;
-- exact code symbols/imports where parsers exist;
-- duplicate IDs;
-- status/gate transitions;
-- output field limits;
-- source-to-claim linkage validation.
+Prefer deterministic code for inventory/scope accounting, hashes/version identity, schema validation, code symbols/imports where parsers exist, duplicate IDs, gate transitions, output limits, source→claim→oracle linkage and project/snapshot isolation.
 
 ## Provider adapters
 
-Never scatter provider calls through domain code. Use an interface such as:
+Never scatter provider calls through domain code. Use typed request/result interfaces. Provider output must be schema-validated, include provider/model/version metadata when material, retain source span/symbol references and never bypass deterministic gates.
 
-```python
-class ReasoningProvider(Protocol):
-    def extract(...): ...
-    def relate(...): ...
-    def synthesize(...): ...
-```
+Core tests must not require a live model.
 
-Provider adapters may support Claude/OpenAI/others. Tests for core logic must not require a live model.
+## Model/prompt changes
 
-## Evaluation discipline
+Treat provider/model/prompt/extraction changes as dependency changes. Re-run relevant evals and record the change before declaring semantic parity.
 
-For model-assisted features, create fixtures before optimizing prompts. Keep expected properties more important than exact wording. Include false-positive penalties and unsupported-oracle checks.
+## Fixtures
+
+Committed fixtures are synthetic/generic. They encode defect classes, not real project rules.
 
 ## Documentation discipline
 
-A future agent should be able to understand every architectural decision from the repository. If implementation relies on an unwritten conversational assumption, the change is not complete.
+A future coding agent must be able to reconstruct architectural intent from the repository alone. If implementation relies on an unwritten conversational assumption, the change is incomplete.
