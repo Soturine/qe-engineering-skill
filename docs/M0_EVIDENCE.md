@@ -47,3 +47,8 @@ CI now covers Linux and Windows, separate unit/eval steps, advisory audit and wh
 installation. No release/tag or publication to a package registry is performed.
 
 No generator, provider, source ingestion or external write adapter is present.
+
+Final trust review adds approval binding to ledger/claim content (not just snapshot IDs)
+and rejects a conflict merely relabeled resolved without an authoritative decision.
+The additional mutation test makes 107 tests. Regenerated schemas preserve 1.0 parsing
+compatibility; old proposals without evidence bindings cannot authorize promotion.

@@ -49,6 +49,12 @@ publication. A changed approval, proposal, operation set, payload or snapshot re
 new governance attestation. External target drift must be supplied by a future adapter;
 the M0 CLI makes no claim to read live targets.
 
+Oracle-promotion proposals also require `evidence_hash = evidence_digest(model)`.
+This binds the full declared ledger and claims, including source hashes, even if a
+caller reuses a snapshot label after mutation. An older proposal without this optional
+schema field still parses, but cannot authorize oracle promotion; rebuild its preview
+and obtain fresh approval. This is the migration path for the pre-release M0 contracts.
+
 ## Interpretation
 
 Passing means declared structures and M0 deterministic invariants are consistent.

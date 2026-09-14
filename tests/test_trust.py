@@ -4,6 +4,7 @@ from qe_skill.domain import Approval, Proposal
 from qe_skill.validation import (
     TrustContext,
     digest,
+    evidence_digest,
     validate_approval,
     validate_claim,
     validate_ledger,
@@ -103,6 +104,7 @@ def approved_promotion():
             "preview_hash": "c" * 64,
             "source_snapshot": "v1",
             "target_snapshot": "v1",
+            "evidence_hash": evidence_digest(model),
             "operations": [
                 {
                     "id": "promote",
@@ -170,3 +172,12 @@ def test_cross_snapshot_and_unsupported_statement() -> None:
     model.oracles[0].claim.snapshot_id = "v1"
     model.oracles[0].statement = "A fabricated exact message"
     assert not validate_oracle(model.oracles[0], model).valid
+
+
+def test_approval_invalidated_when_evidence_changes_under_same_snapshot_id() -> None:
+    model, context = approved_promotion()
+    assert validate_oracle(model.oracles[0], model, context).valid
+    model.ledger.sources[0].content_hash = "f" * 64
+    model.claims[0].evidence[0].source_hash = "f" * 64
+    codes = {i.code for i in validate_oracle(model.oracles[0], model, context).issues}
+    assert "APPROVAL_EVIDENCE_CHANGED" in codes

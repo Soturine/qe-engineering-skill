@@ -164,6 +164,7 @@ class Proposal(Artifact):
     preview_hash: Digest
     source_snapshot: Text
     target_snapshot: Text
+    evidence_hash: Digest | None = None
 
 
 class Approval(Artifact):

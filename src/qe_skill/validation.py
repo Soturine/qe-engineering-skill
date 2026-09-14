@@ -77,6 +77,18 @@ def digest(record: BaseModel) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def evidence_digest(model: ProjectModel) -> str:
+    """Bind approvals to the declared evidence bytes, not just mutable snapshot labels."""
+    payload = {
+        "ledger": model.ledger.model_dump(mode="json"),
+        "claims": [claim.model_dump(mode="json") for claim in model.claims],
+    }
+    encoded = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def same_scope(left: Artifact | Ref, right: Artifact | Ref) -> bool:
     return (left.project_id, left.snapshot_id) == (right.project_id, right.snapshot_id)
 
@@ -289,6 +301,12 @@ def oracle_approval(oracle: Oracle, model: ProjectModel, context: TrustContext) 
     if proposal is None:
         result.add("APPROVAL_PROPOSAL_MISSING", approval, "Approved proposal does not exist.")
         return result
+    if proposal.evidence_hash != evidence_digest(model):
+        result.add(
+            "APPROVAL_EVIDENCE_CHANGED",
+            oracle,
+            "Approval is missing its evidence binding or supporting evidence changed.",
+        )
     result.issues.extend(
         validate_approval(approval, proposal, context, model.snapshot_id, model.snapshot_id).issues
     )
@@ -333,10 +351,25 @@ def validate_oracle(
         pending.extend(claims[r.id] for r in current.derived_from if r.id in claims)
     if oracle.normative:
         for node in model.nodes:
-            if isinstance(node, Conflict) and node.status == "unresolved":
+            if isinstance(node, Conflict):
                 affected = {ref.id for ref in node.affected + node.conflicting_claims}
                 if affected.intersection(checked | {oracle.id}):
-                    result.add("ORACLE_CONFLICT", oracle, "Unresolved conflict blocks this oracle.")
+                    resolution = (
+                        claims.get(node.resolution_claim.id) if node.resolution_claim else None
+                    )
+                    resolved = (
+                        node.status == "resolved"
+                        and resolution is not None
+                        and node.resolution_claim is not None
+                        and same_scope(node.resolution_claim, model)
+                        and resolution.origin in {"CONTRACT", "ORGANIZATIONAL_POLICY"}
+                        and not resolution.inferred
+                        and validate_claim(resolution, model).valid
+                    )
+                    if not resolved:
+                        result.add(
+                            "ORACLE_CONFLICT", oracle, "Unresolved conflict blocks this oracle."
+                        )
     if oracle.statement != claim.statement:
         result.add("ORACLE_STATEMENT", oracle, "Oracle statement differs from its supported claim.")
     if oracle.origin != claim.origin:

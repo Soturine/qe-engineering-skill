@@ -80,6 +80,8 @@ def test_unresolved_conflict_blocks_even_standalone_normative_oracle() -> None:
     )
     model.nodes.append(conflict)
     assert "ORACLE_CONFLICT" in {i.code for i in validate_oracle(model.oracles[0], model).issues}
+    conflict.status = "resolved"
+    assert "ORACLE_CONFLICT" in {i.code for i in validate_oracle(model.oracles[0], model).issues}
 
 
 def test_role_permission_mapping_cannot_be_guessed() -> None:
