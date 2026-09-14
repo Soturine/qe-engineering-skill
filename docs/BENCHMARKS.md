@@ -1,143 +1,257 @@
 # Public Benchmark Landscape — September 2026
 
-This document records public references studied while defining the project. It is not a claim that any vendor is deficient internally; comparisons are limited to publicly documented capabilities.
+This document records public references studied while defining the project. It does not claim knowledge of private/internal capabilities. Lessons are design inputs, not copied requirements.
+
+## Agent Skills open pattern
+
+Sources:
+- https://agentskills.io/
+- https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+
+Relevant ideas:
+- `SKILL.md` plus optional references/scripts/assets;
+- progressive disclosure;
+- reusable procedural knowledge;
+- portability across compatible agent environments.
+
+Adopted:
+- portable skill interface;
+- thin orchestration layer;
+- scripts/references loaded as needed.
+
+Extended here:
+- critical trust rules live in schemas/validators/evals, not prompt text alone.
 
 ## GitHub Awesome Copilot — Quality Playbook
 
-Source: https://github.com/github/awesome-copilot/blob/main/skills/quality-playbook/SKILL.md
+Source:
+- https://github.com/github/awesome-copilot/blob/main/skills/quality-playbook/SKILL.md
 
-Publicly documented strengths:
-
-- phased repository exploration and QA playbook;
-- run metadata and coverage tracking;
+Strengths:
+- phased repository exploration;
+- coverage/run metadata;
 - specification/repository discovery;
-- adversarial iterations and terminal gate;
-- designed to run in coding-agent environments including Claude/Copilot/Codex-style runtimes.
+- adversarial iterations/terminal gate.
 
-Lessons adopted:
-
-- explore before generating;
+Adopted:
+- explore before generation;
 - explicit run metadata;
 - multi-phase quality gates;
 - self-audit/eval mindset.
 
-Design difference here:
-
+Difference targeted here:
 - code behavior is not silently promoted to business contract;
-- source completeness/provenance are separate enforceable contracts;
-- manual test execution is the initial target;
-- physical/human operations are an optional risk domain;
-- normative oracles require primary-source resolution.
+- source completeness/provenance are enforceable contracts;
+- manual execution is the initial output;
+- normative oracles resolve to primary evidence.
 
-## paranoid-qa test-cases skill
+## paranoid-qa — test-cases
 
-Source: https://github.com/akovalion/paranoid-qa/blob/main/skills/test-cases/SKILL.md
+Source:
+- https://github.com/akovalion/paranoid-qa/blob/main/skills/test-cases/SKILL.md
 
-Publicly documented strengths:
-
+Strengths:
 - collect all sources before generation;
-- explicit `studied`/`not studied` reporting and honest blocked-source handling;
-- account for requirements, mockups and implementation;
-- detailed test-case authoring/TMS workflow.
+- studied/not-studied honesty;
+- requirements/mockups/implementation context;
+- detailed TMS-oriented authoring.
 
-Lessons adopted:
+Adopted:
+- no silent source degradation;
+- ambiguity becomes a question;
+- source completeness is visible.
 
-- no silent degradation;
-- source completeness table;
-- ambiguity should become a question, not an invented behavior.
-
-Design difference here:
-
-- source ledger and oracle provenance are machine schemas, not only writing rules;
-- authority and confidence are separate dimensions;
+Extended:
+- machine schemas for ledger/provenance;
+- authority/confidence separated;
 - missing evidence can mechanically block readiness.
+
+## stellarlinkco/myclaude — test-cases
+
+Source:
+- https://github.com/stellarlinkco/myclaude/blob/master/skills/test-cases/SKILL.md
+
+Relevant ideas:
+- requirements/PRD → structured test cases;
+- happy, negative and edge paths;
+- traceability from source requirements to tests.
+
+Adopted:
+- structured generation only after requirements are understood;
+- traceability is first-class.
+
+Extended:
+- generation is preceded by evidence audit, implementation comparison, risk analysis and oracle validation.
+
+## Claude-Skills — test-scenarios
+
+Source:
+- https://github.com/borghei/Claude-Skills/blob/main/project-management/execution/test-scenarios/SKILL.md
+
+Relevant ideas:
+- scenario-level coverage before detailed cases;
+- happy/edge/error/security/accessibility/performance lenses;
+- coverage-gap thinking.
+
+Adopted:
+- map scenario universe before selecting cases.
+
+Extended:
+- scenario optimization and source-backed oracles prevent test-count inflation.
+
+## skilldrop — test-plan-generator
+
+Source:
+- https://github.com/sananthanarayan/skilldrop/blob/main/skills/test-plan-generator/SKILL.md
+
+Relevant ideas:
+- requirements/PR/diff inputs;
+- risk-based test-plan generation;
+- acceptance-criteria mapping;
+- explicit uncovered areas.
+
+Adopted:
+- change-impact and risk-based planning are future capabilities.
+
+Extended:
+- diff/code evidence cannot overwrite higher-authority product truth.
+
+## Browserbase — ui-test
+
+Source:
+- https://github.com/browserbase/skills/blob/main/skills/ui-test/SKILL.md
+
+Relevant idea:
+- action → assertion/observable result discipline during UI execution.
+
+Adopted:
+- clear manual Action/Expected Result pairing.
+
+Difference:
+- routine Pass evidence remains proportional to risk; heavy evidence collection is not mandatory for every successful step.
 
 ## BrowserStack AI Test Management agents
 
 Sources:
-
 - https://www.browserstack.com/docs/test-management/browserstack-ai
 - https://www.browserstack.com/docs/test-management/browserstack-ai/ai-generated-test-cases
 
-Publicly documented strengths:
-
-- test-case generation from requirements, PDFs, screenshots and linked work systems;
+Strengths:
+- generation from documents/screenshots/linked work systems;
 - existing test repository context;
-- dedicated agents for maintenance, test data, deduplication, test selection and failure analysis;
-- manual-to-low-code automation path.
+- dedicated maintenance/data/dedup/selection/failure-analysis agents;
+- manual-to-automation path.
 
-Lessons adopted:
+Adopted:
+- lifecycle concerns as modules;
+- dedup/maintenance/data as first-class;
+- future manual→automation path.
 
-- separate lifecycle concerns into modules;
-- treat deduplication and maintenance as first-class;
-- generate data/boundaries systematically;
-- preserve future manual→automation path.
-
-Design difference here:
-
-- completeness gate across configured project sources;
+Target difference:
+- verifiable configured-source completeness;
 - primary-evidence oracle provenance;
-- explicit contract vs implementation vs risk separation;
-- local/private-first architecture target;
-- generic physical/human risk pack.
+- contract/implementation/policy/risk separation;
+- local/private-first architecture;
+- optional physical/human process pack.
 
 ## Katalon AI-assisted test generation
 
-Source: https://docs.katalon.com/katalon-platform/create-tests/generate-test-cases-with-ai
+Source:
+- https://docs.katalon.com/katalon-platform/create-tests/generate-test-cases-with-ai
 
-Publicly documented strengths:
+Relevant ideas:
+- requirements → manual cases/steps;
+- ALM integration;
+- project/test-object context;
+- future API/automation assistance.
 
-- requirements to manual cases/steps;
-- ALM integrations including Azure DevOps;
-- AI-assisted test design/maintenance.
-
-Lessons adopted:
-
-- requirement→manual-case workflow;
-- TMS integration is a renderer/adapter concern.
+Adopted:
+- TMS is a renderer/adapter, not the domain model.
 
 ## Tricentis agentic testing
 
-Public documentation: https://docs.tricentis.com/
+Public documentation:
+- https://docs.tricentis.com/
 
-Relevant lesson: preserve human-in-the-loop/co-creation for complex or consequential operations rather than assuming full autonomy is always desirable.
+Relevant idea:
+- human-in-the-loop/co-creation remains valuable for complex/consequential workflows.
+
+Adopted:
+- explicit human review gates rather than assuming autonomy is always desirable.
+
+## TestMu AI / LambdaTest Agent Skills
+
+Source:
+- https://github.com/LambdaTest/agent-skills
+
+Relevant ideas:
+- modular skills across many testing frameworks/languages;
+- portability;
+- eval/playbook mindset.
+
+Adopted:
+- future automation via specialized adapters/skills rather than polluting the manual core.
+
+## Greptile — graph-based codebase context
+
+Source:
+- https://www.greptile.com/docs/how-greptile-works/graph-based-codebase-context
+
+Relevant idea:
+- files/functions/classes/imports/dependencies form a useful code graph for impact analysis.
+
+Adopted:
+- AST/symbol/dependency graphs are preferred for structural code facts.
+
+## Augment — semantic codebase context
+
+Public material emphasizes multi-repository semantic context, history and engineering knowledge.
+
+Relevant idea:
+- semantic retrieval helps locate context across large codebases.
+
+Constraint here:
+- semantic retrieval supports discovery; source identity/primary evidence still governs truth.
+
+## Microsoft GraphRAG
+
+Source:
+- https://microsoft.github.io/graphrag/
+
+Relevant idea:
+- graph-based retrieval can improve global questions and cross-document relation discovery.
+
+Constraint:
+- graph/LLM-derived claims are not primary evidence and must resolve to source spans/symbols before becoming an oracle.
 
 ## Azure DevOps Test Plans
 
 Sources:
-
 - https://learn.microsoft.com/en-us/azure/devops/test/create-test-cases?view=azure-devops
 - https://learn.microsoft.com/en-us/azure/devops/test/share-steps-between-test-cases?view=azure-devops
 
-Publicly documented capabilities relevant to the adapter:
-
-- manual cases with individual action/expected-result steps;
-- Shared Steps for reusable sequences;
-- parameters/shared parameters for data-driven cases;
+Relevant native concepts:
+- Action + Expected Result steps;
+- Shared Steps;
+- parameters/shared parameters;
 - separate cases for materially different workflows.
 
-Design implication: generated tests should map to the real TMS model instead of inventing UI concepts the runner does not support.
-
-## Microsoft GraphRAG
-
-Source: https://microsoft.github.io/graphrag/
-
-Relevant lesson: graph-based retrieval can help answer global questions over large corpora and relate entities/claims across documents.
-
-Constraint adopted here: graph/LLM-derived claims are discovery artifacts, not primary evidence. They must resolve back to source spans/symbols before becoming an oracle.
+Design implication:
+- adapters map to real TMS concepts and must not invent runner UI.
 
 ## Landscape conclusion
 
-Public tooling already does many individual pieces extremely well: repository audit, test generation, deduplication, test data, maintenance, ALM integration, agentic execution and advanced retrieval. The target differentiation of this repository is the **combination** of:
+Public tooling already covers many pieces well: repository audit, generation, maintenance, data, deduplication, ALM integration, execution and retrieval. The target differentiation of this repository is the combination of:
 
 - complete-source honesty;
 - machine-verifiable provenance;
-- contract/implementation/risk separation;
+- authority/confidence separation;
+- contract/implementation/policy/risk separation;
 - manual-first executability;
-- risk coverage without test-count inflation;
-- optional physical/human-process modeling;
+- atomic and risk coverage without count inflation;
+- optional human/physical-process modeling;
 - vendor-neutral Agent Skill interface;
 - strict anti-invention gates;
-- future automation from the same approved test model.
+- future automation from the same approved Test Model.
 
-This should be validated empirically through evals rather than treated as a marketing claim.
+This is a hypothesis to validate with evals, not a superiority claim.
