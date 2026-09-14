@@ -1,7 +1,12 @@
 # M0 implementation evidence
 
 Status: partial. Package/tooling and version 1.0 typed/schema contracts implemented;
-cross-artifact trust gates are pending.
+provenance, completeness and exact-scope approval checks implemented.
+Project Model integrity, manual readiness, CLI and complete eval coverage are pending.
+
+Trust checks reject missing/mutated/superseded/non-primary evidence, source authority
+leakage, unsupported inference, scope reductions, false completeness and stale or
+self-declared approvals. Tests include valid minimal chains and governed promotion.
 
 The contracts cover run, ledger, claims, oracles, approvals/proposals, risk,
 typed Project Model nodes and TMS-neutral manual Test Cases/Test Models.
