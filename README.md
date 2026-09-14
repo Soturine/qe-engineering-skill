@@ -427,8 +427,16 @@ Validation/research:
 
 ## Current implementation status
 
-**Foundation/specification stage. M0 is not yet implemented in code.**
+**M0 Foundations & Trust Model is implemented and validated.**
 
-The repository currently defines target behavior, trust architecture, operating modes, policies, research baseline and the first implementation handoff. A production test-case generator is intentionally **not** considered implemented until Source Ledger/schema/validator/eval guarantees are executable.
+The executable package includes versioned schemas, strict domain contracts, deterministic
+trust/model/readiness validators, a read-only CLI and synthetic adversarial evals.
+The broader workflows described above remain target behavior: no production generator,
+source extraction engine or external write adapter is implemented.
+
+Install with `python -m pip install -r requirements-dev.lock`, followed by
+`python -m pip install --no-deps --no-build-isolation -e .`. Run `qe --help` for the four
+validation commands. See `docs/CLI.md` for inputs and `docs/M0_EVIDENCE.md` for the
+107-test evidence matrix, CI reproduction and limitations.
 
 Read `docs/STATUS.md` for the authoritative current state. Coding agents should start with `AGENTS.md` and `docs/CODEX_M0_TASK.md`.

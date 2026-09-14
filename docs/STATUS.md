@@ -1,64 +1,51 @@
-# Implementation Status
-
-This file prevents architecture documentation from being mistaken for implemented capability.
+﻿# Implementation Status
 
 ## Current stage
 
-**M0 partial — Python package and quality-tooling baseline implemented; trust engine pending.**
+**M0 — Foundations & Trust Model: implemented and validated.**
 
-See `M0_EVIDENCE.md` for checkpoint scope and validation evidence.
+M0 completion covers deterministic contracts and gates, not production generation or
+project understanding. See `M0_EVIDENCE.md` for tests, boundaries and exit criteria.
+The current commit must remain green in CI.
 
-## Documented
+## Implemented
 
-- product/trust architecture;
-- Engineering Constitution;
-- Project Input Contract;
-- source authority and provenance model;
-- oracle policy;
-- Project Model target;
-- quality gates;
-- operating modes: greenfield, brownfield/legacy audit, clone/migration/reuse, incremental regression;
-- manual Test Case authoring contract, including detailed human step-by-step proposals;
-- existing-asset/history-preservation policy;
-- human-approval boundary for all external writes;
-- TMS independence of the core engine;
-- test-design/risk/human-physical policies;
-- security threat model;
-- eval strategy and quality metrics;
-- retrieval/RAG/GraphRAG position;
-- Azure DevOps adapter contract;
-- Agent Skill target interface;
-- public benchmark/market research;
-- implementation/audit instructions.
+- Python 3.12+ typed modular-monolith package; no model/TMS runtime dependency.
+- Ten reproducible version 1.0 JSON Schemas and equivalent strict domain contracts.
+- Ledger/manifest completeness, authority, provenance and namespace validation.
+- Source mutation/deletion, inferred-oracle and exact-content approval checks.
+- Typed Project Model skeleton, reference integrity and duplicate detection.
+- TMS-neutral Manual Test Model and deterministic readiness gates.
+- Four bounded, read-only JSON validation CLI commands with structured errors.
+- Eleven synthetic fixtures, unit/integration tests and adversarial evals.
+- Linux/Windows CI, transitive pins, published-advisory audit and installed-wheel tests.
 
-## Not yet implemented
+## Partial by design
 
-- domain engine;
-- JSON Schemas;
-- Source Ledger/Run Manifest validators;
-- Project Model builder;
-- parsers/AST inventory;
-- model-provider adapters;
-- operating-mode runtime dispatch;
-- existing Test Plan importer/auditor;
-- scenario/risk engine;
-- manual test-case generator/rewriter;
-- local JSON/YAML/Markdown Test Model renderers;
-- Azure DevOps read/write adapter;
-- human-approval persistence/enforcement in executable code;
-- production Agent Skill runtime;
-- automation renderers;
-- RAG/GraphRAG;
-- CI/eval execution.
+- Source authenticity/semantics: M0 checks declared metadata, hashes and provenance
+  chains. It does not inspect original evidence or independently discover scope.
+- Approval: exact bindings and separate trusted-context admission are checked;
+  human authentication, signing, durable storage and external enforcement are deferred.
+- Manual executability: structural prerequisites and source-backed instructions are
+  checked; humans still evaluate feasibility, usability and meaning.
+- Operating modes: metadata/history/model shapes exist; workflow dispatch is deferred.
+- Conflicts: unresolved conflicts block affected normative output; M0 does not choose
+  precedence or synthesize resolutions. Supplied resolutions need authority.
 
-## Important safety status
+## Deferred
 
-The repository currently **documents** that generation/audit/rewrite are proposal-producing operations and that no external CRUD occurs without explicit human approval. This policy is not yet mechanically enforced because the runtime/adapter does not exist.
+M1 inventory/parsers; M2 extraction/normalization and graph/matrix construction;
+M3 existing-test audit; risk/scenario generation and coverage optimization; production
+manual generator/rewriter; providers; Azure/MCP/TMS; publication, target-drift checks,
+read-back and idempotency execution; production Agent Skill; automation; RAG/GraphRAG.
 
-Likewise, non-destructive treatment of existing Test Cases, requirements, runs, comments, screenshots/attachments and history is a target contract, not yet executable behavior.
+The only adjacent foundations are M0-required semantic nodes, historical identity and
+approval/proposal hooks. No later-milestone execution capability was introduced.
 
-## Rule
+## Safety interpretation
 
-Until code/tests/evals exist, documentation may describe **target behavior** only. Auditors and coding agents must not infer implementation from the existence of a policy document.
-
-The next actionable documents are `AGENTS.md`, `docs/IMPLEMENTATION_SPEC.md` and `docs/CODEX_M0_TASK.md`.
+Validation executes no analyzed content and preserves its inputs. Destructive operations
+are absent from the normal proposal contract. Historical identity cannot resolve as
+destination evidence. Passing validation or READY never grants publication authority.
+Actual TMS history preservation must be tested when a writer exists; M0 claims no live
+integration guarantee. Cases needing review remain non-READY pending human workflow.

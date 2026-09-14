@@ -1,54 +1,90 @@
-# M0 implementation evidence
+﻿# M0 implementation evidence
 
-Status: partial. Package/tooling and version 1.0 typed/schema contracts implemented;
-provenance, completeness and exact-scope approval checks implemented.
-Project Model integrity and manual readiness checks are implemented.
-Synthetic adversarial evals and the four-command CLI are implemented.
+Status: **implemented and validated for M0**. No release/tag created.
 
-CLI checkpoint: 103 tests pass. Inputs are bounded UTF-8 JSON; malformed inputs,
-duplicate keys, oversized/deep inputs and unsupported remote schema references fail
-with structured errors. Integration tests verify process exit codes and omission
-of raw sensitive statements. See `CLI.md` for invocation and trust boundaries.
+## Deliverables and exit criteria
 
-At this checkpoint 88 tests pass, including 22 evals. Prompt-injection content is
-inert data; validation preserves input/history. Risk promotion needs an exact
-authoritative invariant or separately attested human approval. Role mappings must
-be confirmed before use in READY execution. Unresolved conflicts block even a
-standalone normative oracle. Remote CI is green through the integrity checkpoint.
+| Criterion | Implementation / automated evidence |
+|---|---|
+| Versioned schemas and domain contracts | `domain.py`, `schemas/v1/`; ten Draft 2020-12 schemas with reproduction tests |
+| Unsupported normative oracle rejected | `validation.py`; missing/deleted/mutated/superseded/non-primary evidence tests |
+| Required incomplete sources prevent COMPLETE | Study/read-state parameterizations, scope-reduction and false-completeness fixtures |
+| Inference never silently becomes contract | Origin/inference tests, risk-invariant evals and explicit governed-promotion test |
+| Project/snapshot isolation | Every artifact family tested in both dimensions; foreign cloned-oracle fixture |
+| Explicit exact approval | Attribution/schema checks, trusted-context admission, altered actor/operations/preview/target/snapshot rejection |
+| Evidence mutation invalidates approval | Same-snapshot ledger/claim-content digest mutation test |
+| Explainable failures | Seven stable error-code families; structured CLI JSON and process-exit integration tests |
+| Sufficient Project/Manual Model skeleton | Two entities/relationship, actor/role/group/permission, three states, normal/exception transitions, two channels, interface, atom, risk/ambiguity and manual fixture |
+| Verified paths and readiness | Missing/inferred/invented paths, wrong types, order, unsupported actions/results, mappings and conflicts |
+| Generic synthetic evals | Eleven reproducible fixtures; immutable history and inert prompt-injection tests |
+| No live model/TMS required | Entire core suite runs offline; only dependency-advisory tooling accesses PyPI |
+| Packaging and CI | Linux/Windows install, lint, strict typing, unit tests, evals and installed-wheel checks |
 
-Integrity checks cover typed references, duplicate IDs, entity/state ownership,
-unresolved affected conflicts, verified paths and executable READY prerequisites.
-The representative synthetic model contains two entities, actor/role/group mapping,
-three states, normal/exception transitions, two channels, an interface, atomic
-criterion, risk-only scenario, ambiguity and an evidence-backed manual case.
+Current suite: **107 passing tests, including 22 evals**. The same suite runs against
+editable source and installed wheels in CI. Published PyPI advisory audit: **20 pinned
+packages, zero active findings** at the implementation checkpoint. This is a point-in-time
+registry check, not a guarantee of vulnerability absence. Unavailable advisory metadata
+or active findings fail CI.
 
-Trust checks reject missing/mutated/superseded/non-primary evidence, source authority
-leakage, unsupported inference, scope reductions, false completeness and stale or
-self-declared approvals. Tests include valid minimal chains and governed promotion.
+## Reproduction
 
-The contracts cover run, ledger, claims, oracles, approvals/proposals, risk,
-typed Project Model nodes and TMS-neutral manual Test Cases/Test Models.
-Schema reproducibility, strict identity shapes and destructive-operation exclusion
-have automated tests. This is not yet evidence that normative oracles are safe.
+```text
+python -m pip install -r requirements-dev.lock
+python -m pip install --no-deps --no-build-isolation -e .
+python -m pip check
+python -m ruff check .
+python -m ruff format --check .
+python -m mypy
+python -m pytest tests
+python -m pytest evals
+python -m tools.audit_dependencies
+python -m pip wheel --no-deps --no-build-isolation --wheel-dir dist .
+```
 
-Python 3.12, setuptools packaging, Ruff, strict mypy and pytest form the initial
-deterministic validation environment. CI runs the same checks without a model or TMS.
-Direct tool dependencies and CI actions are pinned; a full transitive lock follows
-when the trust-contract dependencies are established.
+CI installs the wheel and repeats tests. Local Windows sandbox runs required execution
+outside the sandbox for temporary-directory permissions and used `-p no:cacheprovider`
+to avoid stale cache ACLs. No tests were skipped or weakened. Initial pytest/setuptools
+pins had published advisories; pytest 9.0.3/setuptools 83.0.0 resolved them.
 
-Supply-chain checkpoint: all 20 runtime/build/development packages are version-pinned.
-Published PyPI advisory audit reports no findings after updating setuptools to 83.0.0
-and pytest to 9.0.3. This is a point-in-time advisory check, not a security guarantee.
-CI audits again and fails if metadata is unavailable or an active advisory is present.
-Dependency compatibility and complete transitive pin coverage are tested.
+Regenerate with `python -m qe_skill.schemas` and `python -m evals.build_fixtures`.
+Tests reject drift. Build archives are not committed or released.
 
-106 tests pass both from editable installation and the built/installed wheel.
-CI now covers Linux and Windows, separate unit/eval steps, advisory audit and wheel
-installation. No release/tag or publication to a package registry is performed.
+## Architecture and limits
 
-No generator, provider, source ingestion or external write adapter is present.
+Strict Pydantic contracts and checked-in JSON Schemas share one versioned source.
+Cross-artifact policy is separate from schema shape. Typed references include project
+and snapshot; historical origin is opaque and cannot resolve as live evidence.
+See `adr/0001-versioned-trust-contracts.md` and `CLI.md`.
 
-Final trust review adds approval binding to ledger/claim content (not just snapshot IDs)
-and rejects a conflict merely relabeled resolved without an authoritative decision.
-The additional mutation test makes 107 tests. Regenerated schemas preserve 1.0 parsing
-compatibility; old proposals without evidence bindings cannot authorize promotion.
+Manual steps use exact oracle statements and verified-path claims. READY operational
+text conservatively requires exact supporting text. Semantic paraphrase adjudication,
+original-source authentication and full manual usability review remain future/human work.
+
+Approval digests bind full approval/proposal content, operations, target versions and
+ledger/claim bytes. Trusted context comes separately from the operator; M0 does not
+authenticate humans or execute publication. Older pre-release proposals without the
+new optional evidence digest still parse, but cannot authorize oracle promotion; rebuild
+preview and obtain fresh approval as documented in `CLI.md`.
+
+M0 does not inventory original files, detect every semantic contradiction, prove arbitrary
+extracted statements true or guarantee undiscoverable-source completeness. These limits
+are visible in CLI output and `STATUS.md`. Review-dependent cases remain non-READY.
+Historical data and conflicts remain preserved, not silently rewritten.
+
+No M1/M2 extraction, production generator, external CRUD, TMS/MCP, automation or retrieval
+system was added. Only M0-required semantic/history/approval hooks anticipate later work.
+
+## Commits
+
+1. `8dfa41b` — package and quality baseline
+2. `f7f4d69` — versioned schemas and domain models
+3. `4ea59fb` — provenance, completeness and approval validators
+4. `e767dcb` — Project Model integrity and manual readiness
+5. `8053c05` — synthetic adversarial fixtures and evals
+6. `1bdf73c` — bounded validation CLI
+7. `08f10b5` — audited dependency pins and Linux/Windows wheel CI
+8. `b7e6cf3` — evidence-content approval invalidation and conflict-resolution hardening
+
+Each checkpoint was tested before commit, pushed to `main`, and checked with
+`git rev-parse HEAD origin/main`. A subsequent documentation checkpoint records final
+scope. Per-commit CI evidence is in the repository Actions history.
