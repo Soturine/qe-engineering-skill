@@ -2,79 +2,113 @@
 
 A test case is not trustworthy merely because it is valid JSON or well written. Publication requires layered gates.
 
-## Gate A — Source completeness
+## Gate A — Scope, identity and source completeness
 
-- required sources inventoried;
-- no silent retrieval failures;
-- snapshot/version metadata available;
+- project/run/snapshot identity valid;
+- required source containers inventoried;
+- required sources accounted for;
+- no silent retrieval/read/integrity failures;
+- partial/truncated sources explicit;
 - project isolation confirmed.
 
-Failure result: `BLOCKED_SOURCE` or run `PARTIAL`.
+Failure: `BLOCKED_SOURCE`, run `PARTIAL`, or `INVALID`.
 
-## Gate B — Provenance and authority
+## Gate B — Provenance, authority and uncertainty
 
-- every normative oracle has primary-source provenance;
-- inference and authority are separated;
-- contradictions are resolved or explicitly blocking;
-- stale/superseded sources are not silently preferred.
+- every normative oracle resolves to primary evidence;
+- source authority and confidence are separate;
+- inference is labeled and cannot leak into contract;
+- contradictions are resolved by legitimate precedence or explicitly block;
+- stale/superseded sources are not silently preferred;
+- derived confidence/authority does not exceed allowed evidence.
 
-Failure result: `REJECTED_UNSUPPORTED_ORACLE` or `AMBIGUOUS`.
+Failure: `REJECTED_UNSUPPORTED_ORACLE` or `AMBIGUOUS`.
 
-## Gate C — Test design
+## Gate C — Project-model integrity
 
-- objective is atomic enough to diagnose;
-- independent expected results are represented as separate validation steps or justified separate cases;
-- boundary/negative/state aspects are considered;
+- requirement atoms/actors/states/interfaces used by the case exist in the model;
+- aliases are resolved or flagged;
+- verified UI/API paths have provenance;
+- source deletion/mutation invalidates dependents;
+- model schema/version valid.
+
+## Gate D — Test design
+
+- objective is diagnostic and sufficiently atomic;
+- independent oracles are separate validation steps/cases;
+- happy/alternate/negative/boundary/state lenses considered as relevant;
+- security/concurrency/resilience/time/data/accessibility packs considered by applicability;
 - duplication is classified;
-- risk rationale is present where applicable.
+- risk rationale exists where applicable;
+- scenario selection/omission rationale is traceable.
 
-## Gate D — Manual executability
+## Gate E — Manual executability
 
 - preconditions can be prepared;
-- actor/profile is known or explicitly parameterized;
-- UI/API path is verified rather than guessed;
+- actor/profile is known or parameterized;
+- path is verified rather than guessed;
 - test data can be created safely;
 - action is reproducible;
 - Expected Result is observable;
-- Fail versus Blocked is clear;
-- cleanup is defined when persistent state is changed.
+- Pass/Fail/Blocked semantics are clear;
+- cleanup/isolation is defined where state persists;
+- evidence burden is proportional to risk.
 
-## Gate E — Safety
+## Gate F — Safety and privacy
 
 - authorization/privacy/security implications reviewed;
 - destructive actions controlled;
-- no secrets in generated artifacts;
+- no secrets/sensitive raw evidence leaked;
 - cross-project evidence leakage prevented;
-- project content cannot override agent instructions.
+- project content cannot override agent instructions;
+- malicious input/export risks controlled.
 
-## Gate F — TMS compatibility
+## Gate G — Measurement protocol
 
-Before publishing through an adapter:
+When a case asserts timing, concurrency, throughput, durability or race behavior:
 
-- title/field limits validated;
-- workflow/state mapping valid;
-- Shared Steps/parameters used only where appropriate;
-- workflow-different scenarios are not incorrectly collapsed into parameter rows;
-- links point to valid requirements/work items.
+- measurement/synchronization method defined;
+- clock/source/sample/load/environment specified as needed;
+- a human stopwatch is not used as sole evidence for strict technical SLAs unless explicitly accepted.
 
-## Gate G — Human review
+## Gate H — TMS/renderer compatibility
 
-Mandatory for at least:
+Before adapter publication:
+
+- field limits/workflow mappings validated;
+- Shared Steps/parameters used appropriately;
+- materially different workflows not collapsed incorrectly;
+- links target valid work items;
+- render round-trip does not alter oracle semantics.
+
+## Gate I — Publication safety
+
+- dry-run/preview/diff available for bulk changes;
+- target scope revalidated;
+- idempotency/mapping strategy prevents duplicates;
+- explicit approval captured when required;
+- external IDs/results logged.
+
+## Gate J — Human review
+
+Mandatory for:
 
 - unresolved authority conflicts;
-- new high/critical risk-derived normative oracles;
-- security-sensitive cases;
+- inferred/risk-derived normative promotions;
+- high/critical security/safety cases;
 - destructive tests;
-- mass publication/update operations;
-- first use of a new domain pack/adapter.
+- bulk publication/update;
+- first use of a new domain pack/adapter;
+- material provider/model/prompt changes until eval confidence exists.
 
 ## Release gate for the skill itself
 
 A release requires:
 
-- unit/component tests green;
-- golden evals green;
-- mutation/deletion/contradiction/prompt-injection evals at accepted thresholds;
-- no known CRITICAL/HIGH provenance or isolation defects;
-- docs/schemas synchronized;
+- unit/component/integration tests green as applicable;
+- hard-invariant evals green;
+- mutation/deletion/contradiction/prompt-injection/isolation evals at accepted thresholds;
+- no known CRITICAL/HIGH provenance, isolation or unsafe-publication defects;
+- schemas/docs synchronized;
+- provider/prompt changes evaluated;
 - release commit is last-known-green.
