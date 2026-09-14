@@ -36,4 +36,14 @@ deterministic validation environment. CI runs the same checks without a model or
 Direct tool dependencies and CI actions are pinned; a full transitive lock follows
 when the trust-contract dependencies are established.
 
+Supply-chain checkpoint: all 20 runtime/build/development packages are version-pinned.
+Published PyPI advisory audit reports no findings after updating setuptools to 83.0.0
+and pytest to 9.0.3. This is a point-in-time advisory check, not a security guarantee.
+CI audits again and fails if metadata is unavailable or an active advisory is present.
+Dependency compatibility and complete transitive pin coverage are tested.
+
+106 tests pass both from editable installation and the built/installed wheel.
+CI now covers Linux and Windows, separate unit/eval steps, advisory audit and wheel
+installation. No release/tag or publication to a package registry is performed.
+
 No generator, provider, source ingestion or external write adapter is present.
