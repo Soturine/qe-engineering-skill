@@ -1,0 +1,112 @@
+{
+  "$id": "urn:qe-skill:1.0:approval",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Actor",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Authority",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "APPROVED",
+        "REJECTED"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "operation_ids": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Operation Ids",
+      "type": "array"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Reason",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_snapshot": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Source Snapshot",
+      "type": "string"
+    },
+    "target_snapshot": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Target Snapshot",
+      "type": "string"
+    },
+    "timestamp": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "actor",
+    "authority",
+    "timestamp",
+    "decision",
+    "reason",
+    "proposal_id",
+    "proposal_hash",
+    "source_snapshot",
+    "target_snapshot",
+    "operation_ids"
+  ],
+  "title": "Approval",
+  "type": "object"
+}

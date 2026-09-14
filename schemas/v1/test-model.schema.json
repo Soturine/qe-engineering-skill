@@ -1,0 +1,456 @@
+{
+  "$defs": {
+    "ManualStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "evidence_expectation": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Evidence Expectation",
+          "type": "string"
+        },
+        "expected_result": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected Result"
+        },
+        "number": {
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/Ref"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "action",
+        "path",
+        "oracle",
+        "expected_result",
+        "required",
+        "evidence_expectation"
+      ],
+      "title": "ManualStep",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "SupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "claims"
+      ],
+      "title": "SupportedText",
+      "type": "object"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "blocked_rule": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Blocked Rule",
+          "type": "string"
+        },
+        "blocking_notes": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Blocking Notes",
+          "type": "array"
+        },
+        "build": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Build",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "cleanup": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Criteria",
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/TestData"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "environment": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "fail_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fail Rule"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "isolation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "objective": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Objective",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "parameter_candidates": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Parameter Candidates",
+          "type": "array"
+        },
+        "pass_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pass Rule"
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Permissions",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "$ref": "#/$defs/SupportedText"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "profile": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Profile",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "readiness": {
+          "enum": [
+            "READY",
+            "READY_WITH_REVIEW",
+            "AMBIGUOUS",
+            "BLOCKED_SOURCE",
+            "EXPLORATORY_ONLY",
+            "REJECTED_DUPLICATE",
+            "REJECTED_UNSUPPORTED_ORACLE"
+          ],
+          "title": "Readiness",
+          "type": "string"
+        },
+        "review_approval_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Approval Id"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shared_step_candidates": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Shared Step Candidates",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/ManualStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "title",
+        "objective",
+        "origin",
+        "claims",
+        "criteria",
+        "risks",
+        "scenarios",
+        "environment",
+        "build",
+        "actor",
+        "profile",
+        "permissions",
+        "preconditions",
+        "data",
+        "steps",
+        "pass_rule",
+        "fail_rule",
+        "blocked_rule",
+        "cleanup",
+        "isolation",
+        "shared_step_candidates",
+        "parameter_candidates",
+        "readiness",
+        "blocking_notes",
+        "review_required"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TestData": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "boolean"
+        },
+        "preparation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "properties": {
+          "$ref": "#/$defs/SupportedText"
+        }
+      },
+      "required": [
+        "name",
+        "properties",
+        "preparation",
+        "parameter"
+      ],
+      "title": "TestData",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:test-model",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposal_only": {
+      "const": true,
+      "title": "Proposal Only",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "test_cases": {
+      "items": {
+        "$ref": "#/$defs/TestCase"
+      },
+      "title": "Test Cases",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "test_cases",
+    "proposal_only"
+  ],
+  "title": "TestModel",
+  "type": "object"
+}

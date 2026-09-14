@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "ScopeEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Reason"
+        },
+        "in_scope": {
+          "title": "In Scope",
+          "type": "boolean"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "source",
+        "required",
+        "in_scope"
+      ],
+      "title": "ScopeEntry",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:run-manifest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_policy": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Authority Policy",
+      "type": "string"
+    },
+    "completeness": {
+      "enum": [
+        "COMPLETE",
+        "SCOPED_COMPLETE",
+        "PARTIAL",
+        "INVALID"
+      ],
+      "title": "Completeness",
+      "type": "string"
+    },
+    "containers": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Containers",
+      "type": "array"
+    },
+    "created_at": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "inventory_complete": {
+      "title": "Inventory Complete",
+      "type": "boolean"
+    },
+    "mode": {
+      "enum": [
+        "GREENFIELD",
+        "BROWNFIELD",
+        "CLONE_REUSE",
+        "REGRESSION_AUDIT"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scope": {
+      "items": {
+        "$ref": "#/$defs/ScopeEntry"
+      },
+      "title": "Scope",
+      "type": "array"
+    },
+    "scope_description": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Scope Description",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "tool_version": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Tool Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "mode",
+    "scope_description",
+    "scope",
+    "containers",
+    "inventory_complete",
+    "completeness",
+    "created_at",
+    "tool_version",
+    "authority_policy"
+  ],
+  "title": "RunManifest",
+  "type": "object"
+}

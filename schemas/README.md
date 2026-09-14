@@ -1,6 +1,10 @@
 # Schemas
 
-Status: **M0 scaffold**
+Status: **M0 version 1.0 contracts implemented; policy validators pending**
+
+Schemas are in `v1/`. Reproduce with `python -m qe_skill.schemas`.
+Tests check Draft 2020-12 validity and byte-for-byte agreement with typed contracts.
+See `docs/adr/0001-versioned-trust-contracts.md` for authority and evolution rules.
 
 This directory will contain versioned machine-verifiable contracts. Do not treat planned schemas as implemented until the files and validators exist.
 

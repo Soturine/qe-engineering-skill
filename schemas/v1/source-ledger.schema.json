@@ -1,0 +1,489 @@
+{
+  "$defs": {
+    "Extraction": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Method",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "version"
+      ],
+      "title": "Extraction",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "RunManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_policy": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Authority Policy",
+          "type": "string"
+        },
+        "completeness": {
+          "enum": [
+            "COMPLETE",
+            "SCOPED_COMPLETE",
+            "PARTIAL",
+            "INVALID"
+          ],
+          "title": "Completeness",
+          "type": "string"
+        },
+        "containers": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Containers",
+          "type": "array"
+        },
+        "created_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Created At",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inventory_complete": {
+          "title": "Inventory Complete",
+          "type": "boolean"
+        },
+        "mode": {
+          "enum": [
+            "GREENFIELD",
+            "BROWNFIELD",
+            "CLONE_REUSE",
+            "REGRESSION_AUDIT"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "items": {
+            "$ref": "#/$defs/ScopeEntry"
+          },
+          "title": "Scope",
+          "type": "array"
+        },
+        "scope_description": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Scope Description",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "tool_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Tool Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "mode",
+        "scope_description",
+        "scope",
+        "containers",
+        "inventory_complete",
+        "completeness",
+        "created_at",
+        "tool_version",
+        "authority_policy"
+      ],
+      "title": "RunManifest",
+      "type": "object"
+    },
+    "ScopeEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Reason"
+        },
+        "in_scope": {
+          "title": "In Scope",
+          "type": "boolean"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "source",
+        "required",
+        "in_scope"
+      ],
+      "title": "ScopeEntry",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_class": {
+          "enum": [
+            "CONTRACT",
+            "TECHNICAL_CONTRACT",
+            "ORGANIZATIONAL_POLICY",
+            "IMPLEMENTATION",
+            "HISTORICAL",
+            "GUIDANCE"
+          ],
+          "title": "Authority Class",
+          "type": "string"
+        },
+        "collected_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "extraction": {
+          "$ref": "#/$defs/Extraction"
+        },
+        "handling": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Handling",
+          "type": "string"
+        },
+        "hash_unavailable_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hash Unavailable Reason"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "in_scope": {
+          "title": "In Scope",
+          "type": "boolean"
+        },
+        "lifecycle": {
+          "enum": [
+            "draft",
+            "approved",
+            "active",
+            "superseded",
+            "deprecated",
+            "archived",
+            "unknown"
+          ],
+          "title": "Lifecycle",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Locator",
+          "type": "string"
+        },
+        "primary": {
+          "title": "Primary",
+          "type": "boolean"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "read_integrity": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "TRUNCATED",
+            "FAILED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Read Integrity",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sensitivity": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Sensitivity",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "study_status": {
+          "enum": [
+            "STUDIED",
+            "PARTIALLY_STUDIED",
+            "NOT_STUDIED",
+            "BLOCKED",
+            "OUT_OF_SCOPE",
+            "SUPERSEDED"
+          ],
+          "title": "Study Status",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source_type",
+        "locator",
+        "collected_at",
+        "authority_class",
+        "lifecycle",
+        "study_status",
+        "read_integrity",
+        "required",
+        "in_scope",
+        "primary",
+        "extraction",
+        "sensitivity",
+        "handling"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:source-ledger",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "manifest": {
+      "$ref": "#/$defs/RunManifest"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "manifest",
+    "sources"
+  ],
+  "title": "SourceLedger",
+  "type": "object"
+}

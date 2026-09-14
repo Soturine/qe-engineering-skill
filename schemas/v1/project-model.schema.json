@@ -1,0 +1,4037 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "actors": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Actors",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "input_constraints": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Input Constraints",
+          "type": "array"
+        },
+        "kind": {
+          "const": "action",
+          "default": "action",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "output_claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Output Claims",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "side_effects": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Side Effects",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "Actor": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "actor",
+          "default": "actor",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims"
+      ],
+      "title": "Actor",
+      "type": "object"
+    },
+    "ActorMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "$ref": "#/$defs/Ref"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "actor_mapping",
+          "default": "actor_mapping",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "proposed",
+            "conflicting",
+            "unresolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "actor",
+        "roles",
+        "groups",
+        "status"
+      ],
+      "title": "ActorMapping",
+      "type": "object"
+    },
+    "Ambiguity": {
+      "additionalProperties": false,
+      "properties": {
+        "affected": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Affected",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "ambiguity",
+          "default": "ambiguity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "question": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Question",
+          "type": "string"
+        },
+        "resolution_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "risk_of_guessing": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Risk Of Guessing",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "resolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "question",
+        "affected",
+        "risk_of_guessing",
+        "status"
+      ],
+      "title": "Ambiguity",
+      "type": "object"
+    },
+    "Approval": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Actor",
+          "type": "string"
+        },
+        "authority": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Authority",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "APPROVED",
+            "REJECTED"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation_ids": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Operation Ids",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposal_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposal Hash",
+          "type": "string"
+        },
+        "proposal_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_snapshot": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Snapshot",
+          "type": "string"
+        },
+        "target_snapshot": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target Snapshot",
+          "type": "string"
+        },
+        "timestamp": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "actor",
+        "authority",
+        "timestamp",
+        "decision",
+        "reason",
+        "proposal_id",
+        "proposal_hash",
+        "source_snapshot",
+        "target_snapshot",
+        "operation_ids"
+      ],
+      "title": "Approval",
+      "type": "object"
+    },
+    "AtomicCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "actors": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Actors",
+          "type": "array"
+        },
+        "boundaries": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Boundaries",
+          "type": "array"
+        },
+        "channels": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Channels",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "failure_modes": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Failure Modes",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "atomic_criterion",
+          "default": "atomic_criterion",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "requirement": {
+          "$ref": "#/$defs/Ref"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        },
+        "states": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "States",
+          "type": "array"
+        },
+        "timing": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Timing",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "requirement",
+        "statement"
+      ],
+      "title": "AtomicCriterion",
+      "type": "object"
+    },
+    "Channel": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_type": {
+          "enum": [
+            "ui",
+            "api",
+            "cli",
+            "event",
+            "queue",
+            "batch",
+            "device",
+            "file",
+            "physical",
+            "external",
+            "other"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "interfaces": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Interfaces",
+          "type": "array"
+        },
+        "kind": {
+          "const": "channel",
+          "default": "channel",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "channel_type",
+        "interfaces"
+      ],
+      "title": "Channel",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "conflict": {
+          "enum": [
+            "none",
+            "unresolved",
+            "resolved"
+          ],
+          "title": "Conflict",
+          "type": "string"
+        },
+        "derived_from": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Derived From",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "extraction": {
+          "$ref": "#/$defs/Extraction"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "statement",
+        "origin",
+        "evidence",
+        "inferred",
+        "confidence",
+        "extraction",
+        "conflict"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Conflict": {
+      "additionalProperties": false,
+      "properties": {
+        "affected": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Affected",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "conflicting_claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 2,
+          "title": "Conflicting Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "conflict",
+          "default": "conflict",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "resolution_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unresolved",
+            "resolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "conflicting_claims",
+        "affected",
+        "status"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "Constraint": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "constraint",
+          "default": "constraint",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "statement"
+      ],
+      "title": "Constraint",
+      "type": "object"
+    },
+    "Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "business",
+            "technical",
+            "physical",
+            "external",
+            "unknown"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "entity",
+          "default": "entity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "relationships": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Relationships",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "states": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "States",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "category"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "Event": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "consumer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Consumer",
+          "type": "string"
+        },
+        "delivery_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "event",
+          "default": "event",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "ordering_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "producer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Producer",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "producer",
+        "consumer"
+      ],
+      "title": "Event",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Location",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "source_hash",
+        "location"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "ExistingTest": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "classification": {
+          "enum": [
+            "UNKNOWN",
+            "VALID_AS_IS",
+            "VALID_WITH_IMPROVEMENT",
+            "PARTIAL_COVERAGE",
+            "AMBIGUOUS",
+            "BLOCKED_BY_SOURCE",
+            "DUPLICATE_INTENTIONAL",
+            "DUPLICATE_REDUNDANT",
+            "CONFLICTING",
+            "STALE",
+            "OBSOLETE_CANDIDATE",
+            "UNTRACEABLE",
+            "NON_EXECUTABLE",
+            "REQUIRES_UPDATE",
+            "REUSABLE"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "historical": {
+          "$ref": "#/$defs/HistoricalIdentity"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "existing_test",
+          "default": "existing_test",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "original_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Original Text",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "historical",
+        "original_text",
+        "classification"
+      ],
+      "title": "ExistingTest",
+      "type": "object"
+    },
+    "Extraction": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Method",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "version"
+      ],
+      "title": "Extraction",
+      "type": "object"
+    },
+    "GeneratedTest": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "generated_test",
+          "default": "generated_test",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "replaces": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "test_case": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "test_case"
+      ],
+      "title": "GeneratedTest",
+      "type": "object"
+    },
+    "Group": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "group",
+          "default": "group",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims"
+      ],
+      "title": "Group",
+      "type": "object"
+    },
+    "HistoricalIdentity": {
+      "additionalProperties": false,
+      "description": "Opaque historical metadata, never a resolvable destination evidence reference.",
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "external_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "External Id",
+          "type": "string"
+        },
+        "history_locators": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "History Locators",
+          "type": "array"
+        },
+        "source_project": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Project",
+          "type": "string"
+        },
+        "source_snapshot": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Snapshot",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "external_id",
+        "source_project",
+        "source_snapshot",
+        "version",
+        "history_locators",
+        "content_hash"
+      ],
+      "title": "HistoricalIdentity",
+      "type": "object"
+    },
+    "Integration": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "consumer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Consumer",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "interfaces": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Interfaces",
+          "type": "array"
+        },
+        "kind": {
+          "const": "integration",
+          "default": "integration",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "producer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Producer",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "interfaces",
+        "producer",
+        "consumer"
+      ],
+      "title": "Integration",
+      "type": "object"
+    },
+    "Interface": {
+      "additionalProperties": false,
+      "properties": {
+        "authentication": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "authorization": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "consumer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Consumer",
+          "type": "string"
+        },
+        "contract_sources": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Contract Sources",
+          "type": "array"
+        },
+        "failure_behavior": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "implementation_symbols": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Implementation Symbols",
+          "type": "array"
+        },
+        "interface_type": {
+          "enum": [
+            "http_api",
+            "rpc",
+            "event",
+            "queue",
+            "file",
+            "database",
+            "device",
+            "ui",
+            "cli",
+            "other"
+          ],
+          "title": "Interface Type",
+          "type": "string"
+        },
+        "kind": {
+          "const": "interface",
+          "default": "interface",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "producer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Producer",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "retry": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "interface_type",
+        "producer",
+        "consumer",
+        "contract_sources"
+      ],
+      "title": "Interface",
+      "type": "object"
+    },
+    "Invariant": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "invariant",
+          "default": "invariant",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Scope",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "statement",
+        "origin",
+        "scope"
+      ],
+      "title": "Invariant",
+      "type": "object"
+    },
+    "ManualStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "evidence_expectation": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Evidence Expectation",
+          "type": "string"
+        },
+        "expected_result": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected Result"
+        },
+        "number": {
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/Ref"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "action",
+        "path",
+        "oracle",
+        "expected_result",
+        "required",
+        "evidence_expectation"
+      ],
+      "title": "ManualStep",
+      "type": "object"
+    },
+    "ModelField": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "data_type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Data Type",
+          "type": "string"
+        },
+        "entity": {
+          "$ref": "#/$defs/Ref"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "field",
+          "default": "field",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "const": "unknown",
+              "type": "string"
+            }
+          ],
+          "title": "Required"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "entity",
+        "data_type",
+        "required"
+      ],
+      "title": "ModelField",
+      "type": "object"
+    },
+    "Operation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/Ref"
+        },
+        "artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Hash",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "create",
+            "update",
+            "link",
+            "append",
+            "promote_oracle"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "payload_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Payload Hash",
+          "type": "string"
+        },
+        "preserve_history": {
+          "const": true,
+          "title": "Preserve History",
+          "type": "boolean"
+        },
+        "target": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target",
+          "type": "string"
+        },
+        "target_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "target",
+        "target_version",
+        "artifact",
+        "artifact_hash",
+        "payload_hash",
+        "preserve_history",
+        "idempotency_key"
+      ],
+      "title": "Operation",
+      "type": "object"
+    },
+    "Oracle": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approval Id"
+        },
+        "claim": {
+          "$ref": "#/$defs/Ref"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "invariant_claim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "normative": {
+          "title": "Normative",
+          "type": "boolean"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        },
+        "usage": {
+          "enum": [
+            "acceptance",
+            "characterization",
+            "exploration"
+          ],
+          "title": "Usage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "statement",
+        "origin",
+        "claim",
+        "normative",
+        "inferred",
+        "confidence",
+        "usage"
+      ],
+      "title": "Oracle",
+      "type": "object"
+    },
+    "PathStep": {
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "$ref": "#/$defs/Ref"
+        },
+        "instruction": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Instruction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instruction",
+        "claim"
+      ],
+      "title": "PathStep",
+      "type": "object"
+    },
+    "Permission": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/Ref"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "effect": {
+          "enum": [
+            "allow",
+            "deny",
+            "conditional"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "permission",
+          "default": "permission",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "resource": {
+          "$ref": "#/$defs/Ref"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Scope",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "subject": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "subject",
+        "resource",
+        "action",
+        "scope",
+        "effect"
+      ],
+      "title": "Permission",
+      "type": "object"
+    },
+    "Proposal": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/Operation"
+          },
+          "minItems": 1,
+          "title": "Operations",
+          "type": "array"
+        },
+        "preview_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preview Hash",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_snapshot": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Snapshot",
+          "type": "string"
+        },
+        "target_snapshot": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "operations",
+        "preview_hash",
+        "source_snapshot",
+        "target_snapshot"
+      ],
+      "title": "Proposal",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cardinality"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "from_entity": {
+          "$ref": "#/$defs/Ref"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "relationship",
+          "default": "relationship",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "relationship_type": {
+          "enum": [
+            "one_to_one",
+            "one_to_many",
+            "many_to_many",
+            "owns",
+            "references",
+            "contains",
+            "derived",
+            "unknown"
+          ],
+          "title": "Relationship Type",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "to_entity": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "from_entity",
+        "to_entity",
+        "relationship_type"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "requirement",
+          "default": "requirement",
+          "title": "Kind",
+          "type": "string"
+        },
+        "lifecycle": {
+          "enum": [
+            "draft",
+            "approved",
+            "active",
+            "superseded",
+            "deprecated",
+            "unknown"
+          ],
+          "title": "Lifecycle",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "lifecycle"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "affected": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Affected",
+          "type": "array"
+        },
+        "category": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Category",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "derivation": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Derivation",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "risk",
+          "default": "risk",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "scale": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Scale",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "severity": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Severity",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "category",
+        "description",
+        "affected",
+        "severity",
+        "scale",
+        "derivation"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "Role": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "role",
+          "default": "role",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims"
+      ],
+      "title": "Role",
+      "type": "object"
+    },
+    "RunManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_policy": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Authority Policy",
+          "type": "string"
+        },
+        "completeness": {
+          "enum": [
+            "COMPLETE",
+            "SCOPED_COMPLETE",
+            "PARTIAL",
+            "INVALID"
+          ],
+          "title": "Completeness",
+          "type": "string"
+        },
+        "containers": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Containers",
+          "type": "array"
+        },
+        "created_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Created At",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inventory_complete": {
+          "title": "Inventory Complete",
+          "type": "boolean"
+        },
+        "mode": {
+          "enum": [
+            "GREENFIELD",
+            "BROWNFIELD",
+            "CLONE_REUSE",
+            "REGRESSION_AUDIT"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scope": {
+          "items": {
+            "$ref": "#/$defs/ScopeEntry"
+          },
+          "title": "Scope",
+          "type": "array"
+        },
+        "scope_description": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Scope Description",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "tool_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Tool Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "mode",
+        "scope_description",
+        "scope",
+        "containers",
+        "inventory_complete",
+        "completeness",
+        "created_at",
+        "tool_version",
+        "authority_policy"
+      ],
+      "title": "RunManifest",
+      "type": "object"
+    },
+    "Scenario": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "scenario",
+          "default": "scenario",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "preconditions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "selected_for_test": {
+          "title": "Selected For Test",
+          "type": "boolean"
+        },
+        "selection_reason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Selection Reason",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "stimulus": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "origin",
+        "preconditions",
+        "stimulus",
+        "oracle",
+        "risks",
+        "selected_for_test",
+        "selection_reason"
+      ],
+      "title": "Scenario",
+      "type": "object"
+    },
+    "ScopeEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Reason"
+        },
+        "in_scope": {
+          "title": "In Scope",
+          "type": "boolean"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "source",
+        "required",
+        "in_scope"
+      ],
+      "title": "ScopeEntry",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_class": {
+          "enum": [
+            "CONTRACT",
+            "TECHNICAL_CONTRACT",
+            "ORGANIZATIONAL_POLICY",
+            "IMPLEMENTATION",
+            "HISTORICAL",
+            "GUIDANCE"
+          ],
+          "title": "Authority Class",
+          "type": "string"
+        },
+        "collected_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "extraction": {
+          "$ref": "#/$defs/Extraction"
+        },
+        "handling": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Handling",
+          "type": "string"
+        },
+        "hash_unavailable_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hash Unavailable Reason"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "in_scope": {
+          "title": "In Scope",
+          "type": "boolean"
+        },
+        "lifecycle": {
+          "enum": [
+            "draft",
+            "approved",
+            "active",
+            "superseded",
+            "deprecated",
+            "archived",
+            "unknown"
+          ],
+          "title": "Lifecycle",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Locator",
+          "type": "string"
+        },
+        "primary": {
+          "title": "Primary",
+          "type": "boolean"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "read_integrity": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "TRUNCATED",
+            "FAILED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Read Integrity",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sensitivity": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Sensitivity",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "study_status": {
+          "enum": [
+            "STUDIED",
+            "PARTIALLY_STUDIED",
+            "NOT_STUDIED",
+            "BLOCKED",
+            "OUT_OF_SCOPE",
+            "SUPERSEDED"
+          ],
+          "title": "Study Status",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source_type",
+        "locator",
+        "collected_at",
+        "authority_class",
+        "lifecycle",
+        "study_status",
+        "read_integrity",
+        "required",
+        "in_scope",
+        "primary",
+        "extraction",
+        "sensitivity",
+        "handling"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "SourceLedger": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "manifest": {
+          "$ref": "#/$defs/RunManifest"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/Source"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "manifest",
+        "sources"
+      ],
+      "title": "SourceLedger",
+      "type": "object"
+    },
+    "State": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "entity": {
+          "$ref": "#/$defs/Ref"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "state",
+          "default": "state",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "terminal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "const": "unknown",
+              "type": "string"
+            }
+          ],
+          "title": "Terminal"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "entity",
+        "terminal"
+      ],
+      "title": "State",
+      "type": "object"
+    },
+    "SupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "claims"
+      ],
+      "title": "SupportedText",
+      "type": "object"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "blocked_rule": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Blocked Rule",
+          "type": "string"
+        },
+        "blocking_notes": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Blocking Notes",
+          "type": "array"
+        },
+        "build": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Build",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "cleanup": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Criteria",
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/TestData"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "environment": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "fail_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fail Rule"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "isolation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "objective": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Objective",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "parameter_candidates": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Parameter Candidates",
+          "type": "array"
+        },
+        "pass_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pass Rule"
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Permissions",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "$ref": "#/$defs/SupportedText"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "profile": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Profile",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "readiness": {
+          "enum": [
+            "READY",
+            "READY_WITH_REVIEW",
+            "AMBIGUOUS",
+            "BLOCKED_SOURCE",
+            "EXPLORATORY_ONLY",
+            "REJECTED_DUPLICATE",
+            "REJECTED_UNSUPPORTED_ORACLE"
+          ],
+          "title": "Readiness",
+          "type": "string"
+        },
+        "review_approval_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Approval Id"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shared_step_candidates": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Shared Step Candidates",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/ManualStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "title",
+        "objective",
+        "origin",
+        "claims",
+        "criteria",
+        "risks",
+        "scenarios",
+        "environment",
+        "build",
+        "actor",
+        "profile",
+        "permissions",
+        "preconditions",
+        "data",
+        "steps",
+        "pass_rule",
+        "fail_rule",
+        "blocked_rule",
+        "cleanup",
+        "isolation",
+        "shared_step_candidates",
+        "parameter_candidates",
+        "readiness",
+        "blocking_notes",
+        "review_required"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TestData": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "boolean"
+        },
+        "preparation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "properties": {
+          "$ref": "#/$defs/SupportedText"
+        }
+      },
+      "required": [
+        "name",
+        "properties",
+        "preparation",
+        "parameter"
+      ],
+      "title": "TestData",
+      "type": "object"
+    },
+    "TestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposal_only": {
+          "const": true,
+          "title": "Proposal Only",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "test_cases": {
+          "items": {
+            "$ref": "#/$defs/TestCase"
+          },
+          "title": "Test Cases",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "test_cases",
+        "proposal_only"
+      ],
+      "title": "TestModel",
+      "type": "object"
+    },
+    "Transition": {
+      "additionalProperties": false,
+      "properties": {
+        "actors": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Actors",
+          "type": "array"
+        },
+        "channels": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Channels",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "classification": {
+          "enum": [
+            "normal",
+            "exception",
+            "contingency",
+            "invalid",
+            "recovery",
+            "unknown"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "entity": {
+          "$ref": "#/$defs/Ref"
+        },
+        "exceptions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Exceptions",
+          "type": "array"
+        },
+        "from_state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guards": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Guards",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "transition",
+          "default": "transition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "postconditions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Postconditions",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "side_effects": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Side Effects",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "to_state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trigger": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "entity",
+        "from_state",
+        "to_state",
+        "trigger",
+        "classification"
+      ],
+      "title": "Transition",
+      "type": "object"
+    },
+    "VerifiedPath": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "verified_path",
+          "default": "verified_path",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "path_type": {
+          "enum": [
+            "ui",
+            "api",
+            "cli",
+            "physical",
+            "mixed"
+          ],
+          "title": "Path Type",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PathStep"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "verification_status": {
+          "enum": [
+            "verified",
+            "partial",
+            "unresolved"
+          ],
+          "title": "Verification Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "name",
+        "claims",
+        "path_type",
+        "steps",
+        "verification_status"
+      ],
+      "title": "VerifiedPath",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:project-model",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approvals": {
+      "items": {
+        "$ref": "#/$defs/Approval"
+      },
+      "title": "Approvals",
+      "type": "array"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "ledger": {
+      "$ref": "#/$defs/SourceLedger"
+    },
+    "nodes": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "action": "#/$defs/Action",
+            "actor": "#/$defs/Actor",
+            "actor_mapping": "#/$defs/ActorMapping",
+            "ambiguity": "#/$defs/Ambiguity",
+            "atomic_criterion": "#/$defs/AtomicCriterion",
+            "channel": "#/$defs/Channel",
+            "conflict": "#/$defs/Conflict",
+            "constraint": "#/$defs/Constraint",
+            "entity": "#/$defs/Entity",
+            "event": "#/$defs/Event",
+            "existing_test": "#/$defs/ExistingTest",
+            "field": "#/$defs/ModelField",
+            "generated_test": "#/$defs/GeneratedTest",
+            "group": "#/$defs/Group",
+            "integration": "#/$defs/Integration",
+            "interface": "#/$defs/Interface",
+            "invariant": "#/$defs/Invariant",
+            "permission": "#/$defs/Permission",
+            "relationship": "#/$defs/Relationship",
+            "requirement": "#/$defs/Requirement",
+            "risk": "#/$defs/Risk",
+            "role": "#/$defs/Role",
+            "scenario": "#/$defs/Scenario",
+            "state": "#/$defs/State",
+            "transition": "#/$defs/Transition",
+            "verified_path": "#/$defs/VerifiedPath"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Entity"
+          },
+          {
+            "$ref": "#/$defs/ModelField"
+          },
+          {
+            "$ref": "#/$defs/Constraint"
+          },
+          {
+            "$ref": "#/$defs/Relationship"
+          },
+          {
+            "$ref": "#/$defs/Actor"
+          },
+          {
+            "$ref": "#/$defs/Role"
+          },
+          {
+            "$ref": "#/$defs/Group"
+          },
+          {
+            "$ref": "#/$defs/ActorMapping"
+          },
+          {
+            "$ref": "#/$defs/Permission"
+          },
+          {
+            "$ref": "#/$defs/State"
+          },
+          {
+            "$ref": "#/$defs/Transition"
+          },
+          {
+            "$ref": "#/$defs/Channel"
+          },
+          {
+            "$ref": "#/$defs/Action"
+          },
+          {
+            "$ref": "#/$defs/Event"
+          },
+          {
+            "$ref": "#/$defs/Interface"
+          },
+          {
+            "$ref": "#/$defs/Integration"
+          },
+          {
+            "$ref": "#/$defs/Requirement"
+          },
+          {
+            "$ref": "#/$defs/AtomicCriterion"
+          },
+          {
+            "$ref": "#/$defs/Invariant"
+          },
+          {
+            "$ref": "#/$defs/Ambiguity"
+          },
+          {
+            "$ref": "#/$defs/Conflict"
+          },
+          {
+            "$ref": "#/$defs/Risk"
+          },
+          {
+            "$ref": "#/$defs/Scenario"
+          },
+          {
+            "$ref": "#/$defs/ExistingTest"
+          },
+          {
+            "$ref": "#/$defs/GeneratedTest"
+          },
+          {
+            "$ref": "#/$defs/VerifiedPath"
+          }
+        ]
+      },
+      "title": "Nodes",
+      "type": "array"
+    },
+    "oracles": {
+      "items": {
+        "$ref": "#/$defs/Oracle"
+      },
+      "title": "Oracles",
+      "type": "array"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposals": {
+      "items": {
+        "$ref": "#/$defs/Proposal"
+      },
+      "title": "Proposals",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "tests": {
+      "$ref": "#/$defs/TestModel"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "ledger",
+    "claims",
+    "oracles",
+    "nodes",
+    "tests"
+  ],
+  "title": "ProjectModel",
+  "type": "object"
+}
