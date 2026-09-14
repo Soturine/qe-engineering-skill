@@ -3,7 +3,12 @@
 Status: partial. Package/tooling and version 1.0 typed/schema contracts implemented;
 provenance, completeness and exact-scope approval checks implemented.
 Project Model integrity and manual readiness checks are implemented.
-Synthetic adversarial evals are implemented. CLI is pending.
+Synthetic adversarial evals and the four-command CLI are implemented.
+
+CLI checkpoint: 103 tests pass. Inputs are bounded UTF-8 JSON; malformed inputs,
+duplicate keys, oversized/deep inputs and unsupported remote schema references fail
+with structured errors. Integration tests verify process exit codes and omission
+of raw sensitive statements. See `CLI.md` for invocation and trust boundaries.
 
 At this checkpoint 88 tests pass, including 22 evals. Prompt-injection content is
 inert data; validation preserves input/history. Risk promotion needs an exact
