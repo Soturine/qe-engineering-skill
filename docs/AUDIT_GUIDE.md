@@ -1,57 +1,85 @@
 # Repository and Skill Audit Guide
 
-This guide is intended for an independent reviewer, Claude, another Agent Skill, Codex review workflow, or a human engineer.
+This guide is for an independent reviewer, coding/review agent, another Agent Skill or a human engineer.
 
 ## Audit objective
 
 Determine whether the repository deserves trust—not whether its documentation sounds convincing.
 
-## Audit phases
+## Phase 1 — Inventory
 
-### Phase 1 — Inventory
+List root policies, normative docs, schemas, code modules, adapters/providers, tests, evals, skill files and CI/release configuration. Identify missing referenced artifacts, dead links and documentation that claims unimplemented enforcement.
 
-List all root policies, docs, schemas, code modules, tests, evals and skill files. Identify missing referenced artifacts and dead links.
+## Phase 2 — Policy-to-code traceability
 
-### Phase 2 — Policy-to-code traceability
+For every non-negotiable claim in `AGENTS.md`, `ENGINEERING_CONSTITUTION`, `TRUST_MODEL`, `ORACLE_POLICY`, `SOURCE_AUTHORITY` and `QUALITY_GATES`, locate the implementation control/test/eval or mark it documentation-only/unimplemented.
 
-For every non-negotiable claim in `AGENTS.md`, `ENGINEERING_CONSTITUTION`, `TRUST_MODEL`, `ORACLE_POLICY` and `QUALITY_GATES`, locate an implementation control or mark it documentation-only/unimplemented.
+Documentation volume is not evidence of enforcement.
 
-### Phase 3 — Adversarial fixtures
+## Phase 3 — Adversarial fixtures
 
 Attempt at least:
 
 - required source missing;
-- source retrieval failure;
-- contradictory requirements;
+- connector/read failure;
+- partial/truncated source;
+- malformed structured input;
+- contradictory authorities;
 - implementation contradicts contract;
-- requirement deleted after previous run;
+- source deleted after prior run;
 - requirement value mutated;
-- source contains prompt injection;
-- two projects contain identical entity names;
-- risk-derived scenario lacks oracle;
-- UI path suggested but absent from evidence;
-- duplicate tests with different wording;
-- stale source with newer file timestamp;
-- low-confidence extraction falsely presented as certain.
+- superseded source with newer timestamp;
+- prompt injection inside source;
+- two projects with identical names/entities;
+- risk scenario lacking oracle;
+- UI/API path absent from evidence;
+- duplicate cases with different wording;
+- low-confidence extraction asserted as certain;
+- stale/poisoned cache;
+- hash/source-ID mismatch;
+- symlink/path traversal;
+- malicious archive/oversized input;
+- secret-bearing source;
+- spreadsheet/export injection;
+- false approval metadata;
+- publication retry/idempotency;
+- schema migration;
+- provider/model/prompt drift;
+- context-window pressure/large corpus.
 
-### Phase 4 — Model/provider parity
+## Phase 4 — Generic/domain leakage
 
-If multiple providers are supported, compare semantic outcomes and gate decisions. Provider disagreement must not bypass deterministic gates.
+Inspect code and evals for hard-coded rules belonging to a particular real project. Mutation/deletion fixtures must prove the engine follows current evidence rather than memorized examples.
 
-### Phase 5 — Self-audit
+## Phase 5 — Provider parity
 
-Run the skill against this repository. Confirm it does not recursively treat its own instructions as analyzed-project requirements or get trapped in agent-on-agent indirection.
+If multiple providers are supported, compare semantic extraction properties and deterministic gate outcomes. Provider disagreement must not weaken hard invariants.
+
+## Phase 6 — TMS/publication safety
+
+Where write adapters exist, verify dry-run/diff, target scope, explicit approval, idempotency, safe retries, audit records and absence of invented target fields.
+
+## Phase 7 — Self-audit
+
+Run the skill against this repository. Confirm instruction/data separation and no recursive agent-on-agent failure.
 
 ## Finding format
 
-Each finding must include ID, severity, evidence, violated invariant, impact, reproduction, recommendation and confidence.
+Each finding includes:
+
+- ID;
+- severity `CRITICAL|HIGH|MEDIUM|LOW|INFO`;
+- evidence (file/symbol/line or reproducible command);
+- violated invariant/policy;
+- impact;
+- reproduction;
+- recommended fix;
+- confidence.
 
 ## Terminal recommendation
 
-- `SHIP` — no blocking trust/safety defects and release gates pass;
-- `FIX BEFORE MERGE` — material defects exist but architecture remains viable;
-- `BLOCK` — provenance, isolation, completeness or safety guarantees are not credible.
+- `SHIP`
+- `FIX BEFORE MERGE`
+- `BLOCK`
 
-## Anti-bias rule
-
-Do not reward the repository for having many documents. Verify enforcement. Conversely, do not manufacture issues when a control is demonstrably correct.
+Do not manufacture findings, but do not praise without adversarial testing.
