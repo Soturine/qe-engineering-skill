@@ -8,8 +8,9 @@ Use this page as the canonical reading map.
 2. `../AGENTS.md` — implementation contract for coding agents.
 3. `ENGINEERING_CONSTITUTION.md` — non-negotiable engineering principles.
 4. `IMPLEMENTATION_SPEC.md` — concrete M0 build order.
-5. `ROADMAP.md` — milestone sequence and exit criteria.
-6. `STATUS.md` — what is documented versus actually implemented.
+5. `CODEX_M0_TASK.md` — direct first implementation handoff.
+6. `ROADMAP.md` — milestone sequence and exit criteria.
+7. `STATUS.md` — what is documented versus actually implemented.
 
 ## Evidence and trust
 
@@ -47,6 +48,12 @@ Use this page as the canonical reading map.
 
 - `BENCHMARKS.md` — specific public skills/tools and adopted lessons.
 - `MARKET_LANDSCAPE.md` — broader public quality-engineering direction.
+
+## Machine-contract scaffolding
+
+- `../schemas/README.md`
+- `../evals/README.md`
+- `../skill/qe-engineering/SKILL.md`
 
 ## Rule for coding agents
 
