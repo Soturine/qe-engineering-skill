@@ -6,6 +6,17 @@ Status: **Normative design policy**
 
 Generated manual tests must be executable by a human without oral context and without inventing paths or behavior. The output should resemble a guided checklist suitable for a manual Test Runner while remaining TMS-neutral in the core model.
 
+This contract applies in every operating mode:
+
+- generating a plan from zero;
+- improving an existing Test Case;
+- auditing a legacy plan;
+- reusing/cloning tests into another project;
+- generating new coverage discovered during an audit;
+- preparing regression cases after change-impact analysis.
+
+The engine must be able to produce the proposed manual Test Model **without any Azure DevOps, Jira, TestRail, MCP or other TMS connection**. TMS integrations are optional read/write adapters, not prerequisites for analysis or authoring.
+
 ## Canonical manual test structure
 
 Each generated manual test should contain, when applicable:
@@ -135,3 +146,59 @@ The final manual output remains action-oriented and human-executable.
 ## Existing test enhancement
 
 For existing TCs, the engine may propose this structure as a non-destructive revision. It must preserve historical executions and use the Existing Asset Audit Policy before any update.
+
+A brownfield audit may therefore produce:
+
+- the original TC as-is;
+- a proposed step-by-step rewrite;
+- a field-level/step-level diff;
+- rationale for each proposed change;
+- new TCs for uncovered scenarios kept separate from revisions to existing TCs.
+
+No proposed rewrite is applied automatically.
+
+## Clone/reuse behavior
+
+When a Test Plan or Test Case is cloned/reused for another project, the step-by-step must be regenerated or revalidated against the **destination project's** evidence.
+
+Do not blindly carry over:
+
+- UI paths;
+- roles/permissions;
+- field names;
+- statuses/states;
+- messages;
+- identifiers;
+- workflow ordering;
+- test data;
+- Expected Results;
+- cleanup behavior.
+
+A cloned case may preserve its conceptual objective while receiving a different operational procedure when the destination evidence supports it. If destination evidence does not support the old oracle, classify the case accordingly rather than preserving it by inertia.
+
+## Tool independence
+
+Manual Test Models must remain useful as standalone structured artifacts and be renderable to Markdown/JSON/YAML or another local output even when no external TMS connector is available.
+
+The following capabilities must not depend on Azure DevOps MCP or any other external TMS connector:
+
+- source inventory;
+- Project Model construction;
+- requirements/rules audit;
+- existing TC audit from exported/local artifacts;
+- scenario/risk analysis;
+- coverage-gap analysis;
+- generation of new TCs;
+- generation of proposed step-by-step improvements;
+- quality-gate validation;
+- preview/diff rendering.
+
+A TMS connector only adds live inventory, live history and publication/synchronization capabilities.
+
+## Human approval
+
+Generation is a proposal. Auditing is a proposal. Rewriting is a proposal. Publication is a separate controlled operation.
+
+No generated/improved Test Case, requirement, Shared Step, link, comment, attachment or status change may be written to an external system merely because the engine/model produced it.
+
+Human approval must be explicit, scoped to the exact proposal and source/target snapshot, and becomes stale if the target changes before application.
