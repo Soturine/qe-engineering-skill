@@ -1,90 +1,80 @@
 # Architecture
 
-## Architectural goals
+## Goal
 
-The system must transform heterogeneous project evidence into a structured, auditable project model and then into high-confidence manual test cases. It must remain useful across web, API, mobile, data, embedded/IoT and industrial projects without hard-coded domain rules.
+Transform heterogeneous project evidence into a structured, auditable Project Model and then into high-confidence manual test cases. Remain useful across web, API, mobile, data, embedded/IoT and industrial projects without hard-coded real-project rules.
 
 ## Boundary rule
 
-**Evidence discovery is not truth. Retrieval is not verification. Generation is not acceptance.**
-
-The architecture separates these concerns deliberately.
+**Discovery is not truth. Retrieval is not verification. Generation is not acceptance.**
 
 ## Modules
 
-### 1. Source Inventory
+### 1. Scope & Source Inventory
+Discovers configured repositories/documents/TMS/work items/contracts/configuration/integration artifacts and produces stable identities, snapshot metadata and study/read status.
 
-Discovers configured repositories, documents, TMS items, tickets, API specifications, migrations, UI/design assets, configuration and integration artifacts. Produces immutable source identities, versions/hashes and expected-source status.
+### 2. Safe Ingestion & Parsers
+Deterministic parsers for structured formats; bounded/sandboxed handling for hostile content; language-aware AST/symbol/dependency analysis for supported code.
 
-### 2. Parsers
-
-Deterministic parsers for structured formats should be preferred. Code uses language-aware AST/symbol/dependency analysis where practical. Unstructured document extraction may use model assistance but must retain source location/provenance.
-
-### 3. Authority & Provenance
-
-Classifies source authority and tracks every derived claim back to primary evidence. Detects stale, contradictory and duplicate sources.
+### 3. Authority, Provenance & Lifecycle
+Tracks every claim to primary evidence, source authority/freshness/supersession, uncertainty and conflicts.
 
 ### 4. Project Model
-
-Normalized graph/model of requirements, entities, fields, actors, roles, permissions, states, transitions, channels, APIs, integrations, constraints, timings, events, risks, ambiguities and existing tests.
+Normalized model of requirements, entities, actors/permissions, states/transitions/channels, interfaces, integrations, constraints, timings, configuration, risks, ambiguities, conflicts and existing tests.
 
 ### 5. Existing-Test Auditor
-
-Analyzes test cases at atomic-criterion level rather than merely requirement-ID linkage. Detects ambiguous steps, grouped independent oracles, obsolete paths, duplicates, missing setup, inconsistent expected results and unexecutable scenarios.
+Analyzes atomic behavior rather than requirement-ID linkage only. Detects grouped independent oracles, ambiguous/non-executable steps, duplicates, stale paths, missing setup and unsupported Expected Results.
 
 ### 6. Risk & Scenario Engine
-
-Expands behavior into positive, alternate, negative, boundary, state-machine, authorization, security, concurrency, resilience, performance, accessibility and operational scenarios. Optional domain packs add physical/human factors without polluting the generic engine.
+Expands positive/alternate/negative/boundary/state/permission/security/concurrency/resilience/performance/accessibility/operational scenarios. Domain packs are opt-in.
 
 ### 7. Scenario Optimizer
+Preserves the scenario universe while selecting a defensible executable set using equivalence, boundaries, decision tables, state coverage, pairwise/combinatorial methods and risk ranking.
 
-Maintains a comprehensive scenario map but avoids combinatorial explosion through equivalence classes, boundary analysis, state-transition coverage, decision tables, pairwise/combinatorial methods and risk ranking.
-
-### 8. Test Case Generator
-
-Generates structured **manual** cases from approved scenarios. The generator does not invent a missing oracle. Unsupported scenarios become ambiguity records or exploratory charters.
+### 8. Manual Test Generator
+Builds structured manual Test Models only from approved/supported scenarios. Missing oracle becomes ambiguity/exploration, not invented Pass/Fail.
 
 ### 9. Quality Gate Validator
+Machine-checks schema, source completeness, provenance, inference leakage, model integrity, manual executability, isolation and publication safety. Human review handles semantic authority decisions where needed.
 
-Machine-checks schema validity, provenance, source completeness, executability metadata, duplicate status and inference leakage. Human review handles semantic/authority decisions that cannot be safely automated.
+### 10. Provider Boundary
+Typed model-provider adapters support semantic work without embedding one vendor into the core. Outputs are schema-validated and versioned.
 
-### 10. Adapters
+### 11. TMS / Output Adapters
+Azure DevOps first, later other TMS/report/automation renderers. Adapters cannot redefine Test Model semantics.
 
-TMS adapters, starting with Azure DevOps Test Plans, convert the neutral model to native representations (steps, Expected Results, Shared Steps, parameters, tags, links). Provider/model adapters isolate external AI runtimes.
+### 12. Evals & Observability
+Synthetic golden/mutation/deletion/conflict/prompt-injection/isolation/provider-parity/self-audit suites and structured run metadata.
 
-### 11. Evals & Observability
+## Retrieval
 
-Golden fixtures, mutation suites, missing-source scenarios, contradictions, prompt injection, provider parity and self-audit runs. Structured run metadata enables comparison over time.
-
-## RAG and GraphRAG
-
-RAG is optional retrieval infrastructure, not a trust primitive. A vector index may miss a low-similarity exception. GraphRAG may help connect entities/claims across large document sets, but those claims are derived artifacts and must resolve back to primary sources.
-
-Recommended order:
+See `RETRIEVAL_STRATEGY.md`.
 
 ```text
-inventory → deterministic parse → source graph → optional semantic retrieval/GraphRAG → primary-source verification → oracle/test model
+scope → inventory → snapshot → deterministic parse/AST
+      → source/claim graph → optional semantic/GraphRAG discovery
+      → primary-source verification → Project Model/Test Model
 ```
-
-For code, prefer AST/symbol/dependency graphs over generic document embeddings for structural facts.
 
 ## Data isolation
 
-Indexes, caches, embeddings, run metadata and generated artifacts are scoped by project/snapshot. Cross-project retrieval is disabled by default.
+Every cache/index/embedding/run/output is scoped by project + snapshot + relevant parser/model versions. Cross-project retrieval is off by default.
 
-## Future neutral intermediate representation
-
-The long-term `TestModel` should support multiple renderers:
+## Neutral Test Model
 
 ```text
 TestModel
-  ├─ Azure DevOps manual test
-  ├─ Markdown/CSV report
+  ├─ Azure DevOps manual
+  ├─ Markdown/CSV/report
   ├─ Gherkin
-  ├─ Playwright/Appium
+  ├─ browser/mobile automation
   ├─ API/integration tests
-  ├─ pytest/JUnit
+  ├─ unit/test-framework renderers
   └─ hardware/integration harness
 ```
 
 Automation renderers must not redefine the oracle.
+
+## Deployment posture
+
+Start as a modular monolith and CLI/library. Distributed services, graph databases or always-on infrastructure require measured justification.
