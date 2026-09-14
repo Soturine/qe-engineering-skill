@@ -4,7 +4,9 @@ This file prevents architecture documentation from being mistaken for implemente
 
 ## Current stage
 
-**Foundation/specification — M0 not yet implemented in code.**
+**M0 partial — Python package and quality-tooling baseline implemented; trust engine pending.**
+
+See `M0_EVIDENCE.md` for checkpoint scope and validation evidence.
 
 ## Documented
 
@@ -31,7 +33,7 @@ This file prevents architecture documentation from being mistaken for implemente
 
 ## Not yet implemented
 
-- Python package/domain engine;
+- domain engine;
 - JSON Schemas;
 - Source Ledger/Run Manifest validators;
 - Project Model builder;
