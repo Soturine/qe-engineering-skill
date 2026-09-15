@@ -54,11 +54,17 @@ For generation/risk/retrieval/TMS work also read the relevant policy documents.
 
 ## Current build rule
 
-**M0, M1 and M2 are complete and validated. The active implementation milestone is M3 — Test Generation & Improvement.**
+**M0, M1, M2 and M3 are complete and validated. The active implementation milestone is M4 — Integrations & Production Agent Skill.**
 
-Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M3 may add final manual Test Case generation and non-destructive improvement/replacement proposals from the approved M2 scenario universe, but it must not jump ahead into Azure/TMS writes, automation or advanced retrieval.
+Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M4 may add optional
+Semantic Reasoning Provider and Azure/MCP/TMS adapter boundaries, production skill packaging,
+preview/approval/sync, idempotency and read-back behavior. It must not jump ahead into M5
+automation/execution or M6 change impact, benchmarks and advanced retrieval.
 
-M0 trust contracts, M1 ingestion boundaries and M2 audit/scenario semantics remain binding throughout M3 and later milestones. New generation code must preserve project/snapshot isolation, explicit completeness states, provenance, prompt-injection-safe handling, historical assets and non-execution of analyzed content.
+M0 trust contracts, M1 ingestion boundaries, M2 audit/scenario semantics and M3 generation/
+history-preservation guarantees remain binding throughout M4 and later milestones. Provider output
+is candidate interpretation rather than authority, and no external write may bypass exact human
+approval, stale-target checks or read-back validation.
 
 ## Development workflow
 

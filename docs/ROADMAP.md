@@ -124,7 +124,10 @@ Exit expectation:
 
 ## M3 — Test Generation & Improvement
 
-Status: **partial; active milestone**. Initial contracts, trust-safe authoring, local renderers and CLI are implemented; full multi-step and comprehensive replacement generation remain required. See `M3_EVIDENCE.md`.
+Status: **implemented and validated**. Evidence-backed multi-step authoring, strict readiness,
+non-destructive brownfield/clone proposals, Shared Step/Parameter candidates, risk-proportional
+evidence, canonical outputs, deterministic renderers and local CLI are complete. See
+`M3_EVIDENCE.md`.
 
 Generate new manual tests and improve existing/cloned tests from the audited Project Model and scenario set.
 
@@ -157,6 +160,10 @@ This milestone must support:
 No external system is required. Generated output remains proposal-only until explicitly approved for an external write.
 
 ## M4 — Integrations & Production Agent Skill
+
+Status: **active milestone**. The optional Semantic Reasoning Provider is cataloged here alongside
+production skill packaging and external adapters; no provider or integration was implemented in
+M3. See `SEMANTIC_REASONING_ROADMAP.md`.
 
 Make the stable core usable through optional external integrations and a portable Agent Skills interface without coupling the core to any provider or TMS.
 
@@ -225,8 +232,8 @@ Adopt only when evals show measurable gain without weakening provenance/complete
 M0  Foundations & Trust Model                  ✅ implemented
 M1  Source Ingestion & Project Model             ✓ implemented
 M2  Audit, Traceability & Risk Analysis             ✓ implemented
-M3  Test Generation & Improvement                   next active milestone
-M4  Integrations & Production Agent Skill
+M3  Test Generation & Improvement                   ✓ implemented
+M4  Integrations & Production Agent Skill           next active milestone
 M5  Automation & Execution Assistance
 M6  Advanced Retrieval & Change Impact
 ```

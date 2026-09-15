@@ -66,14 +66,30 @@ Authority defaults to `GUIDANCE`; claims therefore remain exploratory unless the
 classifies the source. Contract/policy authority requires an approved lifecycle to pass M0
 provenance validation. Project content cannot select authority or approve itself.
 
-## M3 local generation (partial)
+## M3 local generation
 
 ```powershell
 .\.venv\Scripts\python.exe -m qe_skill.cli generate .\output\project-model.json `
   --analysis .\audit-output\m2-analysis-report.json --output-dir .\m3-output
 ```
 
-The command rejects stale or foreign M2 input and writes the canonical report, Test Model JSON/YAML, Markdown/static HTML reviews, improvement proposals, Shared Step/Parameter candidates, traceability and manifest. It performs local proposal-only writes. Current authoring limitations are in `M3_EVIDENCE.md`.
+Use `--format json`, `--format json,html`, or `--format all` (the default) to select review
+formats. The canonical `m3-generation-report.json` is always written after successful generation.
+The command rejects stale or foreign M2 input and writes only local proposal artifacts: Test Model
+JSON/YAML, requested Markdown/static HTML reviews, improvements, Shared Step/Parameter candidates,
+traceability, and manifest.
+
+Render an existing canonical report without rerunning authoring or semantic reasoning:
+
+```powershell
+.\.venv\Scripts\python.exe -m qe_skill.cli render `
+  .\m3-output\m3-generation-report.json --output-dir .\review --format html,markdown
+```
+
+Supported renderer formats are `json`, `yaml`, `markdown`, and `html`. The renderer is
+deterministic, offline, safely escapes HTML, tolerates compatible additive version-1 fields, and
+rejects incompatible schema majors. Explicit `ReportTheme` configuration is available through the
+Python renderer API and affects presentation only. Current limitations are in `M3_EVIDENCE.md`.
 
 ## Supported semantic input
 

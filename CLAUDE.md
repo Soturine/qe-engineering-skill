@@ -2,7 +2,11 @@
 
 This repository is intended to be implementable and auditable without conversation history.
 
-The roadmap is consolidated as M0-M6. M0, M1 and M2 are complete and validated; the active implementation milestone is **M3 — Test Generation & Improvement**. Later milestones must not bypass M0 trust guarantees, M1 ingestion boundaries or M2 audit/scenario semantics.
+The roadmap is consolidated as M0-M6. M0 through M3 are complete and validated; the active
+implementation milestone is **M4 — Integrations & Production Agent Skill**. Later milestones must
+not bypass M0 trust guarantees, M1 ingestion boundaries, M2 audit/scenario semantics or M3
+generation/history-preservation guarantees. The optional Semantic Reasoning Provider is M4 work,
+not an authority or a replacement for deterministic validation.
 
 ## When implementing
 

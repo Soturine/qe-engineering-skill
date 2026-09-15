@@ -138,7 +138,8 @@ Do not collapse these into untyped arrays of strings if that would prevent M1/M2
 
 ## Manual Test Model design expectations
 
-The partial M3 implementation provides a draft/proposal boundary compatible with a manual case containing:
+The validated M3 implementation provides a draft/proposal boundary and materializes a strict READY
+manual case only when supported evidence exists. Its manual case model contains:
 
 - title/objective;
 - provenance/origin;

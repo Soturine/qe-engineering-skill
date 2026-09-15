@@ -1,43 +1,79 @@
-# M3 Evidence — Partial Implementation
+# M3 Evidence — Test Generation & Improvement
 
-Status: **M3 PARTIAL**
+Status: **M3 IMPLEMENTED AND VALIDATED**
 
-Validated locally on Windows with Python 3.12.10. This document records implemented behavior and does not advance governance to M4.
+The validated completion candidate is `a887d755a5c2be4d62d1305b69679d42b705e853`.
+GitHub Actions workflow `35004416200` passed on Linux and Windows. Package version is `0.4.0`.
+No tag or release was created.
 
-GitHub Actions workflow `34979543111` passed on Linux and Windows for SHA
-`0bc3e3cbb02200392bcb12177a753e0e8ad5f80e`.
+## Implemented authoring behavior
 
-## Implemented
+- `GREENFIELD`, `BROWNFIELD`, and `CLONE_REUSE` consume an exact validated M1 Project Model and
+  M2 report. Input project/snapshot identities and canonical hashes are bound into every report.
+- Typed drafts retain unresolved path, actor, data, environment, build, cleanup, isolation, or
+  oracle evidence. A strict `TestCase` is materialized only after existing READY validation passes.
+- Complete verified paths become deterministic ordered preparation/navigation/action/validation
+  procedures. Partial paths retain only supported steps and block instead of inventing navigation.
+- Normative Expected Results exactly preserve current validated CONTRACT or
+  ORGANIZATIONAL_POLICY oracles. IMPLEMENTATION remains characterization; RISK and EXPLORATORY
+  cases have no normative Pass/Fail unless independently supported.
+- Pass, Fail, and Blocked rules are explicit. Evidence expectations keep normal Pass lightweight,
+  add diagnostic context for Fail/Blocked, and strengthen review/evidence for explicitly modeled
+  high/critical risks without requiring screenshots by default or creating a new oracle.
+- Brownfield output preserves original identity, text, hash, and history while emitting KEEP,
+  IMPROVE, REVISE, or REPLACE proposals with field/step diffs and evidence-backed rationale.
+  Unsupported repair remains blocked; missing coverage remains a separate proposed case.
+- Clone/reuse proposals revalidate destination requirement, criterion, actor, state, channel,
+  path, data/assumption, and oracle references. Source-project behavior is never destination truth.
+- Shared Step candidates require repeated, stable, evidence-backed setup; core validation and
+  execution results are not shared. Parameter candidates retain explicit constraints, partitions,
+  values, provenance, and used-by links without fabricating identifiers or credentials.
 
-- Versioned contracts separate unresolved authoring proposals from strict `TestCase` artifacts.
-- Exact current CONTRACT/POLICY claims may become normative oracles; IMPLEMENTATION remains characterization and RISK/EXPLORATORY remains non-normative.
-- Selected M2 scenarios produce deterministic, traceable, proposal-only drafts with explicit blockers.
-- Fully supplied supported context passes the existing READY validator before materialization.
-- Brownfield and clone proposals preserve historical assets; clone assumptions are checked against destination evidence.
-- Typed Shared Step/Parameter candidates and deterministic JSON/YAML/Markdown/escaped-HTML renderers exist.
-- `qe generate` binds Project Model, M2 report and configuration hashes, rejects stale/cross-scope input and performs local writes only.
-- Fifteen M3 adversarial evals cover the required trust boundaries.
+Historical assets are never modified. Risk-derived scenarios do not become requirements or
+normative Expected Results. All M3 artifacts remain proposal-only and perform no external write.
 
-Historical assets are never modified. Risk-derived scenarios do not become requirements or normative Expected Results.
+## Canonical artifacts and renderer
 
-## Validation
+`qe generate` writes canonical `m3-generation-report.json`, Test Model JSON/YAML, traceability,
+manifest, improvement, Shared Step, and Parameter artifacts plus requested Markdown/static HTML
+review views. JSON is the source of truth. `qe render` deterministically re-renders an existing
+canonical report without rerunning authoring or reasoning.
 
-- pip check, Ruff, format and strict mypy: passed
-- tests: `180 passed, 1 skipped`
-- evals: `47 passed`
+The component-oriented static HTML view conditionally displays cases, steps, Expected Results,
+readiness/blockers, Shared Steps, Parameters, brownfield original/proposed diffs, traceability,
+risks/gaps, and generation metadata. Cross-links connect candidates with using cases. It escapes
+untrusted content, has no remote assets or JavaScript dependency, tolerates additive version-1
+fields, and rejects incompatible schema majors. `ReportTheme` can explicitly change project name,
+accent, and density as presentation metadata only; no theme is inferred from project content.
+
+Validation rejects stale or foreign upstream input, dangling generated references,
+non-consecutive steps, Expected Result/oracle mismatch, invalid READY cases, risk-to-normative
+leakage, and a Test Model that differs from materialized proposals.
+
+## Validation evidence
+
+Validated locally on Windows with Python 3.12.10 and in workflow `35004416200`:
+
+- pip check: passed
+- Ruff lint and format check: passed
+- strict mypy: passed
+- unit/component/integration/schema/CLI tests: `197 passed, 1 skipped`
+- adversarial evals: `52 passed`
 - dependency audit: `22` packages, no findings
-- installed wheel `qe_engineering_skill-0.3.0-py3-none-any.whl`: `227 passed, 1 skipped`
+- installed wheel `qe_engineering_skill-0.4.0-py3-none-any.whl`: `249 passed, 1 skipped`
+- Linux CI: passed
+- Windows CI: passed
 
-The Windows skip is the existing symlink-privilege test and remains enabled in CI.
+The local Windows skip is the existing symlink-privilege test. It remains enabled and passed on a
+capable CI runner. Synthetic fixtures are generic and reproducible.
 
-## Missing exit criteria
+## Preserved limitations and milestone boundary
 
-1. Multi-step procedures are not yet synthesized from every supported verified path; the current authoring slice uses one validated operational step.
-2. Brownfield records field/step diffs and rationale but does not yet build a complete replacement procedure for every M2 defect class.
-3. Candidate discovery does not yet consume every M2 partition/repeated-setup source.
-4. Evidence expectations are represented but not fully varied by risk severity.
-M3 therefore remains active. Package version remains `0.3.0`; M4 is not activated and no tag/release is authorized.
+Arbitrary prose remains structural rather than automatically normalized into requirements;
+PDF/DOCX semantic parsing and full OpenAPI reference resolution are absent; source authorship is
+not authenticated; duplicate semantics remain conservative. M3 neither publishes nor executes
+tests and implements only direct upstream-hash stale detection, not full change impact.
 
-## Preserved limitations
-
-Arbitrary prose is not semantically normalized; PDF/DOCX parsing and full OpenAPI reference resolution remain absent; source authorship is not authenticated; M3 neither publishes nor executes tests; full downstream invalidation/change impact remains M6; risk-only scenarios stay exploratory.
+Azure/MCP/TMS adapters and the optional Semantic Reasoning Provider are deferred to M4. Automation
+and execution are M5. Whole-system audit, semantic-mode benchmarks, advanced retrieval, and change
+impact remain M6 work cataloged in `M6_CATALOG.md` and `SEMANTIC_REASONING_ROADMAP.md`.

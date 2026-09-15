@@ -2,12 +2,14 @@
 
 ## Current stage
 
-**M3 - Test Generation & Improvement: partially implemented and locally validated.**
+**M3 - Test Generation & Improvement: implemented and validated. M4 is active.**
 
 M0 trust contracts and M1 ingestion boundaries remain binding. M2 adds deterministic audit,
 traceability, atomic coverage, risk/scenario analysis and proposal-only local reports. See
-`M2_EVIDENCE.md` for implemented semantics and validation evidence. Linux and Windows CI passed
-for M2. M3 now has initial authoring, renderers and a local CLI, but remains active because all exit criteria are not met. See `M3_EVIDENCE.md`. No tag/release exists.
+`M2_EVIDENCE.md` for implemented semantics and validation evidence. M3 now provides complete
+proposal-only manual authoring, non-destructive improvement, candidate derivation, renderers and
+local CLI behavior. Linux and Windows CI passed for the M3 completion candidate; see
+`M3_EVIDENCE.md`. No tag/release exists.
 
 ## Implemented
 
@@ -35,7 +37,10 @@ for M2. M3 now has initial authoring, renderers and a local CLI, but remains act
 - Evidence-activated risks and typed scenario universe with partition, boundary, decision,
   state-transition and bounded pairwise techniques.
 - Deterministic scenario dispositions and proposal-only JSON/Markdown audit outputs.
-- M3 draft/READY contracts, trust-safe oracle materialization, initial greenfield/brownfield/clone proposals, candidate contracts, renderers and local `generate` CLI.
+- M3 draft/READY contracts, trust-safe oracle materialization, full evidence-supported procedures,
+  greenfield/brownfield/clone proposals, revision diffs, Shared Step/Parameter candidates,
+  risk-proportional evidence, canonical artifacts, static renderers and local `generate`/`render`
+  CLI commands.
 
 ## Current limitations
 
@@ -56,9 +61,9 @@ for M2. M3 now has initial authoring, renderers and a local CLI, but remains act
 
 ## Deferred by milestone
 
-- **M3 remaining:** complete multi-step authoring, comprehensive brownfield replacement/diffs, broader candidate derivation and risk-proportional evidence policy.
 - **M4 - Integrations & Production Agent Skill:** Azure/MCP/TMS adapters, preview/sync,
-  target-drift/read-back/idempotency execution and production Agent Skill packaging.
+  target-drift/read-back/idempotency execution, production Agent Skill packaging, and the optional
+  Semantic Reasoning Provider cataloged in `SEMANTIC_REASONING_ROADMAP.md`.
 - **M5 - Automation & Execution Assistance:** automation renderers and optional bounded
   execution/evidence-capture assistance.
 - **M6 - Advanced Retrieval & Change Impact:** RAG/GraphRAG evaluation, richer code dependency

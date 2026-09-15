@@ -362,8 +362,8 @@ The project is deliberately incremental. The earlier fine-grained M0-M10 plan wa
 - **M0** — Foundations & Trust Model ✅
 - **M1** — Source Ingestion & Project Model
 - **M2** — Audit, Traceability & Risk Analysis ✅
-- **M3** — Test Generation & Improvement (partial; active)
-- **M4** — Integrations & Production Agent Skill
+- **M3** — Test Generation & Improvement ✓
+- **M4** — Integrations & Production Agent Skill (active)
 - **M5** — Automation & Execution Assistance
 - **M6** — Advanced Retrieval & Change Impact
 
@@ -425,7 +425,7 @@ Validation/research:
 
 ## Current implementation status
 
-**M2 is implemented and validated. M3 Test Generation & Improvement is partially implemented and remains the active milestone.**
+**M0–M3 are implemented and validated. M4 Integrations & Production Agent Skill is the active milestone.**
 
 The executable package includes M0/M1 trust and ingestion behavior plus deterministic audit and
 traceability contracts, nominal versus atomic coverage, conservative existing-test/oracle/history
@@ -434,7 +434,10 @@ Arbitrary natural-language semantics are not claimed.
 
 Install with `python -m pip install -r requirements-dev.lock`, followed by
 `python -m pip install --no-deps --no-build-isolation -e .`. Run `qe --help` for validation,
-inventory, ingestion and analysis commands. See `docs/CLI.md` and the milestone evidence documents
+inventory, ingestion, analysis, generation and rendering commands. See `docs/CLI.md` and the milestone evidence documents
 for contracts, reproduction evidence and limitations.
 
-M3 authoring depth remains incomplete; external integrations/publication, automation and advanced retrieval remain deferred. Read `docs/STATUS.md` for the authoritative current state.
+M3 produces provenance-backed manual Test Model proposals and deterministic JSON/YAML/Markdown/
+HTML reviews without external writes. External integrations/publication and the optional Semantic
+Reasoning Provider are deferred to M4; automation is M5; whole-system audit, benchmarks, change
+impact and advanced retrieval remain M6. Read `docs/STATUS.md` for the authoritative current state.
