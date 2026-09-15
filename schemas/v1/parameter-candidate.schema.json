@@ -96,6 +96,13 @@
       "title": "Name",
       "type": "string"
     },
+    "partitions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Partitions",
+      "type": "array"
+    },
     "project_id": {
       "minLength": 1,
       "pattern": "\\S",

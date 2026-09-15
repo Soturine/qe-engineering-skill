@@ -211,6 +211,9 @@ class DraftTestData(d.Record):
     name: d.Text
     properties: DraftSupportedText
     preparation: DraftSupportedText
+    partition: str | None = None
+    constraints: list[d.Ref] = Field(default_factory=list)
+    candidate_values: list[str] = Field(default_factory=list)
     parameter_candidate: d.Ref | None = None
 
 
@@ -337,6 +340,7 @@ class ParameterCandidate(d.Artifact):
     name: d.Text
     properties: DraftSupportedText
     constraints: list[d.Ref] = Field(default_factory=list)
+    partitions: list[str] = Field(default_factory=list)
     source_evidence: list[d.Ref]
     candidate_values: list[str] = Field(default_factory=list)
     used_by: list[d.Ref]
@@ -560,6 +564,31 @@ def _case_from_scenario(
                 "expected_result": oracle.statement,
             }
         )
+    data: list[DraftTestData] = []
+    if scenario.data_partition is not None or scenario.constraint_values:
+        constraints = atom.boundaries if isinstance(atom, d.AtomicCriterion) else []
+        label = scenario.data_partition or "explicit boundary candidate"
+        data.append(
+            DraftTestData(
+                name=label,
+                properties=DraftSupportedText(
+                    text=(
+                        f"Partition: {scenario.data_partition}"
+                        if scenario.data_partition is not None
+                        else "Explicit boundary candidate"
+                    ),
+                    claims=objective.claims,
+                ),
+                preparation=DraftSupportedText(
+                    unresolved_reasons=[
+                        "Concrete preparation remains operator-supplied; no value was invented."
+                    ]
+                ),
+                partition=scenario.data_partition,
+                constraints=constraints,
+                candidate_values=scenario.constraint_values,
+            )
+        )
     materialized: d.TestCase | None = None
     if readiness == "READY_WITH_REVIEW" and path and oracle and oracle.normative:
         materialized = d.TestCase(
@@ -634,6 +663,7 @@ def _case_from_scenario(
         actor=actor,
         profile=config.profile,
         permissions=permissions,
+        data=data,
         steps=steps,
         pass_rule=None if exploratory else "All required steps satisfy their cited oracles.",
         fail_rule=None if exploratory else "A required observation contradicts its cited oracle.",
@@ -921,6 +951,25 @@ def propose_shared_steps(cases: list[GeneratedCaseProposal]) -> list[SharedStepC
             if precondition.text and precondition.claims and not precondition.unresolved_reasons:
                 key = (precondition.text, tuple(sorted(ref.id for ref in precondition.claims)))
                 groups.setdefault(key, []).append(case)
+    path_groups: dict[
+        tuple[tuple[str | None, str, tuple[str, ...], str | None], ...],
+        list[GeneratedCaseProposal],
+    ] = {}
+    for case in cases:
+        setup = [step for step in case.steps if step.phase in {"PREPARATION", "NAVIGATION"}]
+        if not setup or any(step.oracle is not None for step in setup):
+            continue
+        setup_signature = tuple(
+            (
+                step.phase,
+                step.action.text or "",
+                tuple(sorted(ref.id for ref in step.action.claims)),
+                step.path.id if step.path else None,
+            )
+            for step in setup
+        )
+        if all(item[1] and item[2] for item in setup_signature):
+            path_groups.setdefault(setup_signature, []).append(case)
     candidates: list[SharedStepCandidate] = []
     for (text, _), users in sorted(groups.items()):
         unique_users = {case.id: case for case in users}
@@ -945,7 +994,44 @@ def propose_shared_steps(cases: list[GeneratedCaseProposal]) -> list[SharedStepC
                 review_status="REVIEW_REQUIRED",
             )
         )
-    return candidates
+    for path_signature, users in sorted(path_groups.items()):
+        unique_users = {case.id: case for case in users}
+        if len(unique_users) < 2:
+            continue
+        first = next(iter(unique_users.values()))
+        setup = [step for step in first.steps if step.phase in {"PREPARATION", "NAVIGATION"}]
+        supporting = sorted(
+            {ref.id: ref for step in setup for ref in step.action.claims}.values(),
+            key=lambda ref: ref.id,
+        )
+        path_refs = sorted(
+            {step.path.id: step.path for step in setup if step.path is not None}.values(),
+            key=lambda ref: ref.id,
+        )
+        candidates.append(
+            SharedStepCandidate(
+                id=stable_id("m3.shared", first.project_id, first.snapshot_id, path_signature),
+                project_id=first.project_id,
+                snapshot_id=first.snapshot_id,
+                title=f"Reusable setup for {setup[-1].action.text}",
+                steps=[
+                    step.model_copy(
+                        update={"number": number, "oracle": None, "expected_result": None}
+                    )
+                    for number, step in enumerate(setup, 1)
+                ],
+                supporting_evidence=supporting,
+                path_refs=path_refs,
+                claim_refs=supporting,
+                used_by=[
+                    _ref(case) for case in sorted(unique_users.values(), key=lambda item: item.id)
+                ],
+                rationale="The same verified preparation/navigation prefix is repeated.",
+                readiness="READY_WITH_REVIEW",
+                review_status="REVIEW_REQUIRED",
+            )
+        )
+    return sorted(candidates, key=lambda item: item.id)
 
 
 def propose_parameters(cases: list[GeneratedCaseProposal]) -> list[ParameterCandidate]:
@@ -969,7 +1055,17 @@ def propose_parameters(cases: list[GeneratedCaseProposal]) -> list[ParameterCand
                 snapshot_id=first_case.snapshot_id,
                 name=name,
                 properties=first_data.properties,
+                constraints=sorted(
+                    {ref.id: ref for _, data in uses for ref in data.constraints}.values(),
+                    key=lambda ref: ref.id,
+                ),
+                partitions=sorted(
+                    {data.partition for _, data in uses if data.partition is not None}
+                ),
                 source_evidence=evidence,
+                candidate_values=sorted(
+                    {value for _, data in uses for value in data.candidate_values}
+                ),
                 used_by=[_ref(case) for case, _ in uses],
                 rationale="Explicit evidence-backed test data can be supplied as a parameter.",
             )
@@ -1075,6 +1171,34 @@ def generate_m3(
     )
     shared_steps = propose_shared_steps(cases)
     parameters = propose_parameters(cases)
+    for shared_candidate in shared_steps:
+        for case_ref in shared_candidate.used_by:
+            case = next(item for item in cases if item.id == case_ref.id)
+            case.shared_step_candidates.append(_ref(shared_candidate))
+            edges.append(
+                GenerationTraceabilityEdge(
+                    id=stable_id(
+                        "m3.edge",
+                        model.project_id,
+                        model.snapshot_id,
+                        case.id,
+                        shared_candidate.id,
+                    ),
+                    project_id=model.project_id,
+                    snapshot_id=model.snapshot_id,
+                    source=_ref(case),
+                    target=_ref(shared_candidate),
+                    relation="CASE_TO_SHARED_STEP",
+                    evidence=shared_candidate.supporting_evidence,
+                )
+            )
+    for parameter_candidate in parameters:
+        for case_ref in parameter_candidate.used_by:
+            case = next(item for item in cases if item.id == case_ref.id)
+            case.parameter_candidates.append(_ref(parameter_candidate))
+            for datum in case.data:
+                if datum.name == parameter_candidate.name:
+                    datum.parameter_candidate = _ref(parameter_candidate)
     artifact_refs = (
         [_ref(case) for case in cases]
         + [_ref(item) for item in revisions]

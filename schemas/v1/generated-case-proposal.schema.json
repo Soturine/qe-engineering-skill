@@ -136,6 +136,20 @@
     "DraftTestData": {
       "additionalProperties": false,
       "properties": {
+        "candidate_values": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Values",
+          "type": "array"
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
         "name": {
           "minLength": 1,
           "pattern": "\\S",
@@ -152,6 +166,18 @@
             }
           ],
           "default": null
+        },
+        "partition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partition"
         },
         "preparation": {
           "$ref": "#/$defs/DraftSupportedText"
