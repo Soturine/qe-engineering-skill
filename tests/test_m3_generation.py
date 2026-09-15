@@ -113,3 +113,25 @@ def test_high_risk_evidence_is_stronger_without_creating_an_oracle() -> None:
     assert high_case.pass_rule is None and high_case.fail_rule is None
     assert high_case.steps[-1].oracle is None
     assert high.materialized_oracles == low.materialized_oracles
+
+
+def test_generation_validator_rejects_dangling_refs_and_nonconsecutive_steps() -> None:
+    model = representative()
+    analysis = analyze_project(model)
+    report = generate_m3(model, analysis)
+    case = report.cases[0]
+    case.scenarios = [reference("missing-scenario")]
+    case.steps[0].number = 2
+    issues = validate_generation_report(report, model, analysis)
+    assert {issue.code for issue in issues.issues} >= {"M3_DANGLING_REF", "M3_STEP_SEQUENCE"}
+
+
+def test_generation_validator_rejects_expected_result_oracle_mismatch() -> None:
+    model = representative()
+    analysis = analyze_project(model)
+    report = generate_m3(model, analysis)
+    case = next(item for item in report.cases if item.steps[-1].oracle is not None)
+    case.steps[-1].expected_result = "A stronger unsupported result."
+    assert "M3_ORACLE_MISMATCH" in {
+        issue.code for issue in validate_generation_report(report, model, analysis).issues
+    }

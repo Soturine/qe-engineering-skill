@@ -1296,7 +1296,31 @@ def validate_generation_report(
         result.add("M3_INVALID_ANALYSIS", report, "M2 analysis is invalid for the Project Model.")
     working = model.model_copy(deep=True)
     working.oracles.extend(report.materialized_oracles)
+    allowed_ids = set(artifacts(model))
+    allowed_ids.update(record.id for record in _records(analysis) if isinstance(record, d.Artifact))
+    allowed_ids.update(record.id for record in _records(report) if isinstance(record, d.Artifact))
+    for record in _records(report):
+        if isinstance(record, d.Ref) and record.id not in allowed_ids:
+            result.add("M3_DANGLING_REF", report, f"M3 reference does not resolve: {record.id}")
     for case in report.cases:
+        if [step.number for step in case.steps] != list(range(1, len(case.steps) + 1)):
+            result.add("M3_STEP_SEQUENCE", case, "Manual proposal steps are not consecutive.")
+        oracle_index = {item.id: item for item in working.oracles}
+        for step in case.steps:
+            if step.expected_result is not None and step.oracle is None:
+                result.add(
+                    "M3_EXPECTED_WITHOUT_ORACLE",
+                    case,
+                    "An Expected Result has no resolvable oracle reference.",
+                )
+            if step.oracle is not None:
+                oracle = oracle_index.get(step.oracle.id)
+                if oracle is None or step.expected_result != oracle.statement:
+                    result.add(
+                        "M3_ORACLE_MISMATCH",
+                        case,
+                        "Expected Result does not exactly preserve its cited oracle.",
+                    )
         if case.readiness == "READY":
             if case.materialized_test is None:
                 result.add("M3_READY_DRAFT", case, "READY proposal lacks a materialized TestCase.")
@@ -1304,4 +1328,13 @@ def validate_generation_report(
                 result.issues.extend(validate_test_case(case.materialized_test, working).issues)
         if case.origin in {"RISK", "EXPLORATORY"} and case.readiness != "EXPLORATORY_ONLY":
             result.add("M3_RISK_LEAKAGE", case, "Risk/exploratory proposal became normative.")
+    materialized_ids = {
+        case.materialized_test.id for case in report.cases if case.materialized_test is not None
+    }
+    if {case.id for case in report.test_model.test_cases} != materialized_ids:
+        result.add(
+            "M3_TEST_MODEL_MISMATCH",
+            report.test_model,
+            "Canonical Test Model differs from materialized READY proposals.",
+        )
     return result
