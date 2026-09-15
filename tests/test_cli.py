@@ -10,6 +10,15 @@ from qe_skill.validation import digest
 from tests.helpers import representative
 from tests.test_trust import approved_promotion
 
+M1_IDENTITY = [
+    "--project-id",
+    "synthetic",
+    "--snapshot-id",
+    "v1",
+    "--collected-at",
+    "2026-01-01T00:00:00Z",
+]
+
 
 @pytest.mark.parametrize(
     "command",
@@ -97,3 +106,68 @@ def test_prompt_injection_remains_inert(tmp_path: Path, capsys) -> None:
     assert main(["validate-project-model", str(path)]) == 0
     assert "SYNTHETIC_SECRET_CANARY" not in capsys.readouterr().out
     assert path.read_text(encoding="utf-8") == model.model_dump_json()
+
+
+def test_inventory_command_writes_bounded_local_artifacts(tmp_path: Path, capsys) -> None:
+    root = tmp_path / "source"
+    output = root / "output"
+    root.mkdir()
+    (root / "evidence.md").write_text("# Synthetic evidence", encoding="utf-8")
+    assert main(["inventory", str(root), *M1_IDENTITY, "--output-dir", str(output)]) == 0
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["inventory_complete"] and not summary["network_used"]
+    assert {path.name for path in output.iterdir()} == {
+        "run-manifest.json",
+        "source-inventory.json",
+        "source-ledger.json",
+    }
+    ledger = json.loads((output / "source-ledger.json").read_text(encoding="utf-8"))
+    assert ledger["sources"][0]["study_status"] == "NOT_STUDIED"
+
+
+def test_ingest_command_builds_and_validates_project_model(tmp_path: Path, capsys) -> None:
+    from tests.test_project_builder import representative_document
+
+    root = tmp_path / "source"
+    output = root / "output"
+    root.mkdir()
+    (root / "model.json").write_text(json.dumps(representative_document()), encoding="utf-8")
+    assert main(["ingest", str(root), *M1_IDENTITY, "--output-dir", str(output)]) == 0
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["status"] == "COMPLETE"
+    assert summary["claims"] > 0 and summary["nodes"] > 0
+    assert {path.name for path in output.iterdir()} == {
+        "extraction.json",
+        "ingestion-report.json",
+        "project-model.json",
+        "run-manifest.json",
+        "source-inventory.json",
+        "source-ledger.json",
+    }
+    project_model = json.loads((output / "project-model.json").read_text(encoding="utf-8"))
+    assert project_model["project_id"] == "synthetic"
+
+
+def test_ingest_failure_is_nonzero_and_does_not_log_raw_source(tmp_path: Path, capsys) -> None:
+    root = tmp_path / "source"
+    root.mkdir()
+    (root / "broken.json").write_text('{"secret":"SYNTHETIC_SECRET_CANARY"', encoding="utf-8")
+    assert main(["ingest", str(root), *M1_IDENTITY]) == 1
+    output = capsys.readouterr().out
+    assert "SYNTHETIC_SECRET_CANARY" not in output
+    assert json.loads(output)["status"] == "PARTIAL"
+
+
+@pytest.mark.parametrize(
+    "extra,code",
+    [
+        (["--project-id", "synthetic"], "MODEL_COMMAND"),
+        ([*M1_IDENTITY[:-1], "invalid-date"], "SRC_TIMESTAMP"),
+        ([*M1_IDENTITY, "--max-files", "0"], "SRC_INPUT_LIMIT"),
+    ],
+)
+def test_m1_command_rejects_missing_identity_timestamp_and_bad_limits(
+    tmp_path: Path, capsys, extra: list[str], code: str
+) -> None:
+    assert main(["inventory", str(tmp_path), *extra]) == 1
+    assert json.loads(capsys.readouterr().out)["issues"][0]["code"] == code

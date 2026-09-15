@@ -38,6 +38,7 @@ DEFAULT_IGNORED_DIRECTORIES = frozenset(
         "build",
         "dist",
         "node_modules",
+        "output",
     }
 )
 SUPPORTED_EXTENSIONS = frozenset({".json", ".md", ".markdown", ".py", ".txt", ".yaml", ".yml"})
