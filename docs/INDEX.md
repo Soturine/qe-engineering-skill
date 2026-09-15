@@ -52,6 +52,7 @@ Use this page as the canonical reading map.
 - `M3_EVIDENCE.md`
 - `IMPLEMENTATION_STATE.md`
 - `M6_CATALOG.md`
+- `SEMANTIC_REASONING_ROADMAP.md`
 - `AUDIT_GUIDE.md`
 - `AI_IMPLEMENTATION_GUIDE.md`
 - `../CLAUDE.md`

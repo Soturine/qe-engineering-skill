@@ -100,3 +100,98 @@ Catalog architecture, schema/version, security/threat-model, fuzz/adversarial, p
 Status: **DEFERRED_TO_M6**
 
 Catalog vector retrieval, GraphRAG and richer dependency graphs. Adopt them only when evaluations show a measurable benefit without weakening provenance. Retrieval-derived normative claims must still resolve to primary evidence.
+
+## M6-L — Retrospective whole-system audit
+
+Status: **DEFERRED_TO_M6**
+
+M6 requalifies the complete M0→M5 system, not only M6 code. Tier 1 covers M3 generation,
+M0 trust, M5 oracle-preserving automation and cross-layer behavior. Tier 2 covers M2 analysis,
+M1 ingestion and M4 integration/approval/sync behavior. M3 receives the heaviest review because
+it first converts analysis into operational Test Cases.
+
+## M6-M — Independent audit must try to break M3
+
+Status: **DEFERRED_TO_M6**
+
+Attempt path invention, implementation-to-contract leakage, risk-to-oracle leakage, silent
+conflict resolution, clone assumption leakage, history mutation, Shared Step result propagation
+and stale-M2 acceptance. Compare documentation, schemas, code, tests, evals, CLI and real generated
+outputs rather than trusting milestone evidence alone.
+
+## M6-N — Revalidate M0 across later architecture
+
+Status: **DEFERRED_TO_M6**
+
+For every M0 invariant, verify preservation through M1, M2, M3, M4 and M5. In particular, audit
+whether programmatic oracle creation, external publication or automation introduces a bypass that
+was absent when M0 was tested in isolation.
+
+## M6-O — Findings become engineering evidence
+
+Status: **DEFERRED_TO_M6**
+
+Record each candidate finding with ID, claim, severity, evidence, reproduction, expected invariant
+and actual result. A reviewer is not authority. Use `finding → reproduce → failing test/eval → fix
+→ targeted validation → full suite → benchmark regression`; close unconfirmed findings with
+evidence and avoid speculative refactors.
+
+## M6-P — Two-pass independent audit
+
+Status: **DEFERRED_TO_M6**
+
+When Astra6 Light/Medium are available, use Light for a broad architecture/docs/complexity/trust
+scan, then Medium only for credible findings and Tier 1 areas: M0, M3, M5, cross-layer behavior,
+benchmark integrity and security.
+
+## M6-Q — Pre/post hardening benchmark
+
+Status: **DEFERRED_TO_M6**
+
+Run the pinned automated benchmark before and after accepted M6 fixes. Report executability,
+false-oracle/fake-path rates, gap recall, clone errors and redundancy so hardening is measurable.
+
+## M6-R — Quality/trust and efficiency together
+
+Status: **DEFERRED_TO_M6**
+
+Principle: **Optimize around the trust boundary, never through it.** Track runtime, tokens,
+context, case count, redundancy, coverage per case, output size and measurable cost alongside
+atomic coverage recall, unsupported-oracle and hallucinated-path rates, false requirements,
+traceability, executability, conflict detection, injection resistance and project isolation.
+
+Priority is minimum quality → trust gates → security → provenance → correctness → optimization.
+
+## M6-S — Hard gates are not trade-offs
+
+Status: **DEFERRED_TO_M6**
+
+Unsupported normative oracles, hallucinated verified paths and cross-project leakage above zero
+are unacceptable regressions. Runtime/token savings never compensate for a trust-gate failure.
+
+## M6-T — Efficiency frontier
+
+Status: **DEFERRED_TO_M6**
+
+Use a Pareto-style view rather than one weighted vanity score. A result dominates only when it
+preserves required quality and perfect hard-gate trust while improving measured efficiency; a
+cheaper result with degraded quality or trust cannot win.
+
+## M6-U — Progressive depth
+
+Status: **DEFERRED_TO_M6**
+
+Evaluate Light, Medium and Deep analysis depths. Light supports deterministic CI checks, Medium
+standard analysis and Deep release/ambiguity hardening. Depth may omit optional analysis but may
+never weaken provenance, oracle, isolation or security gates.
+
+## M6-V — Semantic reasoning mode benchmark
+
+Status: **DEFERRED_TO_M6**
+
+Compare deterministic-only, deterministic-plus-heuristics and deterministic-plus-semantic-provider
+modes using identical pinned fixtures and evaluation contracts. Measure requirement/constraint
+recall, false requirements, missed constraints, actor/state/relationship errors, conflict
+detection, provenance/span accuracy, unsupported oracles, hallucinated paths, runtime, tokens,
+context and cost. More extracted records do not imply better quality. Provider caches must bind to
+source hash, provider/model/version, prompt/template/config and project/snapshot.

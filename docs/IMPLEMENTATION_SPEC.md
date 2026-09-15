@@ -175,6 +175,10 @@ Fixtures should exercise greenfield-compatible and brownfield-compatible model s
 
 ## Provider abstraction
 
+The hybrid deterministic/heuristic/provider plan is cataloged in
+`SEMANTIC_REASONING_ROADMAP.md`. Provider implementation remains deferred to M4; M3 has no live
+model dependency.
+
 If model assistance is introduced, use a typed boundary similar to:
 
 ```python

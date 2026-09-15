@@ -2,6 +2,9 @@
 
 The roadmap is intentionally incremental. Later milestones must not bypass trust foundations. Real project data is not required to build or validate the generic engine; committed eval fixtures are synthetic.
 
+The deferred hybrid semantic architecture and milestone ownership are cataloged in
+`SEMANTIC_REASONING_ROADMAP.md`.
+
 The product must remain general, TMS-independent at the core, manual-first, human-approved for external writes and non-destructive toward existing quality history.
 
 This roadmap consolidates the earlier finer-grained M0-M10 plan into M0-M6. No planned capability was removed; closely related stages were grouped so each milestone represents a complete product outcome rather than an internal implementation slice.

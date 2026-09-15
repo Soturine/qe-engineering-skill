@@ -4,6 +4,9 @@ Status: **M3 PARTIAL**
 
 Validated locally on Windows with Python 3.12.10. This document records implemented behavior and does not advance governance to M4.
 
+GitHub Actions workflow `34979543111` passed on Linux and Windows for SHA
+`0bc3e3cbb02200392bcb12177a753e0e8ad5f80e`.
+
 ## Implemented
 
 - Versioned contracts separate unresolved authoring proposals from strict `TestCase` artifacts.
@@ -33,8 +36,6 @@ The Windows skip is the existing symlink-privilege test and remains enabled in C
 2. Brownfield records field/step diffs and rationale but does not yet build a complete replacement procedure for every M2 defect class.
 3. Candidate discovery does not yet consume every M2 partition/repeated-setup source.
 4. Evidence expectations are represented but not fully varied by risk severity.
-5. Final Linux and Windows CI is not yet proven for this evidence commit.
-
 M3 therefore remains active. Package version remains `0.3.0`; M4 is not activated and no tag/release is authorized.
 
 ## Preserved limitations
