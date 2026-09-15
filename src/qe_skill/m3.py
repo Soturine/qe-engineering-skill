@@ -616,6 +616,92 @@ def _brownfield_revisions(
     return sorted(revisions, key=lambda item: item.id)
 
 
+def revalidate_clone_asset(
+    test: d.ExistingTest, destination: d.ProjectModel
+) -> tuple[
+    Literal[
+        "REUSABLE", "REQUIRES_UPDATE", "OBSOLETE_CANDIDATE", "DUPLICATE", "CONFLICTING", "UNKNOWN"
+    ],
+    str,
+]:
+    """Revalidate modeled source assumptions only against destination evidence."""
+
+    index = artifacts(destination)
+    refs_to_check = (
+        test.requirement_ids
+        + test.criterion_ids
+        + test.state_ids
+        + test.channel_ids
+        + test.path_ids
+        + test.oracle_ids
+        + test.source_assumption_refs
+        + ([test.actor_id] if test.actor_id else [])
+    )
+    if any(ref.id not in index for ref in refs_to_check):
+        return "UNKNOWN", "One or more source assumptions do not resolve in destination evidence."
+    if any(
+        ref.project_id != destination.project_id or ref.snapshot_id != destination.snapshot_id
+        for ref in refs_to_check
+    ):
+        return "UNKNOWN", "Source assumptions are not bound to the destination project snapshot."
+    for oracle_ref in test.oracle_ids:
+        if reuse_oracle(oracle_ref, destination).status != "MATERIALIZED_NORMATIVE":
+            return "CONFLICTING", "The source-project oracle is not normative in the destination."
+    if not test.path_ids or test.actor_id is None or not test.oracle_ids:
+        return "REQUIRES_UPDATE", "Destination path, actor, or oracle assumptions are incomplete."
+    paths = [index[ref.id] for ref in test.path_ids]
+    if any(
+        not isinstance(path, d.VerifiedPath) or path.verification_status != "verified"
+        for path in paths
+    ):
+        return "REQUIRES_UPDATE", "The destination operational path is not verified."
+    return "REUSABLE", "All modeled assumptions resolve in current destination evidence."
+
+
+def _clone_revisions(model: d.ProjectModel) -> list[TestRevisionProposal]:
+    revisions: list[TestRevisionProposal] = []
+    tests = sorted(
+        (node for node in model.nodes if isinstance(node, d.ExistingTest)), key=lambda item: item.id
+    )
+    for test in tests:
+        classification, rationale = revalidate_clone_asset(test, model)
+        action: Literal["KEEP", "IMPROVE", "REVISE", "REPLACE"] = (
+            "KEEP"
+            if classification == "REUSABLE"
+            else "REPLACE"
+            if classification in {"OBSOLETE_CANDIDATE", "CONFLICTING"}
+            else "REVISE"
+        )
+        revisions.append(
+            TestRevisionProposal(
+                id=stable_id(
+                    "m3.clone", model.project_id, model.snapshot_id, test.id, classification
+                ),
+                project_id=model.project_id,
+                snapshot_id=model.snapshot_id,
+                original_test=_ref(test),
+                action=action,
+                field_diffs=(
+                    []
+                    if action == "KEEP"
+                    else [
+                        FieldDiff(
+                            field="destination_assumptions",
+                            kind="CHANGED",
+                            before="source project assumptions",
+                            after=classification,
+                            rationale=rationale,
+                            evidence=test.claims,
+                        )
+                    ]
+                ),
+                rationale=rationale,
+                evidence=test.claims,
+            )
+        )
+    return revisions
+
+
 def generate_m3(
     model: d.ProjectModel,
     analysis: M2AnalysisReport,
@@ -670,6 +756,27 @@ def generate_m3(
                         evidence=case.primary_provenance,
                     )
                 )
+        for claim_ref in case.primary_provenance:
+            claim = next((item for item in model.claims if item.id == claim_ref.id), None)
+            if claim is not None and claim.origin == "ORGANIZATIONAL_POLICY":
+                edges.append(
+                    GenerationTraceabilityEdge(
+                        id=stable_id(
+                            "m3.edge",
+                            model.project_id,
+                            model.snapshot_id,
+                            "policy",
+                            claim.id,
+                            case.id,
+                        ),
+                        project_id=model.project_id,
+                        snapshot_id=model.snapshot_id,
+                        source=claim_ref,
+                        target=case_ref,
+                        relation="POLICY_TO_CASE",
+                        evidence=[claim_ref],
+                    )
+                )
     config_hash = canonical_hash(config)
     binding = GenerationInputBinding(
         project_model_hash=canonical_hash(model),
@@ -685,7 +792,11 @@ def generate_m3(
         proposal_only=True,
     )
     revisions = (
-        _brownfield_revisions(model, analysis, cases) if analysis.mode == "BROWNFIELD" else []
+        _brownfield_revisions(model, analysis, cases)
+        if analysis.mode == "BROWNFIELD"
+        else _clone_revisions(model)
+        if analysis.mode == "CLONE_REUSE"
+        else []
     )
     artifact_refs = [_ref(case) for case in cases] + [_ref(item) for item in revisions]
     manifest = GenerationManifest(
