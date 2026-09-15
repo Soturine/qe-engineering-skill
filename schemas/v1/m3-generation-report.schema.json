@@ -1594,8 +1594,19 @@
           "title": "Id",
           "type": "string"
         },
+        "original_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Original Hash",
+          "type": "string"
+        },
         "original_test": {
           "$ref": "#/$defs/Ref"
+        },
+        "original_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Original Text",
+          "type": "string"
         },
         "project_id": {
           "minLength": 1,
@@ -1626,6 +1637,29 @@
           "title": "Rationale",
           "type": "string"
         },
+        "readiness": {
+          "enum": [
+            "READY",
+            "READY_WITH_REVIEW",
+            "AMBIGUOUS",
+            "BLOCKED_SOURCE",
+            "EXPLORATORY_ONLY",
+            "REJECTED_DUPLICATE",
+            "REJECTED_UNSUPPORTED_ORACLE"
+          ],
+          "title": "Readiness",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "NOT_REQUIRED",
+            "REVIEW_REQUIRED",
+            "APPROVED",
+            "REJECTED"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
         "schema_version": {
           "const": "1.0",
           "default": "1.0",
@@ -1651,9 +1685,13 @@
         "project_id",
         "snapshot_id",
         "original_test",
+        "original_text",
+        "original_hash",
         "action",
         "rationale",
-        "evidence"
+        "evidence",
+        "readiness",
+        "review_status"
       ],
       "title": "TestRevisionProposal",
       "type": "object"

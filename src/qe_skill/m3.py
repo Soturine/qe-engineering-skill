@@ -297,12 +297,16 @@ class GeneratedCaseProposal(d.Artifact):
 
 class TestRevisionProposal(d.Artifact):
     original_test: d.Ref
+    original_text: d.Text
+    original_hash: d.Digest
     action: Literal["KEEP", "IMPROVE", "REVISE", "REPLACE"]
     proposed_case: d.Ref | None = None
     field_diffs: list[FieldDiff] = Field(default_factory=list)
     step_diffs: list[StepDiff] = Field(default_factory=list)
     rationale: d.Text
     evidence: list[d.Ref]
+    readiness: d.Readiness
+    review_status: ReviewStatus
     historical_asset_mutated: Literal[False] = False
     proposal_only: Literal[True] = True
 
@@ -673,14 +677,19 @@ def _brownfield_revisions(
             (
                 case
                 for case in cases
-                if {ref.id for ref in case.criteria} & {ref.id for ref in existing.criterion_ids}
+                if ({ref.id for ref in case.criteria} & {ref.id for ref in existing.criterion_ids})
+                or (
+                    {ref.id for ref in case.requirements}
+                    & {ref.id for ref in existing.requirement_ids}
+                )
             ),
             None,
         )
-        field_diffs = (
-            []
-            if action == "KEEP"
-            else [
+        if related is not None and action != "KEEP":
+            related.action = action
+        field_diffs: list[FieldDiff] = []
+        if action != "KEEP":
+            field_diffs.append(
                 FieldDiff(
                     field="classification",
                     kind="CHANGED",
@@ -689,21 +698,108 @@ def _brownfield_revisions(
                     rationale=finding.rationale,
                     evidence=finding.supporting_evidence,
                 )
-            ]
-        )
-        step_diffs = (
-            [
+            )
+        proposal_kinds = {
+            proposal.kind
+            for proposal in analysis.proposals
+            if proposal.asset is not None and proposal.asset.id == existing.id
+        }
+        repairs = {
+            "IMPROVE_PRECONDITIONS": "preconditions",
+            "ADD_CLEANUP": "cleanup_and_isolation",
+            "PARAMETERIZE_DATA": "test_data",
+            "ADD_TRACEABILITY": "traceability",
+            "CLARIFY_EXPECTED_RESULT": "expected_result",
+        }
+        for kind, field in repairs.items():
+            if kind not in proposal_kinds:
+                continue
+            source_proposal = next(
+                item
+                for item in analysis.proposals
+                if item.asset is not None and item.asset.id == existing.id and item.kind == kind
+            )
+            field_diffs.append(
+                FieldDiff(
+                    field=field,
+                    kind="CHANGED",
+                    before="missing or unsuitable historical value",
+                    after=(
+                        "evidence-backed proposed value"
+                        if related is not None and related.readiness != "BLOCKED_SOURCE"
+                        else "unresolved; source evidence required"
+                    ),
+                    rationale=source_proposal.rationale,
+                    evidence=related.primary_provenance if related else existing.claims,
+                )
+            )
+        explicit_gaps = [
+            (not existing.preconditions, "preconditions", "Historical preconditions are absent."),
+            (not existing.cleanup, "cleanup_and_isolation", "Historical cleanup is absent."),
+            (
+                existing.data_partition is None or "HARD_CODED_DATA" in existing.quality_flags,
+                "test_data",
+                "Historical data is missing a partition or is explicitly hard-coded.",
+            ),
+            (not existing.path_ids, "verified_path", "Historical procedure has no verified path."),
+            (
+                bool(existing.expected_results) and not existing.oracle_ids,
+                "expected_result",
+                "Historical Expected Result has no oracle reference.",
+            ),
+        ]
+        existing_diff_fields = {diff.field for diff in field_diffs}
+        for present, field, rationale in explicit_gaps:
+            if present and field not in existing_diff_fields:
+                field_diffs.append(
+                    FieldDiff(
+                        field=field,
+                        kind="CHANGED",
+                        before="missing or unsuitable historical value",
+                        after=(
+                            "evidence-backed proposed value"
+                            if related is not None and related.readiness != "BLOCKED_SOURCE"
+                            else "unresolved; source evidence required"
+                        ),
+                        rationale=rationale,
+                        evidence=related.primary_provenance if related else existing.claims,
+                    )
+                )
+        step_diffs: list[StepDiff] = []
+        if action in {"REVISE", "REPLACE"}:
+            step_diffs.append(
                 StepDiff(
                     kind="CHANGED",
                     rationale=(
-                        "Procedure requires evidence-backed review; historical steps remain "
-                        "unchanged."
+                        "Use the proposed evidence-backed procedure only after its readiness gate; "
+                        "the historical procedure remains unchanged."
                     ),
-                    evidence=finding.supporting_evidence,
+                    evidence=(
+                        related.primary_provenance if related else finding.supporting_evidence
+                    ),
                 )
-            ]
-            if action in {"REVISE", "REPLACE"}
-            else []
+            )
+        if "GROUPED_ORACLES" in existing.quality_flags:
+            step_diffs.append(
+                StepDiff(
+                    kind="CHANGED",
+                    rationale=(
+                        "Split explicitly grouped independent validations into diagnosable "
+                        "oracle-backed steps; do not normalize unsupported assertions."
+                    ),
+                    evidence=existing.oracle_ids,
+                )
+            )
+        history = analysis.history_summary.get(existing.id, {})
+        history_note = (
+            f" Historical priority evidence: {dict(sorted(history.items()))}." if history else ""
+        )
+        readiness: d.Readiness = (
+            "READY_WITH_REVIEW"
+            if action == "KEEP"
+            else related.readiness
+            if related is not None
+            else "BLOCKED_SOURCE"
         )
         revisions.append(
             TestRevisionProposal(
@@ -713,12 +809,16 @@ def _brownfield_revisions(
                 project_id=model.project_id,
                 snapshot_id=model.snapshot_id,
                 original_test=_ref(existing),
+                original_text=existing.original_text,
+                original_hash=canonical_hash(existing),
                 action=action,
                 proposed_case=_ref(related) if related else None,
                 field_diffs=field_diffs,
                 step_diffs=step_diffs,
-                rationale=finding.rationale,
+                rationale=finding.rationale + history_note,
                 evidence=finding.supporting_evidence,
+                readiness=readiness,
+                review_status="REVIEW_REQUIRED",
             )
         )
     return sorted(revisions, key=lambda item: item.id)
@@ -788,6 +888,8 @@ def _clone_revisions(model: d.ProjectModel) -> list[TestRevisionProposal]:
                 project_id=model.project_id,
                 snapshot_id=model.snapshot_id,
                 original_test=_ref(test),
+                original_text=test.original_text,
+                original_hash=canonical_hash(test),
                 action=action,
                 field_diffs=(
                     []
@@ -805,6 +907,8 @@ def _clone_revisions(model: d.ProjectModel) -> list[TestRevisionProposal]:
                 ),
                 rationale=rationale,
                 evidence=test.claims,
+                readiness="READY_WITH_REVIEW" if action == "KEEP" else "BLOCKED_SOURCE",
+                review_status="REVIEW_REQUIRED",
             )
         )
     return revisions
