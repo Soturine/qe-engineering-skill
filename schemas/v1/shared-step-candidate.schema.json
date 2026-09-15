@@ -1,0 +1,263 @@
+{
+  "$defs": {
+    "DraftManualStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/DraftSupportedText"
+        },
+        "blocking_reasons": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Blocking Reasons",
+          "type": "array"
+        },
+        "evidence_expectation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Expectation"
+        },
+        "expected_result": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Result"
+        },
+        "number": {
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "path": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "action"
+      ],
+      "title": "DraftManualStep",
+      "type": "object"
+    },
+    "DraftSupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "unresolved_reasons": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Unresolved Reasons",
+          "type": "array"
+        }
+      },
+      "title": "DraftSupportedText",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:shared-step-candidate",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "claim_refs": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Claim Refs",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "path_refs": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Path Refs",
+      "type": "array"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Rationale",
+      "type": "string"
+    },
+    "readiness": {
+      "enum": [
+        "READY",
+        "READY_WITH_REVIEW",
+        "AMBIGUOUS",
+        "BLOCKED_SOURCE",
+        "EXPLORATORY_ONLY",
+        "REJECTED_DUPLICATE",
+        "REJECTED_UNSUPPORTED_ORACLE"
+      ],
+      "title": "Readiness",
+      "type": "string"
+    },
+    "review_status": {
+      "enum": [
+        "NOT_REQUIRED",
+        "REVIEW_REQUIRED",
+        "APPROVED",
+        "REJECTED"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/DraftManualStep"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "supporting_evidence": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Supporting Evidence",
+      "type": "array"
+    },
+    "title": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Title",
+      "type": "string"
+    },
+    "used_by": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "minItems": 2,
+      "title": "Used By",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "title",
+    "steps",
+    "supporting_evidence",
+    "used_by",
+    "rationale",
+    "readiness",
+    "review_status"
+  ],
+  "title": "SharedStepCandidate",
+  "type": "object"
+}

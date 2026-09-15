@@ -1,0 +1,856 @@
+{
+  "$defs": {
+    "DraftManualStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/DraftSupportedText"
+        },
+        "blocking_reasons": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Blocking Reasons",
+          "type": "array"
+        },
+        "evidence_expectation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Expectation"
+        },
+        "expected_result": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Result"
+        },
+        "number": {
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "path": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "action"
+      ],
+      "title": "DraftManualStep",
+      "type": "object"
+    },
+    "DraftSupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "unresolved_reasons": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Unresolved Reasons",
+          "type": "array"
+        }
+      },
+      "title": "DraftSupportedText",
+      "type": "object"
+    },
+    "DraftTestData": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "parameter_candidate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "preparation": {
+          "$ref": "#/$defs/DraftSupportedText"
+        },
+        "properties": {
+          "$ref": "#/$defs/DraftSupportedText"
+        }
+      },
+      "required": [
+        "name",
+        "properties",
+        "preparation"
+      ],
+      "title": "DraftTestData",
+      "type": "object"
+    },
+    "ManualStep": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "evidence_expectation": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Evidence Expectation",
+          "type": "string"
+        },
+        "expected_result": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected Result"
+        },
+        "number": {
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/Ref"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "action",
+        "path",
+        "oracle",
+        "expected_result",
+        "required",
+        "evidence_expectation"
+      ],
+      "title": "ManualStep",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "SupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "claims"
+      ],
+      "title": "SupportedText",
+      "type": "object"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "blocked_rule": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Blocked Rule",
+          "type": "string"
+        },
+        "blocking_notes": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Blocking Notes",
+          "type": "array"
+        },
+        "build": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Build",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "cleanup": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Criteria",
+          "type": "array"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/TestData"
+          },
+          "title": "Data",
+          "type": "array"
+        },
+        "environment": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "fail_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fail Rule"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "isolation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "objective": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Objective",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "parameter_candidates": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Parameter Candidates",
+          "type": "array"
+        },
+        "pass_rule": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pass Rule"
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Permissions",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "$ref": "#/$defs/SupportedText"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "profile": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Profile",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "readiness": {
+          "enum": [
+            "READY",
+            "READY_WITH_REVIEW",
+            "AMBIGUOUS",
+            "BLOCKED_SOURCE",
+            "EXPLORATORY_ONLY",
+            "REJECTED_DUPLICATE",
+            "REJECTED_UNSUPPORTED_ORACLE"
+          ],
+          "title": "Readiness",
+          "type": "string"
+        },
+        "review_approval_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Approval Id"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shared_step_candidates": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Shared Step Candidates",
+          "type": "array"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/ManualStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "title",
+        "objective",
+        "origin",
+        "claims",
+        "criteria",
+        "risks",
+        "scenarios",
+        "environment",
+        "build",
+        "actor",
+        "profile",
+        "permissions",
+        "preconditions",
+        "data",
+        "steps",
+        "pass_rule",
+        "fail_rule",
+        "blocked_rule",
+        "cleanup",
+        "isolation",
+        "shared_step_candidates",
+        "parameter_candidates",
+        "readiness",
+        "blocking_notes",
+        "review_required"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TestData": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "boolean"
+        },
+        "preparation": {
+          "$ref": "#/$defs/SupportedText"
+        },
+        "properties": {
+          "$ref": "#/$defs/SupportedText"
+        }
+      },
+      "required": [
+        "name",
+        "properties",
+        "preparation",
+        "parameter"
+      ],
+      "title": "TestData",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:generated-case-proposal",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "NEW",
+        "KEEP",
+        "IMPROVE",
+        "REVISE",
+        "REPLACE"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "actor": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Ref"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "blocked_rule": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Blocked Rule",
+      "type": "string"
+    },
+    "blocking_notes": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Blocking Notes",
+      "type": "array"
+    },
+    "build": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Build"
+    },
+    "cleanup": {
+      "$ref": "#/$defs/DraftSupportedText"
+    },
+    "criteria": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Criteria",
+      "type": "array"
+    },
+    "data": {
+      "items": {
+        "$ref": "#/$defs/DraftTestData"
+      },
+      "title": "Data",
+      "type": "array"
+    },
+    "environment": {
+      "$ref": "#/$defs/DraftSupportedText"
+    },
+    "evidence_expectations": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Evidence Expectations",
+      "type": "array"
+    },
+    "fail_rule": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fail Rule"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "isolation": {
+      "$ref": "#/$defs/DraftSupportedText"
+    },
+    "materialized_test": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TestCase"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "objective": {
+      "$ref": "#/$defs/DraftSupportedText"
+    },
+    "origin": {
+      "enum": [
+        "CONTRACT",
+        "IMPLEMENTATION",
+        "ORGANIZATIONAL_POLICY",
+        "RISK",
+        "EXPLORATORY"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "parameter_candidates": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Parameter Candidates",
+      "type": "array"
+    },
+    "pass_rule": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pass Rule"
+    },
+    "permissions": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Permissions",
+      "type": "array"
+    },
+    "preconditions": {
+      "items": {
+        "$ref": "#/$defs/DraftSupportedText"
+      },
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "primary_provenance": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Primary Provenance",
+      "type": "array"
+    },
+    "priority_rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Priority Rationale",
+      "type": "string"
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposal_only": {
+      "const": true,
+      "default": true,
+      "title": "Proposal Only",
+      "type": "boolean"
+    },
+    "rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Rationale",
+      "type": "string"
+    },
+    "readiness": {
+      "enum": [
+        "READY",
+        "READY_WITH_REVIEW",
+        "AMBIGUOUS",
+        "BLOCKED_SOURCE",
+        "EXPLORATORY_ONLY",
+        "REJECTED_DUPLICATE",
+        "REJECTED_UNSUPPORTED_ORACLE"
+      ],
+      "title": "Readiness",
+      "type": "string"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "review_status": {
+      "enum": [
+        "NOT_REQUIRED",
+        "REVIEW_REQUIRED",
+        "APPROVED",
+        "REJECTED"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "risks": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "scenarios": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shared_step_candidates": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Shared Step Candidates",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/DraftManualStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "title": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "action",
+    "title",
+    "objective",
+    "origin",
+    "primary_provenance",
+    "priority_rationale",
+    "environment",
+    "blocked_rule",
+    "cleanup",
+    "isolation",
+    "readiness",
+    "review_status",
+    "rationale"
+  ],
+  "title": "GeneratedCaseProposal",
+  "type": "object"
+}

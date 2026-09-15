@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "FieldDiff": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "field": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Field",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "ADDED",
+            "REMOVED",
+            "CHANGED",
+            "UNCHANGED"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "kind",
+        "rationale"
+      ],
+      "title": "FieldDiff",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "StepDiff": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "ADDED",
+            "REMOVED",
+            "CHANGED",
+            "UNCHANGED"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "original_step": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Step"
+        },
+        "proposed_step": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposed Step"
+        },
+        "rationale": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "rationale"
+      ],
+      "title": "StepDiff",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:test-revision-proposal",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "KEEP",
+        "IMPROVE",
+        "REVISE",
+        "REPLACE"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "field_diffs": {
+      "items": {
+        "$ref": "#/$defs/FieldDiff"
+      },
+      "title": "Field Diffs",
+      "type": "array"
+    },
+    "historical_asset_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Historical Asset Mutated",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "original_test": {
+      "$ref": "#/$defs/Ref"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposal_only": {
+      "const": true,
+      "default": true,
+      "title": "Proposal Only",
+      "type": "boolean"
+    },
+    "proposed_case": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Ref"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Rationale",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "step_diffs": {
+      "items": {
+        "$ref": "#/$defs/StepDiff"
+      },
+      "title": "Step Diffs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "original_test",
+    "action",
+    "rationale",
+    "evidence"
+  ],
+  "title": "TestRevisionProposal",
+  "type": "object"
+}

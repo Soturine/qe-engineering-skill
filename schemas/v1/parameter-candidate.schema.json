@@ -1,0 +1,153 @@
+{
+  "$defs": {
+    "DraftSupportedText": {
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "unresolved_reasons": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Unresolved Reasons",
+          "type": "array"
+        }
+      },
+      "title": "DraftSupportedText",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:parameter-candidate",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_values": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Values",
+      "type": "array"
+    },
+    "constraints": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Name",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "properties": {
+      "$ref": "#/$defs/DraftSupportedText"
+    },
+    "rationale": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Rationale",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_evidence": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Source Evidence",
+      "type": "array"
+    },
+    "used_by": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Used By",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "name",
+    "properties",
+    "source_evidence",
+    "used_by",
+    "rationale"
+  ],
+  "title": "ParameterCandidate",
+  "type": "object"
+}

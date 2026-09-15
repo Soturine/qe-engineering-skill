@@ -28,6 +28,15 @@ from qe_skill.m2 import (
     ScenarioUniverse,
     TraceabilityGraph,
 )
+from qe_skill.m3 import (
+    GeneratedCaseProposal,
+    GenerationManifest,
+    GenerationTraceabilityEdge,
+    M3GenerationReport,
+    ParameterCandidate,
+    SharedStepCandidate,
+    TestRevisionProposal,
+)
 from qe_skill.parsers import ParseResult
 from qe_skill.project_builder import ProjectBuild
 
@@ -53,6 +62,13 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "risk-analysis": RiskAnalysis,
     "scenario-universe": ScenarioUniverse,
     "m2-proposals": ProposalSet,
+    "m3-generation-report": M3GenerationReport,
+    "generated-case-proposal": GeneratedCaseProposal,
+    "test-revision-proposal": TestRevisionProposal,
+    "shared-step-candidate": SharedStepCandidate,
+    "parameter-candidate": ParameterCandidate,
+    "generation-traceability": GenerationTraceabilityEdge,
+    "generation-manifest": GenerationManifest,
 }
 
 

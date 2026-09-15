@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:generation-traceability",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "relation": {
+      "enum": [
+        "REQUIREMENT_TO_CASE",
+        "CRITERION_TO_CASE",
+        "RISK_TO_CASE",
+        "SCENARIO_TO_CASE",
+        "POLICY_TO_CASE",
+        "ORACLE_TO_STEP",
+        "EXISTING_TEST_TO_REVISION",
+        "CASE_TO_SHARED_STEP",
+        "CASE_TO_PARAMETER"
+      ],
+      "title": "Relation",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/Ref"
+    },
+    "target": {
+      "$ref": "#/$defs/Ref"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "source",
+    "target",
+    "relation",
+    "evidence"
+  ],
+  "title": "GenerationTraceabilityEdge",
+  "type": "object"
+}
