@@ -1110,7 +1110,8 @@
               "project_id": "synthetic",
               "snapshot_id": "v1"
             },
-            "instruction": "Open the synthetic record endpoint with the prepared identifier."
+            "instruction": "Open the synthetic record endpoint with the prepared identifier.",
+            "phase": null
           }
         ],
         "verification_status": "verified"
