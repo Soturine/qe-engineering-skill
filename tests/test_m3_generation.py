@@ -91,3 +91,25 @@ def test_partial_path_preserves_known_steps_without_fabricating_remainder() -> N
     assert len(case.steps) == 1
     assert case.readiness == "BLOCKED_SOURCE"
     assert any("no remainder was invented" in note for note in case.blocking_notes)
+
+
+def test_high_risk_evidence_is_stronger_without_creating_an_oracle() -> None:
+    low_model = representative()
+    low = generate_m3(low_model, analyze_project(low_model))
+    low_case = next(case for case in low.cases if case.origin == "RISK")
+
+    high_model = representative()
+    risk = next(node for node in high_model.nodes if isinstance(node, d.Risk))
+    risk.severity = "high"
+    high = generate_m3(high_model, analyze_project(high_model))
+    high_case = next(case for case in high.cases if case.origin == "RISK")
+
+    assert len(high_case.evidence_expectations) > len(low_case.evidence_expectations)
+    assert any(
+        "context sufficient to reproduce" in step.evidence_expectation for step in high_case.steps
+    )
+    assert high_case.review_status == "REVIEW_REQUIRED"
+    assert high_case.readiness == "EXPLORATORY_ONLY"
+    assert high_case.pass_rule is None and high_case.fail_rule is None
+    assert high_case.steps[-1].oracle is None
+    assert high.materialized_oracles == low.materialized_oracles

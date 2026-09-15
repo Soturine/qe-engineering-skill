@@ -16,7 +16,12 @@ from pydantic import BaseModel, Field, model_validator
 
 from qe_skill import domain as d
 from qe_skill.integrity import artifacts, validate_project_model, validate_test_case
-from qe_skill.m2 import M2AnalysisReport, ScenarioRecord, validate_analysis_report
+from qe_skill.m2 import (
+    M2AnalysisReport,
+    RiskAnalysisRecord,
+    ScenarioRecord,
+    validate_analysis_report,
+)
 from qe_skill.validation import Result, validate_claim, validate_oracle
 
 GenerationMode = Literal["GREENFIELD", "BROWNFIELD", "CLONE_REUSE"]
@@ -485,10 +490,30 @@ def _scenario_path(
     ]
 
 
+def _evidence_policy(risk: RiskAnalysisRecord | None) -> tuple[list[d.Text], d.Text, bool]:
+    expectations = [
+        "For a normal Pass, record the observation at the validating step.",
+        "For Fail or Blocked, record the affected step and diagnostic observation.",
+    ]
+    step_expectation = "Record the observed result for any Fail or Blocked outcome."
+    review_required = False
+    if risk is not None and risk.impact.lower() in {"high", "critical"}:
+        expectations.append(
+            "For this explicitly modeled high-consequence risk, retain the environment/build, "
+            "actor, inputs, affected step, timestamp, and relevant diagnostic observations."
+        )
+        step_expectation = (
+            "Record the step outcome; on Fail or Blocked retain context sufficient to reproduce it."
+        )
+        review_required = True
+    return expectations, step_expectation, review_required
+
+
 def _case_from_scenario(
     scenario: ScenarioRecord,
     model: d.ProjectModel,
     config: AuthoringConfig,
+    risk: RiskAnalysisRecord | None = None,
 ) -> tuple[GeneratedCaseProposal, d.Oracle | None]:
     index = artifacts(model)
     atom = index.get(scenario.source_atom.id) if scenario.source_atom else None
@@ -527,6 +552,11 @@ def _case_from_scenario(
         blockers.append("Actor/profile evidence is not available.")
     if config.profile is None:
         blockers.append("Actor profile context is not available.")
+    evidence_expectations, step_evidence_expectation, risk_review_required = _evidence_policy(risk)
+    steps = [
+        step.model_copy(update={"evidence_expectation": step_evidence_expectation})
+        for step in steps
+    ]
     permissions: list[d.Ref] = []
     if actor is not None:
         mappings = [
@@ -590,7 +620,13 @@ def _case_from_scenario(
             )
         )
     materialized: d.TestCase | None = None
-    if readiness == "READY_WITH_REVIEW" and path and oracle and oracle.normative:
+    if (
+        readiness == "READY_WITH_REVIEW"
+        and not risk_review_required
+        and path
+        and oracle
+        and oracle.normative
+    ):
         materialized = d.TestCase(
             id=case_id,
             project_id=model.project_id,
@@ -670,10 +706,14 @@ def _case_from_scenario(
         blocked_rule="Required evidence, preparation, action, or observation cannot be completed.",
         cleanup=cleanup,
         isolation=isolation,
-        evidence_expectations=["Record the failed or blocked step and relevant observation."],
+        evidence_expectations=evidence_expectations,
         readiness=readiness,
         blocking_notes=sorted(set(blockers)),
-        review_status="NOT_REQUIRED" if readiness == "READY" else "REVIEW_REQUIRED",
+        review_status=(
+            "NOT_REQUIRED"
+            if readiness == "READY" and not risk_review_required
+            else "REVIEW_REQUIRED"
+        ),
         rationale="Generated from an explicitly selected M2 scenario without adding behavior.",
         materialized_test=materialized,
     )
@@ -1091,10 +1131,12 @@ def generate_m3(
         if item.disposition in {"SELECTED", "EXPLORATORY"}
     }
     scenarios = [item for item in analysis.scenarios if item.id in selected][: config.max_cases]
+    risks = {item.source_risk.id: item for item in analysis.risks}
     cases: list[GeneratedCaseProposal] = []
     generated_oracles: list[d.Oracle] = []
     for scenario in scenarios:
-        case, oracle = _case_from_scenario(scenario, model, config)
+        risk = risks.get(scenario.source_risk.id) if scenario.source_risk else None
+        case, oracle = _case_from_scenario(scenario, model, config, risk)
         cases.append(case)
         if oracle is not None:
             generated_oracles.append(oracle)
