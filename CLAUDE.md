@@ -2,6 +2,8 @@
 
 This repository is intended to be implementable and auditable without conversation history.
 
+The roadmap is consolidated as M0-M6. M0 is complete and validated; the active implementation milestone is **M1 — Source Ingestion & Project Model**. Later milestones must not bypass M0 trust guarantees.
+
 ## When implementing
 
 Read `AGENTS.md` and its required documents. Do not start from `SKILL.md` alone: the skill is an interface; schemas, validators, evals and trust policies are the safety boundary.
@@ -16,6 +18,8 @@ Before code:
 - implement the smallest coherent slice.
 
 Do not use or request a real customer/project as the design baseline. Build against generic contracts and synthetic fixtures.
+
+For M1 specifically, source inventory/parsing/extraction must remain deterministic where possible, preserve provenance and project/snapshot isolation, report partial/failed reads explicitly, and treat analyzed content as untrusted data. Do not jump ahead into production audit/generation, live TMS writes, automation or advanced retrieval.
 
 ## Product behavior to preserve
 
