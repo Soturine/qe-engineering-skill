@@ -2,8 +2,15 @@ import json
 
 import yaml
 
+from qe_skill import domain as d
 from qe_skill.m2 import analyze_project
-from qe_skill.m3 import generate_m3
+from qe_skill.m3 import (
+    DraftSupportedText,
+    DraftTestData,
+    generate_m3,
+    propose_parameters,
+    propose_shared_steps,
+)
 from qe_skill.m3_render import (
     ReportTheme,
     render_canonical,
@@ -82,6 +89,47 @@ def test_brownfield_original_and_proposed_are_visible() -> None:
     page = render_html(report)
     assert "Original" in page and "Proposed" in page
     assert "Historical asset modified? NO" in page
+
+
+def test_shared_step_and_parameter_sections_link_to_using_cases() -> None:
+    from .helpers import ref
+    from .test_m3_candidates import proposal
+
+    _, _, report = _report()
+    first, second = proposal("render-case-a"), proposal("render-case-b")
+    first.data = [
+        DraftTestData(
+            name="record identifier",
+            properties=DraftSupportedText(
+                text="Use the prepared identifier.", claims=[ref("claim")]
+            ),
+            preparation=DraftSupportedText(text="Record it during setup.", claims=[ref("claim")]),
+        )
+    ]
+    report.cases = [first, second]
+    report.shared_steps = propose_shared_steps(report.cases)
+    report.parameters = propose_parameters(report.cases)
+    first.shared_step_candidates = [
+        d.Ref(
+            id=report.shared_steps[0].id,
+            project_id=first.project_id,
+            snapshot_id=first.snapshot_id,
+        )
+    ]
+    first.parameter_candidates = [
+        d.Ref(
+            id=report.parameters[0].id,
+            project_id=first.project_id,
+            snapshot_id=first.snapshot_id,
+        )
+    ]
+
+    page = render_html(report)
+    assert f'id="shared-{report.shared_steps[0].id}"' in page
+    assert f'href="#shared-{report.shared_steps[0].id}"' in page
+    assert f'id="parameter-{report.parameters[0].id}"' in page
+    assert f'href="#parameter-{report.parameters[0].id}"' in page
+    assert "Used by:" in page
 
 
 def _report():
