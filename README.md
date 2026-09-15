@@ -362,7 +362,7 @@ The project is deliberately incremental. The earlier fine-grained M0-M10 plan wa
 - **M0** — Foundations & Trust Model ✅
 - **M1** — Source Ingestion & Project Model
 - **M2** — Audit, Traceability & Risk Analysis ✅
-- **M3** — Test Generation & Improvement
+- **M3** — Test Generation & Improvement (partial; active)
 - **M4** — Integrations & Production Agent Skill
 - **M5** — Automation & Execution Assistance
 - **M6** — Advanced Retrieval & Change Impact
@@ -425,8 +425,7 @@ Validation/research:
 
 ## Current implementation status
 
-**M2 Audit, Traceability & Risk Analysis is implemented and validated. M3 Test Generation &
-Improvement is the next active milestone.**
+**M2 is implemented and validated. M3 Test Generation & Improvement is partially implemented and remains the active milestone.**
 
 The executable package includes M0/M1 trust and ingestion behavior plus deterministic audit and
 traceability contracts, nominal versus atomic coverage, conservative existing-test/oracle/history
@@ -438,5 +437,4 @@ Install with `python -m pip install -r requirements-dev.lock`, followed by
 inventory, ingestion and analysis commands. See `docs/CLI.md` and the milestone evidence documents
 for contracts, reproduction evidence and limitations.
 
-M3 test generation, external integrations/publication, automation and advanced retrieval remain
-deferred. Read `docs/STATUS.md` for the authoritative current state.
+M3 authoring depth remains incomplete; external integrations/publication, automation and advanced retrieval remain deferred. Read `docs/STATUS.md` for the authoritative current state.

@@ -2,12 +2,12 @@
 
 ## Current stage
 
-**M2 - Audit, Traceability & Risk Analysis: implemented and validated.**
+**M3 - Test Generation & Improvement: partially implemented and locally validated.**
 
 M0 trust contracts and M1 ingestion boundaries remain binding. M2 adds deterministic audit,
 traceability, atomic coverage, risk/scenario analysis and proposal-only local reports. See
 `M2_EVIDENCE.md` for implemented semantics and validation evidence. Linux and Windows CI passed
-for the completed implementation. M3 is the next active milestone. No tag/release exists.
+for M2. M3 now has initial authoring, renderers and a local CLI, but remains active because all exit criteria are not met. See `M3_EVIDENCE.md`. No tag/release exists.
 
 ## Implemented
 
@@ -35,6 +35,7 @@ for the completed implementation. M3 is the next active milestone. No tag/releas
 - Evidence-activated risks and typed scenario universe with partition, boundary, decision,
   state-transition and bounded pairwise techniques.
 - Deterministic scenario dispositions and proposal-only JSON/Markdown audit outputs.
+- M3 draft/READY contracts, trust-safe oracle materialization, initial greenfield/brownfield/clone proposals, candidate contracts, renderers and local `generate` CLI.
 
 ## Current limitations
 
@@ -55,8 +56,7 @@ for the completed implementation. M3 is the next active milestone. No tag/releas
 
 ## Deferred by milestone
 
-- **M3 - Test Generation & Improvement:** production manual generator/rewriter, greenfield plans,
-  missing-case generation and step-by-step rewrite proposals.
+- **M3 remaining:** complete multi-step authoring, comprehensive brownfield replacement/diffs, broader candidate derivation and risk-proportional evidence policy.
 - **M4 - Integrations & Production Agent Skill:** Azure/MCP/TMS adapters, preview/sync,
   target-drift/read-back/idempotency execution and production Agent Skill packaging.
 - **M5 - Automation & Execution Assistance:** automation renderers and optional bounded

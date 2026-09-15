@@ -121,6 +121,8 @@ Exit expectation:
 
 ## M3 — Test Generation & Improvement
 
+Status: **partial; active milestone**. Initial contracts, trust-safe authoring, local renderers and CLI are implemented; full multi-step and comprehensive replacement generation remain required. See `M3_EVIDENCE.md`.
+
 Generate new manual tests and improve existing/cloned tests from the audited Project Model and scenario set.
 
 Deliver structured manual cases/proposals containing:

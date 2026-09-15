@@ -138,7 +138,7 @@ Do not collapse these into untyped arrays of strings if that would prevent M1/M2
 
 ## Manual Test Model design expectations
 
-Even before M3 generation exists, the contract should be compatible with a future manual case containing:
+The partial M3 implementation provides a draft/proposal boundary compatible with a manual case containing:
 
 - title/objective;
 - provenance/origin;

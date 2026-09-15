@@ -66,6 +66,15 @@ Authority defaults to `GUIDANCE`; claims therefore remain exploratory unless the
 classifies the source. Contract/policy authority requires an approved lifecycle to pass M0
 provenance validation. Project content cannot select authority or approve itself.
 
+## M3 local generation (partial)
+
+```powershell
+.\.venv\Scripts\python.exe -m qe_skill.cli generate .\output\project-model.json `
+  --analysis .\audit-output\m2-analysis-report.json --output-dir .\m3-output
+```
+
+The command rejects stale or foreign M2 input and writes the canonical report, Test Model JSON/YAML, Markdown/static HTML reviews, improvement proposals, Shared Step/Parameter candidates, traceability and manifest. It performs local proposal-only writes. Current authoring limitations are in `M3_EVIDENCE.md`.
+
 ## Supported semantic input
 
 Markdown/text yield document structure only. Python yields AST symbols/imports/decorators only.
