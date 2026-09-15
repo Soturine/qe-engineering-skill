@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "TraceabilityEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "REQUIREMENT_HAS_ATOM",
+            "REQUIREMENT_NOMINALLY_LINKED_TO_TEST",
+            "ATOM_COVERED_BY_TEST",
+            "STATE_COVERED_BY_TEST",
+            "ACTOR_COVERED_BY_TEST",
+            "CHANNEL_COVERED_BY_TEST",
+            "RISK_COVERED_BY_TEST",
+            "TEST_USES_ORACLE",
+            "RISK_PROPOSES_SCENARIO"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "target": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source",
+        "target",
+        "relation",
+        "evidence"
+      ],
+      "title": "TraceabilityEdge",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:traceability",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/TraceabilityEdge"
+      },
+      "title": "Edges",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "edges"
+  ],
+  "title": "TraceabilityGraph",
+  "type": "object"
+}

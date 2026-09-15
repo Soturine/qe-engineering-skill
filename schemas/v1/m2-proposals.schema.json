@@ -1,0 +1,182 @@
+{
+  "$defs": {
+    "ImprovementProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_operations": {
+          "const": false,
+          "default": false,
+          "title": "External Operations",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "ADD_COVERAGE",
+            "IMPROVE_PRECONDITIONS",
+            "CLARIFY_EXPECTED_RESULT",
+            "SPLIT_GROUPED_ORACLE",
+            "PARAMETERIZE_DATA",
+            "ADD_CLEANUP",
+            "ADD_TRACEABILITY",
+            "MARK_AMBIGUITY",
+            "REVIEW_STALE_OR_OBSOLETE",
+            "CREATE_REVISION_OR_REPLACEMENT",
+            "ADD_RISK_SCENARIO",
+            "SHARED_STEP_CANDIDATE"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposal_only": {
+          "const": true,
+          "default": true,
+          "title": "Proposal Only",
+          "type": "boolean"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "related": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "asset",
+        "kind",
+        "rationale",
+        "related"
+      ],
+      "title": "ImprovementProposal",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:m2-proposals",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "external_operations": {
+      "const": false,
+      "default": false,
+      "title": "External Operations",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposal_only": {
+      "const": true,
+      "default": true,
+      "title": "Proposal Only",
+      "type": "boolean"
+    },
+    "proposals": {
+      "items": {
+        "$ref": "#/$defs/ImprovementProposal"
+      },
+      "title": "Proposals",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "proposals"
+  ],
+  "title": "ProposalSet",
+  "type": "object"
+}

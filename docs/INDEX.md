@@ -8,7 +8,7 @@ Use this page as the canonical reading map.
 2. `../AGENTS.md` — implementation contract for coding agents.
 3. `ENGINEERING_CONSTITUTION.md` — non-negotiable engineering principles.
 4. `IMPLEMENTATION_SPEC.md` — implemented M0/M1 build boundaries.
-5. `M0_EVIDENCE.md` and `M1_EVIDENCE.md` — executable milestone evidence.
+5. `M0_EVIDENCE.md`, `M1_EVIDENCE.md` and `M2_EVIDENCE.md` — executable milestone evidence.
 6. `ROADMAP.md` — milestone sequence and exit criteria.
 7. `STATUS.md` — what is documented versus actually implemented.
 
@@ -48,6 +48,7 @@ Use this page as the canonical reading map.
 - `EVAL_STRATEGY.md`
 - `M0_EVIDENCE.md`
 - `M1_EVIDENCE.md`
+- `M2_EVIDENCE.md`
 - `AUDIT_GUIDE.md`
 - `AI_IMPLEMENTATION_GUIDE.md`
 - `../CLAUDE.md`

@@ -30,6 +30,7 @@ class ProjectBuild(d.Artifact):
 COLLECTIONS = frozenset(
     {
         "requirements",
+        "decision_rules",
         "atomic_criteria",
         "entities",
         "fields",
@@ -192,6 +193,17 @@ def _build_structured_node(
         return d.Requirement.model_validate(
             {**common, "kind": "requirement", "lifecycle": record.get("lifecycle", "unknown")}
         )
+    if collection == "decision_rules":
+        action_id = _optional_text(record.get("action_id"))
+        return d.DecisionRule.model_validate(
+            {
+                **common,
+                "kind": "decision_rule",
+                "conditions": rs(record.get("condition_ids"), "condition_ids"),
+                "outcome": r(record.get("outcome_claim_id"), "outcome_claim_id"),
+                "action": r(action_id, "action_id") if action_id else None,
+            }
+        )
     if collection == "atomic_criteria":
         return d.AtomicCriterion.model_validate(
             {
@@ -238,6 +250,10 @@ def _build_structured_node(
                 **common,
                 "kind": "constraint",
                 "statement": _text(record.get("statement"), "statement"),
+                "value_type": record.get("value_type", "unknown"),
+                "minimum": record.get("minimum"),
+                "maximum": record.get("maximum"),
+                "partitions": _strings(record.get("partitions"), "partitions"),
             }
         )
     if collection == "relationships":
@@ -425,6 +441,17 @@ def _build_structured_node(
             }
         )
     if collection == "existing_tests":
+        ref_fields = {
+            "requirement_ids": "requirement_ids",
+            "criterion_ids": "criterion_ids",
+            "state_ids": "state_ids",
+            "channel_ids": "channel_ids",
+            "risk_ids": "risk_ids",
+            "oracle_ids": "oracle_ids",
+            "path_ids": "path_ids",
+            "source_assumption_refs": "source_assumption_ids",
+        }
+        actor_id = _optional_text(record.get("actor_id"))
         return d.ExistingTest.model_validate(
             {
                 **common,
@@ -432,6 +459,20 @@ def _build_structured_node(
                 "historical": _historical(record.get("historical")).model_dump(),
                 "original_text": _text(record.get("original_text"), "original_text"),
                 "classification": record.get("classification", "UNKNOWN"),
+                "objective": _optional_text(record.get("objective")),
+                **{target: rs(record.get(source), source) for target, source in ref_fields.items()},
+                "actor_id": r(actor_id, "actor_id") if actor_id else None,
+                "layer": _optional_text(record.get("layer")),
+                "data_partition": _optional_text(record.get("data_partition")),
+                "preconditions": _strings(record.get("preconditions"), "preconditions"),
+                "actions": _strings(record.get("actions"), "actions"),
+                "expected_results": _strings(record.get("expected_results"), "expected_results"),
+                "cleanup": _strings(record.get("cleanup"), "cleanup"),
+                "environment": _optional_text(record.get("environment")),
+                "measurement_protocol": _optional_text(record.get("measurement_protocol")),
+                "parameterized_data": record.get("parameterized_data"),
+                "intentional_regression": record.get("intentional_regression", False),
+                "quality_flags": _strings(record.get("quality_flags"), "quality_flags"),
             }
         )
     if collection == "existing_results":

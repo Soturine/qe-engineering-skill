@@ -1,0 +1,1201 @@
+{
+  "$defs": {
+    "AtomCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "atom": {
+          "$ref": "#/$defs/Ref"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "requirement": {
+          "$ref": "#/$defs/Ref"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "UNCOVERED",
+            "NOMINALLY_LINKED",
+            "PARTIALLY_COVERED",
+            "BEHAVIORALLY_COVERED",
+            "BLOCKED_UNKNOWN",
+            "CONFLICTING"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "requirement",
+        "atom",
+        "tests",
+        "state",
+        "rationale"
+      ],
+      "title": "AtomCoverage",
+      "type": "object"
+    },
+    "AtomicityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "atoms": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Atoms",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "requirement": {
+          "$ref": "#/$defs/Ref"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "EXPLICIT",
+            "NO_EXPLICIT_ATOMS",
+            "CONFLICTING"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "requirement",
+        "atoms",
+        "status",
+        "rationale",
+        "evidence",
+        "review_required"
+      ],
+      "title": "AtomicityResult",
+      "type": "object"
+    },
+    "AuditFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "enum": [
+                "VALID_AS_IS",
+                "VALID_WITH_IMPROVEMENT",
+                "PARTIAL_COVERAGE",
+                "AMBIGUOUS",
+                "BLOCKED_BY_SOURCE",
+                "DUPLICATE_INTENTIONAL",
+                "DUPLICATE_REDUNDANT",
+                "CONFLICTING",
+                "STALE",
+                "OBSOLETE_CANDIDATE",
+                "UNTRACEABLE",
+                "NON_EXECUTABLE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classification"
+        },
+        "confidence": {
+          "enum": [
+            "DETERMINISTIC",
+            "REVIEW_REQUIRED"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "human_clarification_required": {
+          "title": "Human Clarification Required",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "impacted": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Impacted",
+          "type": "array"
+        },
+        "kind": {
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposed_action": {
+          "minLength": 1,
+          "title": "Proposed Action",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "supporting_evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Supporting Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "asset",
+        "kind",
+        "rationale",
+        "supporting_evidence",
+        "impacted",
+        "severity",
+        "confidence",
+        "proposed_action",
+        "human_clarification_required"
+      ],
+      "title": "AuditFinding",
+      "type": "object"
+    },
+    "CoverageReport": {
+      "additionalProperties": false,
+      "properties": {
+        "atoms": {
+          "items": {
+            "$ref": "#/$defs/AtomCoverage"
+          },
+          "title": "Atoms",
+          "type": "array"
+        },
+        "behaviorally_covered_atoms": {
+          "minimum": 0,
+          "title": "Behaviorally Covered Atoms",
+          "type": "integer"
+        },
+        "denominator_reliable": {
+          "title": "Denominator Reliable",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "limitation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limitation"
+        },
+        "nominal_linked_requirements": {
+          "minimum": 0,
+          "title": "Nominal Linked Requirements",
+          "type": "integer"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "total_explicit_atoms": {
+          "minimum": 0,
+          "title": "Total Explicit Atoms",
+          "type": "integer"
+        },
+        "total_requirements": {
+          "minimum": 0,
+          "title": "Total Requirements",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "atoms",
+        "nominal_linked_requirements",
+        "total_requirements",
+        "behaviorally_covered_atoms",
+        "total_explicit_atoms",
+        "denominator_reliable"
+      ],
+      "title": "CoverageReport",
+      "type": "object"
+    },
+    "ImprovementProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_operations": {
+          "const": false,
+          "default": false,
+          "title": "External Operations",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "ADD_COVERAGE",
+            "IMPROVE_PRECONDITIONS",
+            "CLARIFY_EXPECTED_RESULT",
+            "SPLIT_GROUPED_ORACLE",
+            "PARAMETERIZE_DATA",
+            "ADD_CLEANUP",
+            "ADD_TRACEABILITY",
+            "MARK_AMBIGUITY",
+            "REVIEW_STALE_OR_OBSOLETE",
+            "CREATE_REVISION_OR_REPLACEMENT",
+            "ADD_RISK_SCENARIO",
+            "SHARED_STEP_CANDIDATE"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposal_only": {
+          "const": true,
+          "default": true,
+          "title": "Proposal Only",
+          "type": "boolean"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "related": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "asset",
+        "kind",
+        "rationale",
+        "related"
+      ],
+      "title": "ImprovementProposal",
+      "type": "object"
+    },
+    "OracleSupportFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expected_result_index": {
+          "minimum": 0,
+          "title": "Expected Result Index",
+          "type": "integer"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "SUPPORTED",
+            "SUPPORTED_BUT_GROUPED",
+            "IMPLEMENTATION_DERIVED_ONLY",
+            "CONFLICTING",
+            "STALE",
+            "AMBIGUOUS",
+            "UNSUPPORTED",
+            "BLOCKED_BY_SOURCE"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "test": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "test",
+        "oracle",
+        "expected_result_index",
+        "status",
+        "rationale",
+        "evidence"
+      ],
+      "title": "OracleSupportFinding",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "RiskAnalysisRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "affected": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Affected",
+          "type": "array"
+        },
+        "category": {
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        },
+        "detectability": {
+          "default": "unknown",
+          "title": "Detectability",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "impact": {
+          "minLength": 1,
+          "title": "Impact",
+          "type": "string"
+        },
+        "likelihood": {
+          "default": "unknown",
+          "title": "Likelihood",
+          "type": "string"
+        },
+        "origin": {
+          "const": "RISK",
+          "default": "RISK",
+          "title": "Origin",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_risk": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source_risk",
+        "category",
+        "affected",
+        "evidence",
+        "rationale",
+        "impact",
+        "review_required"
+      ],
+      "title": "RiskAnalysisRecord",
+      "type": "object"
+    },
+    "ScenarioDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "disposition": {
+          "enum": [
+            "SELECTED",
+            "MERGED",
+            "PARAMETERIZED_CANDIDATE",
+            "COVERED_BY_ANOTHER_LAYER",
+            "DEFERRED",
+            "EXPLORATORY",
+            "BLOCKED",
+            "REJECTED_UNSUPPORTED_OR_REDUNDANT"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "scenario": {
+          "$ref": "#/$defs/Ref"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "scenario",
+        "disposition",
+        "rationale"
+      ],
+      "title": "ScenarioDisposition",
+      "type": "object"
+    },
+    "ScenarioRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "constraint_values": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraint Values",
+          "type": "array"
+        },
+        "data_partition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Partition"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "oracle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "origin": {
+          "enum": [
+            "CONTRACT",
+            "IMPLEMENTATION",
+            "ORGANIZATIONAL_POLICY",
+            "RISK",
+            "EXPLORATORY"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "pre_state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "readiness": {
+          "enum": [
+            "READY_FOR_M3",
+            "REVIEW_REQUIRED",
+            "EXPLORATORY",
+            "BLOCKED"
+          ],
+          "title": "Readiness",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_atom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_requirement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_risk": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stimulus": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "technique": {
+          "enum": [
+            "CRITERION",
+            "EQUIVALENCE_PARTITION",
+            "BOUNDARY_VALUE",
+            "DECISION_TABLE",
+            "STATE_TRANSITION",
+            "PAIRWISE",
+            "RISK_PACK"
+          ],
+          "title": "Technique",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "origin",
+        "technique",
+        "rationale",
+        "readiness"
+      ],
+      "title": "ScenarioRecord",
+      "type": "object"
+    },
+    "TraceabilityEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "REQUIREMENT_HAS_ATOM",
+            "REQUIREMENT_NOMINALLY_LINKED_TO_TEST",
+            "ATOM_COVERED_BY_TEST",
+            "STATE_COVERED_BY_TEST",
+            "ACTOR_COVERED_BY_TEST",
+            "CHANNEL_COVERED_BY_TEST",
+            "RISK_COVERED_BY_TEST",
+            "TEST_USES_ORACLE",
+            "RISK_PROPOSES_SCENARIO"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "target": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source",
+        "target",
+        "relation",
+        "evidence"
+      ],
+      "title": "TraceabilityEdge",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:m2-analysis-report",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "atomicity": {
+      "items": {
+        "$ref": "#/$defs/AtomicityResult"
+      },
+      "title": "Atomicity",
+      "type": "array"
+    },
+    "clone_classifications": {
+      "additionalProperties": {
+        "enum": [
+          "REUSABLE",
+          "REQUIRES_UPDATE",
+          "OBSOLETE_CANDIDATE",
+          "DUPLICATE",
+          "CONFLICTING",
+          "UNKNOWN"
+        ],
+        "type": "string"
+      },
+      "title": "Clone Classifications",
+      "type": "object"
+    },
+    "coverage": {
+      "$ref": "#/$defs/CoverageReport"
+    },
+    "deterministic": {
+      "const": true,
+      "default": true,
+      "title": "Deterministic",
+      "type": "boolean"
+    },
+    "dispositions": {
+      "items": {
+        "$ref": "#/$defs/ScenarioDisposition"
+      },
+      "title": "Dispositions",
+      "type": "array"
+    },
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/AuditFinding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "historical_assets_mutated": {
+      "const": false,
+      "default": false,
+      "title": "Historical Assets Mutated",
+      "type": "boolean"
+    },
+    "history_summary": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "type": "object"
+      },
+      "title": "History Summary",
+      "type": "object"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "input_model_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Model Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "mode": {
+      "enum": [
+        "GREENFIELD",
+        "BROWNFIELD",
+        "CLONE_REUSE"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "network_used": {
+      "const": false,
+      "default": false,
+      "title": "Network Used",
+      "type": "boolean"
+    },
+    "oracle_findings": {
+      "items": {
+        "$ref": "#/$defs/OracleSupportFinding"
+      },
+      "title": "Oracle Findings",
+      "type": "array"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposals": {
+      "items": {
+        "$ref": "#/$defs/ImprovementProposal"
+      },
+      "title": "Proposals",
+      "type": "array"
+    },
+    "risks": {
+      "items": {
+        "$ref": "#/$defs/RiskAnalysisRecord"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "scenarios": {
+      "items": {
+        "$ref": "#/$defs/ScenarioRecord"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_completeness": {
+      "enum": [
+        "COMPLETE",
+        "SCOPED_COMPLETE",
+        "PARTIAL",
+        "INVALID"
+      ],
+      "title": "Source Completeness",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "INVALID"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "traceability": {
+      "items": {
+        "$ref": "#/$defs/TraceabilityEdge"
+      },
+      "title": "Traceability",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "mode",
+    "status",
+    "source_completeness",
+    "atomicity",
+    "traceability",
+    "coverage",
+    "findings",
+    "oracle_findings",
+    "history_summary",
+    "clone_classifications",
+    "risks",
+    "scenarios",
+    "dispositions",
+    "proposals",
+    "limitations",
+    "input_model_hash"
+  ],
+  "title": "M2AnalysisReport",
+  "type": "object"
+}

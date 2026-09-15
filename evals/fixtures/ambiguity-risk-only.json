@@ -389,11 +389,15 @@
         ],
         "id": "constraint",
         "kind": "constraint",
+        "maximum": null,
+        "minimum": null,
         "name": "constraint",
+        "partitions": [],
         "project_id": "synthetic",
         "schema_version": "1.0",
         "snapshot_id": "v1",
-        "statement": "The synthetic identifier is required."
+        "statement": "The synthetic identifier is required.",
+        "value_type": "unknown"
       },
       {
         "aliases": [],

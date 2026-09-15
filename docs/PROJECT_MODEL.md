@@ -319,6 +319,19 @@ scenario:
 
 Existing tests are evidence assets and coverage candidates; they are not authoritative merely because they exist.
 
+For deterministic M2 audit, an existing-test node may carry explicit structured facts alongside
+its immutable historical identity and original text: objective, requirement/criterion links,
+actor, states, channels, risks, oracle and verified-path references, layer, data partition,
+preconditions, actions, Expected Results, cleanup, environment, measurement protocol,
+parameterization/intentional-regression markers and explicit quality flags. These fields are
+operator/source evidence; M2 does not infer them from arbitrary historical prose. Audit
+classifications and proposals are separate output artifacts and do not rewrite the node.
+
+Constraints may explicitly carry numeric/length/cardinality minimum/maximum values and named
+equivalence partitions. Decision rules may carry explicit condition, outcome-claim and optional
+action references. M2 uses these structured fields for bounded boundary, partition and decision
+scenario analysis; missing structure is not guessed.
+
 A generated Test Model should reference:
 
 - objective;

@@ -188,6 +188,10 @@ class Node(Artifact):
 class Constraint(Node):
     kind: Literal["constraint"] = "constraint"
     statement: Text
+    value_type: Literal["integer", "number", "date", "length", "cardinality", "unknown"] = "unknown"
+    minimum: int | float | None = None
+    maximum: int | float | None = None
+    partitions: list[Text] = Field(default_factory=list)
 
 
 class Entity(Node):
@@ -352,6 +356,13 @@ class Requirement(Node):
     lifecycle: Literal["draft", "approved", "active", "superseded", "deprecated", "unknown"]
 
 
+class DecisionRule(Node):
+    kind: Literal["decision_rule"] = "decision_rule"
+    conditions: list[Ref] = Field(min_length=1)
+    outcome: Ref
+    action: Ref | None = None
+
+
 class AtomicCriterion(Node):
     kind: Literal["atomic_criterion"] = "atomic_criterion"
     requirement: Ref
@@ -449,6 +460,37 @@ class ExistingTest(Node):
         "REQUIRES_UPDATE",
         "REUSABLE",
     ]
+    objective: Text | None = None
+    requirement_ids: list[Ref] = Field(default_factory=list)
+    criterion_ids: list[Ref] = Field(default_factory=list)
+    actor_id: Ref | None = None
+    state_ids: list[Ref] = Field(default_factory=list)
+    channel_ids: list[Ref] = Field(default_factory=list)
+    risk_ids: list[Ref] = Field(default_factory=list)
+    oracle_ids: list[Ref] = Field(default_factory=list)
+    path_ids: list[Ref] = Field(default_factory=list)
+    layer: Text | None = None
+    data_partition: Text | None = None
+    preconditions: list[Text] = Field(default_factory=list)
+    actions: list[Text] = Field(default_factory=list)
+    expected_results: list[Text] = Field(default_factory=list)
+    cleanup: list[Text] = Field(default_factory=list)
+    environment: Text | None = None
+    measurement_protocol: Text | None = None
+    parameterized_data: bool | None = None
+    intentional_regression: bool = False
+    source_assumption_refs: list[Ref] = Field(default_factory=list)
+    quality_flags: list[
+        Literal[
+            "AMBIGUOUS_ACTION",
+            "AMBIGUOUS_RESULT",
+            "CONFLICTING_EXPECTED_RESULT",
+            "GROUPED_ORACLES",
+            "HARD_CODED_DATA",
+            "MEASUREMENT_SENSITIVE",
+            "REPEATED_PREPARATION",
+        ]
+    ] = Field(default_factory=list)
 
 
 class ExistingResult(Node):
@@ -496,6 +538,7 @@ SemanticNode = Annotated[
     | Interface
     | Integration
     | Requirement
+    | DecisionRule
     | AtomicCriterion
     | Invariant
     | Ambiguity

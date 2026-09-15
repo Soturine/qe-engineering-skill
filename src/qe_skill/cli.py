@@ -14,6 +14,16 @@ from qe_skill.domain import ProjectModel, SourceLedger
 from qe_skill.ingestion import IngestionReport, ingest_local
 from qe_skill.integrity import validate_project_model
 from qe_skill.inventory import InventoryLimits, inventory_sources, ledger_from_inventory
+from qe_skill.m2 import (
+    AnalysisConfig,
+    AuditFindings,
+    ProposalSet,
+    RiskAnalysis,
+    ScenarioUniverse,
+    TraceabilityGraph,
+    analyze_project,
+    validate_analysis_report,
+)
 from qe_skill.parsers import ParserLimits
 from qe_skill.schemas import schema_text
 from qe_skill.validation import Issue, Result, TrustContext, timestamp_valid, validate_ledger
@@ -145,6 +155,84 @@ def write_ingestion_outputs(output: Path, report: IngestionReport) -> None:
     write_json(output / "ingestion-report.json", report.model_dump(mode="json"))
 
 
+def write_m2_outputs(output: Path, report: object) -> None:
+    from qe_skill.m2 import M2AnalysisReport
+
+    if not isinstance(report, M2AnalysisReport):
+        raise InputFailure("MODEL_SCHEMA", "M2 output has an unexpected contract.")
+    try:
+        if output.exists() and (output.is_symlink() or not output.is_dir()):
+            raise InputFailure("SRC_OUTPUT", "Output must be a regular local directory.")
+        output.mkdir(parents=True, exist_ok=True)
+    except OSError as error:
+        raise InputFailure("SRC_OUTPUT", "Local output directory could not be created.") from error
+    artifacts = {
+        "traceability.json": TraceabilityGraph(
+            id="m2-traceability",
+            project_id=report.project_id,
+            snapshot_id=report.snapshot_id,
+            edges=report.traceability,
+        ),
+        "coverage-report.json": report.coverage,
+        "audit-findings.json": AuditFindings(
+            id="m2-audit-findings",
+            findings=report.findings,
+            oracle_findings=report.oracle_findings,
+            history_summary=report.history_summary,
+            project_id=report.project_id,
+            snapshot_id=report.snapshot_id,
+        ),
+        "risk-analysis.json": RiskAnalysis(
+            id="m2-risk-analysis",
+            project_id=report.project_id,
+            snapshot_id=report.snapshot_id,
+            risks=report.risks,
+        ),
+        "scenario-universe.json": ScenarioUniverse(
+            id="m2-scenario-universe",
+            scenarios=report.scenarios,
+            dispositions=report.dispositions,
+            project_id=report.project_id,
+            snapshot_id=report.snapshot_id,
+        ),
+        "proposals.json": ProposalSet(
+            id="m2-proposals",
+            project_id=report.project_id,
+            snapshot_id=report.snapshot_id,
+            proposals=report.proposals,
+        ),
+        "m2-analysis-report.json": report,
+    }
+    for name, artifact in artifacts.items():
+        write_json(output / name, artifact.model_dump(mode="json"))
+    coverage = report.coverage
+    lines = [
+        "# M2 audit report",
+        "",
+        f"- Status: `{report.status}`",
+        f"- Mode: `{report.mode}`",
+        f"- Source completeness: `{report.source_completeness}`",
+        "- Requirements nominally linked: "
+        f"{coverage.nominal_linked_requirements}/{coverage.total_requirements}",
+        "- Atoms behaviorally covered: "
+        f"{coverage.behaviorally_covered_atoms}/{coverage.total_explicit_atoms}",
+        f"- Existing-asset findings: {len(report.findings)}",
+        f"- Oracle findings: {len(report.oracle_findings)}",
+        f"- Risks: {len(report.risks)}",
+        f"- Scenario universe: {len(report.scenarios)}",
+        f"- Non-destructive proposals: {len(report.proposals)}",
+        "",
+        "Historical assets were not modified. Risk-derived scenarios remain non-contractual.",
+    ]
+    if report.limitations:
+        lines.extend(["", "## Known limitations", ""])
+        lines.extend(f"- {item}" for item in report.limitations)
+    try:
+        (output / "audit-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    except OSError as error:
+        raise InputFailure("SRC_OUTPUT", "Local audit report could not be written.") from error
+
+
 class Parser(argparse.ArgumentParser):
     def error(self, message: str) -> NoReturn:
         emit(Result([Issue("MODEL_COMMAND", "input", "Invalid command arguments; use --help.")]))
@@ -162,6 +250,7 @@ def main(argv: list[str] | None = None) -> int:
             "validate-test-case",
             "inventory",
             "ingest",
+            "analyze",
         ],
     )
     parser.add_argument(
@@ -199,8 +288,51 @@ def main(argv: list[str] | None = None) -> int:
         default="active",
     )
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--max-scenarios", type=int, default=100)
+    parser.add_argument("--max-pairwise-combinations", type=int, default=24)
     args = parser.parse_args(argv)
     try:
+        if args.command == "analyze":
+            if args.artifact_id or args.trusted_approvals:
+                raise InputFailure(
+                    "MODEL_COMMAND", "M2 analysis does not accept selection or approval."
+                )
+            value = read_json(args.file)
+            schema = json.loads(schema_text("project-model"))
+            if next(Draft202012Validator(schema).iter_errors(value), None) is not None:
+                raise InputFailure(
+                    "MODEL_SCHEMA", "Input does not satisfy the Project Model schema."
+                )
+            try:
+                config = AnalysisConfig(
+                    max_scenarios=args.max_scenarios,
+                    max_pairwise_combinations=args.max_pairwise_combinations,
+                )
+            except ValidationError as error:
+                raise InputFailure("MODEL_COMMAND", "M2 analysis limits are invalid.") from error
+            model = ProjectModel.model_validate(value)
+            try:
+                m2_report = analyze_project(model, config)
+            except ValueError as error:
+                raise InputFailure("MODEL_COMMAND", str(error)) from error
+            validation = validate_analysis_report(m2_report, model)
+            if args.output_dir:
+                write_m2_outputs(args.output_dir, m2_report)
+            emit_json(
+                {
+                    "schema_version": "1.0",
+                    "command": "analyze",
+                    "status": m2_report.status,
+                    "mode": m2_report.mode,
+                    "findings": len(m2_report.findings),
+                    "scenarios": len(m2_report.scenarios),
+                    "validation_issues": [asdict(issue) for issue in validation.issues],
+                    "output_dir": str(args.output_dir) if args.output_dir else None,
+                    "network_used": False,
+                    "publication_authorized": False,
+                }
+            )
+            return 0 if validation.valid and m2_report.status != "INVALID" else 1
         if args.command in {"inventory", "ingest"}:
             if args.artifact_id or args.trusted_approvals:
                 raise InputFailure(

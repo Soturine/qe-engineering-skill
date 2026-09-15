@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "RiskAnalysisRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "affected": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Affected",
+          "type": "array"
+        },
+        "category": {
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        },
+        "detectability": {
+          "default": "unknown",
+          "title": "Detectability",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "impact": {
+          "minLength": 1,
+          "title": "Impact",
+          "type": "string"
+        },
+        "likelihood": {
+          "default": "unknown",
+          "title": "Likelihood",
+          "type": "string"
+        },
+        "origin": {
+          "const": "RISK",
+          "default": "RISK",
+          "title": "Origin",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "review_required": {
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_risk": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source_risk",
+        "category",
+        "affected",
+        "evidence",
+        "rationale",
+        "impact",
+        "review_required"
+      ],
+      "title": "RiskAnalysisRecord",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:risk-analysis",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "risks": {
+      "items": {
+        "$ref": "#/$defs/RiskAnalysisRecord"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "risks"
+  ],
+  "title": "RiskAnalysis",
+  "type": "object"
+}

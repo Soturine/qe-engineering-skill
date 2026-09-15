@@ -19,6 +19,15 @@ from qe_skill.domain import (
 )
 from qe_skill.ingestion import IngestionReport
 from qe_skill.inventory import InventoryReport
+from qe_skill.m2 import (
+    AuditFindings,
+    CoverageReport,
+    M2AnalysisReport,
+    ProposalSet,
+    RiskAnalysis,
+    ScenarioUniverse,
+    TraceabilityGraph,
+)
 from qe_skill.parsers import ParseResult
 from qe_skill.project_builder import ProjectBuild
 
@@ -37,6 +46,13 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "source-extraction": ParseResult,
     "project-build": ProjectBuild,
     "ingestion-report": IngestionReport,
+    "m2-analysis-report": M2AnalysisReport,
+    "traceability": TraceabilityGraph,
+    "coverage-report": CoverageReport,
+    "audit-findings": AuditFindings,
+    "risk-analysis": RiskAnalysis,
+    "scenario-universe": ScenarioUniverse,
+    "m2-proposals": ProposalSet,
 }
 
 

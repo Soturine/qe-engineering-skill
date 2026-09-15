@@ -41,6 +41,27 @@ The console contains a compact structured summary, not raw source. Exit code 0 m
 scope completed; partial/invalid ingestion returns 1 and invalid arguments return 2. Local
 artifact writing is the only side effect. No network, external CRUD or publication exists.
 
+## M2 local analysis
+
+Analyze a versioned Project Model produced by ingestion or another validated local source:
+
+```powershell
+.\.venv\Scripts\python.exe -m qe_skill.cli analyze .\output\project-model.json `
+  --max-scenarios 100 --max-pairwise-combinations 24 `
+  --output-dir .\audit-output
+```
+
+The command validates the Project Model, rejects M6 regression mode, and writes typed
+`traceability.json`, `coverage-report.json`, `audit-findings.json`, `risk-analysis.json`,
+`scenario-universe.json`, `proposals.json`, `m2-analysis-report.json` and `audit-report.md`.
+Scenario limits are positive bounded integers. Output ordering and IDs are stable for identical
+input and configuration.
+
+Analysis is read-only. Historical tests/results remain unchanged, proposals contain no external
+operations, and risk scenarios without a defensible oracle remain exploratory. The report marks
+incomplete evidence and unreliable coverage denominators instead of claiming full certainty. The
+command does not create final manual Test Cases; that remains M3.
+
 Authority defaults to `GUIDANCE`; claims therefore remain exploratory unless the operator
 classifies the source. Contract/policy authority requires an approved lifecycle to pass M0
 provenance validation. Project content cannot select authority or approve itself.
@@ -56,9 +77,11 @@ security, component schemas and fields. It does not create business requirements
 Generic deterministic semantic normalization uses an explicit top-level `qe_model` object in
 JSON or YAML. Supported collections include requirements/criteria, entities/fields/constraints/
 relationships, actors/roles/groups/mappings/permissions, states/transitions/channels/actions/
-events, interfaces/integrations, invariants, ambiguities/conflicts/aliases, verified paths and
-existing test/result evidence. Each record needs a globally unique explicit `id`; relationships
-use explicit `*_id`/`*_ids` fields. Malformed records are reported rather than guessed.
+events, interfaces/integrations, invariants, decision rules, ambiguities/conflicts/aliases,
+verified paths and existing test/result evidence. M2 audit fields on existing tests and structured
+constraint bounds/partitions are accepted only when explicitly declared. Each record needs a
+globally unique explicit `id`; relationships use explicit `*_id`/`*_ids` fields. Malformed records
+are reported rather than guessed.
 
 ## M0 validation commands
 

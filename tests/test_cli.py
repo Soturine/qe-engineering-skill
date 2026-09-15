@@ -171,3 +171,43 @@ def test_m1_command_rejects_missing_identity_timestamp_and_bad_limits(
 ) -> None:
     assert main(["inventory", str(tmp_path), *extra]) == 1
     assert json.loads(capsys.readouterr().out)["issues"][0]["code"] == code
+
+
+def test_analyze_command_writes_only_typed_local_m2_artifacts(tmp_path: Path, capsys) -> None:
+    model = representative()
+    model.ledger.manifest.mode = "BROWNFIELD"
+    from tests.test_m2 import existing
+
+    model.nodes.append(existing("cli-existing"))
+    source = tmp_path / "project-model.json"
+    output = tmp_path / "audit-output"
+    source.write_text(model.model_dump_json(), encoding="utf-8")
+    assert (
+        main(
+            [
+                "analyze",
+                str(source),
+                "--output-dir",
+                str(output),
+                "--max-scenarios",
+                "4",
+            ]
+        )
+        == 0
+    )
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["status"] == "COMPLETE"
+    assert summary["network_used"] is False
+    assert {path.name for path in output.iterdir()} == {
+        "audit-findings.json",
+        "audit-report.md",
+        "coverage-report.json",
+        "m2-analysis-report.json",
+        "proposals.json",
+        "risk-analysis.json",
+        "scenario-universe.json",
+        "traceability.json",
+    }
+    audit = (output / "audit-report.md").read_text(encoding="utf-8")
+    assert "Historical assets were not modified" in audit
+    assert "Risk-derived scenarios remain non-contractual" in audit

@@ -361,7 +361,7 @@ The project is deliberately incremental. The earlier fine-grained M0-M10 plan wa
 
 - **M0** — Foundations & Trust Model ✅
 - **M1** — Source Ingestion & Project Model
-- **M2** — Audit, Traceability & Risk Analysis
+- **M2** — Audit, Traceability & Risk Analysis (implemented locally; CI validation pending)
 - **M3** — Test Generation & Improvement
 - **M4** — Integrations & Production Agent Skill
 - **M5** — Automation & Execution Assistance
@@ -380,7 +380,7 @@ Start here:
 - `docs/INDEX.md` — documentation map;
 - `docs/ENGINEERING_CONSTITUTION.md` — engineering rules;
 - `docs/IMPLEMENTATION_SPEC.md` — implementation plan;
-- `docs/M0_EVIDENCE.md` and `docs/M1_EVIDENCE.md` — milestone evidence;
+- `docs/M0_EVIDENCE.md`, `docs/M1_EVIDENCE.md` and `docs/M2_EVIDENCE.md` — milestone evidence;
 - `docs/ROADMAP.md` — milestone sequence;
 - `docs/STATUS.md` — documented vs implemented capability.
 
@@ -425,17 +425,18 @@ Validation/research:
 
 ## Current implementation status
 
-**M1 Source Ingestion & Project Model is implemented and validated.**
+**M2 Audit, Traceability & Risk Analysis is implemented and locally validated; cross-platform CI
+validation is pending.**
 
-The executable package includes M0's versioned trust contracts and gates plus bounded local
-source inventory, SHA-256 identity, Markdown/text/JSON/YAML/OpenAPI/Python parsing, typed
-extraction records, conservative semantic normalization and a local ingestion CLI. Arbitrary
-natural-language semantics are not claimed.
+The executable package includes M0/M1 trust and ingestion behavior plus deterministic audit and
+traceability contracts, nominal versus atomic coverage, conservative existing-test/oracle/history
+findings, clone revalidation, risk/scenario analysis, bounded scenario selection and local reports.
+Arbitrary natural-language semantics are not claimed.
 
 Install with `python -m pip install -r requirements-dev.lock`, followed by
 `python -m pip install --no-deps --no-build-isolation -e .`. Run `qe --help` for validation,
-inventory and ingestion commands. See `docs/CLI.md`, `docs/M0_EVIDENCE.md` and
-`docs/M1_EVIDENCE.md` for contracts, reproduction evidence and limitations.
+inventory, ingestion and analysis commands. See `docs/CLI.md` and the milestone evidence documents
+for contracts, reproduction evidence and limitations.
 
-M2 audit/risk analysis, M3 test generation, external integrations/publication, automation and
-advanced retrieval remain deferred. Read `docs/STATUS.md` for the authoritative current state.
+M3 test generation, external integrations/publication, automation and advanced retrieval remain
+deferred. Read `docs/STATUS.md` for the authoritative current state.

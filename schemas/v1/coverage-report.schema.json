@@ -1,0 +1,190 @@
+{
+  "$defs": {
+    "AtomCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "atom": {
+          "$ref": "#/$defs/Ref"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "requirement": {
+          "$ref": "#/$defs/Ref"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "UNCOVERED",
+            "NOMINALLY_LINKED",
+            "PARTIALLY_COVERED",
+            "BEHAVIORALLY_COVERED",
+            "BLOCKED_UNKNOWN",
+            "CONFLICTING"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "requirement",
+        "atom",
+        "tests",
+        "state",
+        "rationale"
+      ],
+      "title": "AtomCoverage",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:coverage-report",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "atoms": {
+      "items": {
+        "$ref": "#/$defs/AtomCoverage"
+      },
+      "title": "Atoms",
+      "type": "array"
+    },
+    "behaviorally_covered_atoms": {
+      "minimum": 0,
+      "title": "Behaviorally Covered Atoms",
+      "type": "integer"
+    },
+    "denominator_reliable": {
+      "title": "Denominator Reliable",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "limitation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Limitation"
+    },
+    "nominal_linked_requirements": {
+      "minimum": 0,
+      "title": "Nominal Linked Requirements",
+      "type": "integer"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "total_explicit_atoms": {
+      "minimum": 0,
+      "title": "Total Explicit Atoms",
+      "type": "integer"
+    },
+    "total_requirements": {
+      "minimum": 0,
+      "title": "Total Requirements",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "atoms",
+    "nominal_linked_requirements",
+    "total_requirements",
+    "behaviorally_covered_atoms",
+    "total_explicit_atoms",
+    "denominator_reliable"
+  ],
+  "title": "CoverageReport",
+  "type": "object"
+}

@@ -2,12 +2,13 @@
 
 ## Current stage
 
-**M1 - Source Ingestion & Project Model: implemented and validated.**
+**M2 - Audit, Traceability & Risk Analysis: implemented and locally validated; cross-platform CI
+validation pending.**
 
-M0 trust contracts remain binding. M1 adds deterministic local evidence accounting, bounded
-parsing, provenance-bearing extraction and conservative Project Model population. See
-`M1_EVIDENCE.md` for supported types, tests, boundaries and exit criteria. Linux and Windows CI
-passed for the completed implementation. M2 is the next active milestone. No tag/release exists.
+M0 trust contracts and M1 ingestion boundaries remain binding. M2 adds deterministic audit,
+traceability, atomic coverage, risk/scenario analysis and proposal-only local reports. See
+`M2_EVIDENCE.md` for implemented semantics and current validation evidence. M2 remains the active
+milestone until the pushed implementation passes Linux and Windows CI. No tag/release exists.
 
 ## Implemented
 
@@ -26,8 +27,17 @@ passed for the completed implementation. M2 is the next active milestone. No tag
 - Local `inventory` and `ingest` CLI commands with structured JSON artifacts and no network,
   model, TMS or publication dependency.
 - Synthetic unit/integration/adversarial evals and Linux/Windows CI.
+- Explicit greenfield, brownfield and clone/reuse M2 analysis dispatch.
+- Requirement atomicity review without natural-language decomposition.
+- Provenance-bearing criterion/test/state/actor/channel/risk/oracle traceability.
+- Separate nominal-linkage and atomic-behavioral coverage with denominator reliability.
+- Non-destructive existing-test, oracle, duplicate, stale, executability and history audit.
+- Clone destination-evidence revalidation and separate reuse classifications.
+- Evidence-activated risks and typed scenario universe with partition, boundary, decision,
+  state-transition and bounded pairwise techniques.
+- Deterministic scenario dispositions and proposal-only JSON/Markdown audit outputs.
 
-## M1 limitations
+## Current limitations
 
 - Arbitrary natural-language documents are structurally parsed but not promoted into domain
   semantics. Semantic normalization requires the explicit generic `qe_model` structure.
@@ -40,13 +50,12 @@ passed for the completed implementation. M2 is the next active milestone. No tag
   authorship, signatures, human reviewers or mutable remote systems.
 - Exact approval bindings are validated, but authentication, signing, durable storage and
   external enforcement remain deferred.
-- Existing tests/results are evidence nodes only; no audit or quality classification is inferred.
+- Existing-test audit consumes explicit structured audit facts; it does not infer semantics from
+  arbitrary historical prose.
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
 
 ## Deferred by milestone
 
-- **M2 - Audit, Traceability & Risk Analysis:** existing-test audit, atomic coverage, duplicate/
-  conflict/stale classification, risk/scenario generation and coverage optimization.
 - **M3 - Test Generation & Improvement:** production manual generator/rewriter, greenfield plans,
   missing-case generation and step-by-step rewrite proposals.
 - **M4 - Integrations & Production Agent Skill:** Azure/MCP/TMS adapters, preview/sync,

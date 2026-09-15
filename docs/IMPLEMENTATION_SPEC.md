@@ -110,6 +110,16 @@ false completeness. The implementation has no live model, retrieval database, ne
 resolution, TMS dependency or publication capability. See `M1_EVIDENCE.md` for exact supported
 types, automated evidence and limitations.
 
+## M2 implemented boundary
+
+M2 consumes the validated M1 Project Model through a deterministic local analyzer. It implements
+explicit mode dispatch, atomicity review, provenance-bearing traceability, nominal versus atomic
+coverage, conservative existing-test/oracle/history and clone audit, evidence-activated risk
+records, a typed scenario universe, bounded selection and non-destructive proposals. Structured
+partition, numeric boundary, decision-rule, state-transition and pairwise techniques operate only
+when explicit model evidence supports them. M2 creates no final Test Cases and performs no external
+writes. See `M2_EVIDENCE.md` for exact semantics and limitations.
+
 ## Project Model design expectations
 
 The M0 skeleton must leave room for structured, provenance-bearing nodes for:

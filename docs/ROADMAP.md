@@ -77,6 +77,8 @@ Optional semantic retrieval may be evaluated only after deterministic source acc
 
 ## M2 — Audit, Traceability & Risk Analysis
 
+Status: **implemented and locally validated; cross-platform CI validation pending**.
+
 Audit existing quality assets and build the defensible scenario/coverage picture before generating tests.
 
 Deliver traceability and existing-test audit:

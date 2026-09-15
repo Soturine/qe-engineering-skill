@@ -34,6 +34,10 @@ def representative_document() -> dict[str, object]:
                     "id": "constraint.identifier",
                     "name": "Identifier required",
                     "statement": "The identifier is required.",
+                    "value_type": "length",
+                    "minimum": 1,
+                    "maximum": 40,
+                    "partitions": ["valid", "empty"],
                 }
             ],
             "entities": [
@@ -178,6 +182,20 @@ def representative_document() -> dict[str, object]:
                     "historical": historical("test-1"),
                     "original_text": "Check record retention.",
                     "classification": "UNKNOWN",
+                    "objective": "Verify explicit record retention behavior.",
+                    "requirement_ids": ["requirement.retain"],
+                    "criterion_ids": ["criterion.retain"],
+                    "actor_id": "actor.operator",
+                    "state_ids": ["state.saved"],
+                    "channel_ids": ["channel.api"],
+                    "path_ids": ["path.save"],
+                    "layer": "manual-system",
+                    "data_partition": "valid",
+                    "preconditions": ["A new synthetic record exists."],
+                    "actions": ["Save the synthetic record."],
+                    "cleanup": ["Remove isolated synthetic data."],
+                    "environment": "synthetic",
+                    "parameterized_data": True,
                 }
             ],
             "existing_results": [
@@ -240,6 +258,14 @@ def test_representative_structured_project_builds_nontrivial_valid_model(tmp_pat
     )
     assert all(not claim.inferred for claim in model.claims)
     assert model.oracles == [] and model.tests.test_cases == []
+    existing = next(node for node in model.nodes if isinstance(node, d.ExistingTest))
+    assert existing.criterion_ids[0].id == "criterion.retain"
+    constraint = next(node for node in model.nodes if isinstance(node, d.Constraint))
+    assert (constraint.minimum, constraint.maximum, constraint.partitions) == (
+        1,
+        40,
+        ["valid", "empty"],
+    )
 
 
 def test_unstructured_code_does_not_become_domain_contract(tmp_path: Path) -> None:
