@@ -2,7 +2,9 @@
 
 Status: **DEFERRED_TO_M6**
 
-This catalog records future change-impact, orchestration, benchmark, retrieval and release-hardening work. It does not authorize implementation during M3 and does not change the M0–M2 trust model.
+This catalog records future change-impact, orchestration, benchmark, retrieval and release-hardening
+work. It does not authorize implementation during M4 and does not change the validated M0–M3 trust,
+audit, or generation contracts.
 
 ## M6-A — Change impact
 

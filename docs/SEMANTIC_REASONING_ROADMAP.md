@@ -1,6 +1,6 @@
 # Semantic Reasoning Roadmap
 
-Status: **planning only; no semantic provider is implemented in M3**
+Status: **M4 implementation plan; no semantic provider is implemented at the M4.H0 baseline**
 
 The target architecture is hybrid: deterministic structure first, bounded heuristic discovery
 second, and an optional semantic provider only where natural-language interpretation adds value.

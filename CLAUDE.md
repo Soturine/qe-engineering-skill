@@ -23,7 +23,10 @@ Before code:
 
 Do not use or request a real customer/project as the design baseline. Build against generic contracts and synthetic fixtures.
 
-For M3 specifically, generation must consume the approved M2 analysis/scenario artifacts, preserve provenance and existing history, and keep risk-derived output distinct from contract. Do not jump ahead into live TMS writes, automation or advanced retrieval.
+For M4 specifically, provider output remains a provenance-bound candidate and cannot self-authorize.
+External adapters must separate read/audit, preview, and explicitly approved synchronization, with
+drift detection, idempotency, read-back verification, and historical preservation. Do not jump
+ahead into M5 automation/execution or M6 change impact, benchmarks, and advanced retrieval.
 
 ## Product behavior to preserve
 
