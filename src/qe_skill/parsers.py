@@ -62,6 +62,7 @@ class ExtractionRecord(Artifact):
         "python_async_function",
         "python_import",
         "python_decorator",
+        "project_model_record",
     ]
     location: str = Field(min_length=1)
     span: SourceSpan | None = None
@@ -710,6 +711,41 @@ def _remote_references(value: JsonValue) -> list[str]:
     return sorted(found)
 
 
+def _project_model_records(
+    entry: InventoryEntry, value: JsonValue, line_count: int
+) -> list[ExtractionRecord]:
+    if not isinstance(value, dict):
+        return []
+    project_model = value.get("qe_model")
+    if not isinstance(project_model, dict):
+        return []
+    records: list[ExtractionRecord] = []
+    for collection in sorted(project_model):
+        items = project_model[collection]
+        if not isinstance(items, list):
+            continue
+        for index, item in enumerate(items):
+            if not isinstance(item, dict):
+                continue
+            label = item.get("id") or item.get("name") or str(index)
+            name = str(label) if isinstance(label, str | int) else str(index)
+            records.append(
+                _record(
+                    entry,
+                    kind="project_model_record",
+                    location=f"/qe_model/{_pointer(collection)}/{index}",
+                    text=f"{collection} record {name}",
+                    line_start=1,
+                    line_end=max(line_count, 1),
+                    name=name,
+                    attributes={"collection": collection, "value": item},
+                    method="explicit-project-model-structure",
+                    interpretation="explicit",
+                )
+            )
+    return records
+
+
 def parse_entry(
     root: Path,
     entry: InventoryEntry,
@@ -770,6 +806,7 @@ def parse_entry(
             bounded = _bounded_value(value, limits)
             records = _structured_records(entry, bounded, method, line_count, limits)
             records.extend(_openapi_records(entry, bounded, line_count))
+            records.extend(_project_model_records(entry, bounded, line_count))
             remote = _remote_references(bounded)
             if remote:
                 issues.append(

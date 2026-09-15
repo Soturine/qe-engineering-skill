@@ -58,7 +58,8 @@
             "python_function",
             "python_async_function",
             "python_import",
-            "python_decorator"
+            "python_decorator",
+            "project_model_record"
           ],
           "title": "Kind",
           "type": "string"

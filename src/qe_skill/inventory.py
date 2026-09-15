@@ -298,7 +298,6 @@ def inventory_sources(
                         relative,
                         **common,
                         size_bytes=before.st_size,
-                        modified_ns=before.st_mtime_ns,
                         state="LIMIT_EXCEEDED",
                         reason="File exceeds the configured byte limit; content was not read.",
                     )
@@ -323,7 +322,6 @@ def inventory_sources(
                     relative,
                     **common,
                     size_bytes=after.st_size,
-                    modified_ns=after.st_mtime_ns,
                     state="UNREADABLE",
                     reason="File mutated while it was being inventoried.",
                 )
@@ -335,7 +333,6 @@ def inventory_sources(
                 relative,
                 **common,
                 size_bytes=len(data),
-                modified_ns=after.st_mtime_ns,
                 content_hash=hashlib.sha256(data).hexdigest(),
                 state=state,
                 reason=None if state == "INVENTORIED" else "No M1 semantic parser for this type.",

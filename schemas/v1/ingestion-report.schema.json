@@ -634,6 +634,46 @@
       "title": "AtomicCriterion",
       "type": "object"
     },
+    "BuildIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "extraction_id": {
+          "minLength": 1,
+          "title": "Extraction Id",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "default": "error",
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "code",
+        "extraction_id",
+        "source",
+        "message"
+      ],
+      "title": "BuildIssue",
+      "type": "object"
+    },
     "Channel": {
       "additionalProperties": false,
       "properties": {
@@ -1446,6 +1486,147 @@
       "title": "Extraction",
       "type": "object"
     },
+    "ExtractionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Attributes",
+          "type": "object"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "extraction_method": {
+          "minLength": 1,
+          "title": "Extraction Method",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "interpretation": {
+          "enum": [
+            "explicit",
+            "structural",
+            "heuristic",
+            "unresolved"
+          ],
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "heading",
+            "paragraph",
+            "list_item",
+            "code_fence",
+            "structured_value",
+            "openapi_operation",
+            "openapi_parameter",
+            "openapi_response",
+            "openapi_schema",
+            "openapi_security",
+            "python_module",
+            "python_class",
+            "python_function",
+            "python_async_function",
+            "python_import",
+            "python_decorator",
+            "project_model_record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "location": {
+          "minLength": 1,
+          "title": "Location",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source",
+        "source_hash",
+        "kind",
+        "location",
+        "text",
+        "extraction_method",
+        "interpretation",
+        "inferred",
+        "confidence"
+      ],
+      "title": "ExtractionRecord",
+      "type": "object"
+    },
     "GeneratedTest": {
       "additionalProperties": false,
       "properties": {
@@ -1627,6 +1808,42 @@
         "content_hash"
       ],
       "title": "HistoricalIdentity",
+      "type": "object"
+    },
+    "IngestionIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "artifact_id",
+        "message",
+        "severity"
+      ],
+      "title": "IngestionIssue",
       "type": "object"
     },
     "Integration": {
@@ -1973,6 +2190,234 @@
       "title": "Invariant",
       "type": "object"
     },
+    "InventoryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "entry_kind": {
+          "enum": [
+            "file",
+            "directory",
+            "symlink"
+          ],
+          "title": "Entry Kind",
+          "type": "string"
+        },
+        "extension": {
+          "title": "Extension",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "modified_ns": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Ns"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "INVENTORIED",
+            "IGNORED",
+            "UNSUPPORTED",
+            "UNREADABLE",
+            "LIMIT_EXCEEDED",
+            "SYMLINK_ESCAPES_ROOT"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "symlink": {
+          "default": false,
+          "title": "Symlink",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "path",
+        "entry_kind",
+        "extension",
+        "source_type",
+        "state"
+      ],
+      "title": "InventoryEntry",
+      "type": "object"
+    },
+    "InventoryReport": {
+      "additionalProperties": false,
+      "properties": {
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/InventoryEntry"
+          },
+          "title": "Entries",
+          "type": "array"
+        },
+        "excludes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excludes",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "ignored_directories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ignored Directories",
+          "type": "array"
+        },
+        "includes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Includes",
+          "type": "array"
+        },
+        "inventory_complete": {
+          "title": "Inventory Complete",
+          "type": "boolean"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "limits": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Limits",
+          "type": "object"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "root": {
+          "minLength": 1,
+          "title": "Root",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "root",
+        "includes",
+        "excludes",
+        "limits",
+        "entries",
+        "ignored_directories",
+        "inventory_complete",
+        "issues"
+      ],
+      "title": "InventoryReport",
+      "type": "object"
+    },
+    "JsonValue": {},
     "ManualStep": {
       "additionalProperties": false,
       "properties": {
@@ -2312,6 +2757,105 @@
       "title": "Oracle",
       "type": "object"
     },
+    "ParseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "extractions": {
+          "items": {
+            "$ref": "#/$defs/ExtractionRecord"
+          },
+          "title": "Extractions",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "parser": {
+          "minLength": 1,
+          "title": "Parser",
+          "type": "string"
+        },
+        "parser_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Hash"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "PARSED",
+            "PARTIAL",
+            "FAILED",
+            "UNSUPPORTED",
+            "MUTATED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source",
+        "source_type",
+        "parser",
+        "status",
+        "extractions",
+        "issues"
+      ],
+      "title": "ParseResult",
+      "type": "object"
+    },
     "PathStep": {
       "additionalProperties": false,
       "properties": {
@@ -2423,6 +2967,264 @@
         "effect"
       ],
       "title": "Permission",
+      "type": "object"
+    },
+    "ProjectBuild": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/BuildIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "model": {
+          "$ref": "#/$defs/ProjectModel"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "BUILT",
+            "PARTIAL",
+            "FAILED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "status",
+        "model",
+        "issues"
+      ],
+      "title": "ProjectBuild",
+      "type": "object"
+    },
+    "ProjectModel": {
+      "additionalProperties": false,
+      "properties": {
+        "approvals": {
+          "items": {
+            "$ref": "#/$defs/Approval"
+          },
+          "title": "Approvals",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "ledger": {
+          "$ref": "#/$defs/SourceLedger"
+        },
+        "nodes": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "action": "#/$defs/Action",
+                "actor": "#/$defs/Actor",
+                "actor_mapping": "#/$defs/ActorMapping",
+                "alias": "#/$defs/Alias",
+                "ambiguity": "#/$defs/Ambiguity",
+                "atomic_criterion": "#/$defs/AtomicCriterion",
+                "channel": "#/$defs/Channel",
+                "conflict": "#/$defs/Conflict",
+                "constraint": "#/$defs/Constraint",
+                "entity": "#/$defs/Entity",
+                "event": "#/$defs/Event",
+                "existing_result": "#/$defs/ExistingResult",
+                "existing_test": "#/$defs/ExistingTest",
+                "field": "#/$defs/ModelField",
+                "generated_test": "#/$defs/GeneratedTest",
+                "group": "#/$defs/Group",
+                "integration": "#/$defs/Integration",
+                "interface": "#/$defs/Interface",
+                "invariant": "#/$defs/Invariant",
+                "permission": "#/$defs/Permission",
+                "relationship": "#/$defs/Relationship",
+                "requirement": "#/$defs/Requirement",
+                "risk": "#/$defs/Risk",
+                "role": "#/$defs/Role",
+                "scenario": "#/$defs/Scenario",
+                "state": "#/$defs/State",
+                "transition": "#/$defs/Transition",
+                "verified_path": "#/$defs/VerifiedPath"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Entity"
+              },
+              {
+                "$ref": "#/$defs/ModelField"
+              },
+              {
+                "$ref": "#/$defs/Constraint"
+              },
+              {
+                "$ref": "#/$defs/Relationship"
+              },
+              {
+                "$ref": "#/$defs/Actor"
+              },
+              {
+                "$ref": "#/$defs/Role"
+              },
+              {
+                "$ref": "#/$defs/Group"
+              },
+              {
+                "$ref": "#/$defs/ActorMapping"
+              },
+              {
+                "$ref": "#/$defs/Permission"
+              },
+              {
+                "$ref": "#/$defs/State"
+              },
+              {
+                "$ref": "#/$defs/Transition"
+              },
+              {
+                "$ref": "#/$defs/Channel"
+              },
+              {
+                "$ref": "#/$defs/Action"
+              },
+              {
+                "$ref": "#/$defs/Event"
+              },
+              {
+                "$ref": "#/$defs/Interface"
+              },
+              {
+                "$ref": "#/$defs/Integration"
+              },
+              {
+                "$ref": "#/$defs/Requirement"
+              },
+              {
+                "$ref": "#/$defs/AtomicCriterion"
+              },
+              {
+                "$ref": "#/$defs/Invariant"
+              },
+              {
+                "$ref": "#/$defs/Ambiguity"
+              },
+              {
+                "$ref": "#/$defs/Conflict"
+              },
+              {
+                "$ref": "#/$defs/Alias"
+              },
+              {
+                "$ref": "#/$defs/Risk"
+              },
+              {
+                "$ref": "#/$defs/Scenario"
+              },
+              {
+                "$ref": "#/$defs/ExistingTest"
+              },
+              {
+                "$ref": "#/$defs/ExistingResult"
+              },
+              {
+                "$ref": "#/$defs/GeneratedTest"
+              },
+              {
+                "$ref": "#/$defs/VerifiedPath"
+              }
+            ]
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "oracles": {
+          "items": {
+            "$ref": "#/$defs/Oracle"
+          },
+          "title": "Oracles",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposals": {
+          "items": {
+            "$ref": "#/$defs/Proposal"
+          },
+          "title": "Proposals",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "tests": {
+          "$ref": "#/$defs/TestModel"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "ledger",
+        "claims",
+        "oracles",
+        "nodes",
+        "tests"
+      ],
+      "title": "ProjectModel",
       "type": "object"
     },
     "Proposal": {
@@ -3363,6 +4165,92 @@
       "title": "SourceLedger",
       "type": "object"
     },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "column_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column End"
+        },
+        "column_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column Start"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "line_end": {
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "line_start",
+        "line_end"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
     "State": {
       "additionalProperties": false,
       "properties": {
@@ -4044,23 +4932,18 @@
       "type": "object"
     }
   },
-  "$id": "urn:qe-skill:1.0:project-model",
+  "$id": "urn:qe-skill:1.0:ingestion-report",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
-    "approvals": {
-      "items": {
-        "$ref": "#/$defs/Approval"
-      },
-      "title": "Approvals",
-      "type": "array"
+    "build": {
+      "$ref": "#/$defs/ProjectBuild"
     },
-    "claims": {
-      "items": {
-        "$ref": "#/$defs/Claim"
-      },
-      "title": "Claims",
-      "type": "array"
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
     },
     "id": {
       "minLength": 1,
@@ -4068,139 +4951,23 @@
       "title": "Id",
       "type": "string"
     },
+    "inventory": {
+      "$ref": "#/$defs/InventoryReport"
+    },
     "ledger": {
       "$ref": "#/$defs/SourceLedger"
     },
-    "nodes": {
-      "items": {
-        "discriminator": {
-          "mapping": {
-            "action": "#/$defs/Action",
-            "actor": "#/$defs/Actor",
-            "actor_mapping": "#/$defs/ActorMapping",
-            "alias": "#/$defs/Alias",
-            "ambiguity": "#/$defs/Ambiguity",
-            "atomic_criterion": "#/$defs/AtomicCriterion",
-            "channel": "#/$defs/Channel",
-            "conflict": "#/$defs/Conflict",
-            "constraint": "#/$defs/Constraint",
-            "entity": "#/$defs/Entity",
-            "event": "#/$defs/Event",
-            "existing_result": "#/$defs/ExistingResult",
-            "existing_test": "#/$defs/ExistingTest",
-            "field": "#/$defs/ModelField",
-            "generated_test": "#/$defs/GeneratedTest",
-            "group": "#/$defs/Group",
-            "integration": "#/$defs/Integration",
-            "interface": "#/$defs/Interface",
-            "invariant": "#/$defs/Invariant",
-            "permission": "#/$defs/Permission",
-            "relationship": "#/$defs/Relationship",
-            "requirement": "#/$defs/Requirement",
-            "risk": "#/$defs/Risk",
-            "role": "#/$defs/Role",
-            "scenario": "#/$defs/Scenario",
-            "state": "#/$defs/State",
-            "transition": "#/$defs/Transition",
-            "verified_path": "#/$defs/VerifiedPath"
-          },
-          "propertyName": "kind"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Entity"
-          },
-          {
-            "$ref": "#/$defs/ModelField"
-          },
-          {
-            "$ref": "#/$defs/Constraint"
-          },
-          {
-            "$ref": "#/$defs/Relationship"
-          },
-          {
-            "$ref": "#/$defs/Actor"
-          },
-          {
-            "$ref": "#/$defs/Role"
-          },
-          {
-            "$ref": "#/$defs/Group"
-          },
-          {
-            "$ref": "#/$defs/ActorMapping"
-          },
-          {
-            "$ref": "#/$defs/Permission"
-          },
-          {
-            "$ref": "#/$defs/State"
-          },
-          {
-            "$ref": "#/$defs/Transition"
-          },
-          {
-            "$ref": "#/$defs/Channel"
-          },
-          {
-            "$ref": "#/$defs/Action"
-          },
-          {
-            "$ref": "#/$defs/Event"
-          },
-          {
-            "$ref": "#/$defs/Interface"
-          },
-          {
-            "$ref": "#/$defs/Integration"
-          },
-          {
-            "$ref": "#/$defs/Requirement"
-          },
-          {
-            "$ref": "#/$defs/AtomicCriterion"
-          },
-          {
-            "$ref": "#/$defs/Invariant"
-          },
-          {
-            "$ref": "#/$defs/Ambiguity"
-          },
-          {
-            "$ref": "#/$defs/Conflict"
-          },
-          {
-            "$ref": "#/$defs/Alias"
-          },
-          {
-            "$ref": "#/$defs/Risk"
-          },
-          {
-            "$ref": "#/$defs/Scenario"
-          },
-          {
-            "$ref": "#/$defs/ExistingTest"
-          },
-          {
-            "$ref": "#/$defs/ExistingResult"
-          },
-          {
-            "$ref": "#/$defs/GeneratedTest"
-          },
-          {
-            "$ref": "#/$defs/VerifiedPath"
-          }
-        ]
-      },
-      "title": "Nodes",
-      "type": "array"
+    "network_used": {
+      "const": false,
+      "default": false,
+      "title": "Network Used",
+      "type": "boolean"
     },
-    "oracles": {
+    "parses": {
       "items": {
-        "$ref": "#/$defs/Oracle"
+        "$ref": "#/$defs/ParseResult"
       },
-      "title": "Oracles",
+      "title": "Parses",
       "type": "array"
     },
     "project_id": {
@@ -4208,13 +4975,6 @@
       "pattern": "\\S",
       "title": "Project Id",
       "type": "string"
-    },
-    "proposals": {
-      "items": {
-        "$ref": "#/$defs/Proposal"
-      },
-      "title": "Proposals",
-      "type": "array"
     },
     "schema_version": {
       "const": "1.0",
@@ -4228,20 +4988,34 @@
       "title": "Snapshot Id",
       "type": "string"
     },
-    "tests": {
-      "$ref": "#/$defs/TestModel"
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "INVALID"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "validation_issues": {
+      "items": {
+        "$ref": "#/$defs/IngestionIssue"
+      },
+      "title": "Validation Issues",
+      "type": "array"
     }
   },
   "required": [
     "id",
     "project_id",
     "snapshot_id",
+    "status",
+    "inventory",
     "ledger",
-    "claims",
-    "oracles",
-    "nodes",
-    "tests"
+    "parses",
+    "build",
+    "validation_issues"
   ],
-  "title": "ProjectModel",
+  "title": "IngestionReport",
   "type": "object"
 }

@@ -634,6 +634,46 @@
       "title": "AtomicCriterion",
       "type": "object"
     },
+    "BuildIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "extraction_id": {
+          "minLength": 1,
+          "title": "Extraction Id",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "default": "error",
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        }
+      },
+      "required": [
+        "code",
+        "extraction_id",
+        "source",
+        "message"
+      ],
+      "title": "BuildIssue",
+      "type": "object"
+    },
     "Channel": {
       "additionalProperties": false,
       "properties": {
@@ -2425,6 +2465,206 @@
       "title": "Permission",
       "type": "object"
     },
+    "ProjectModel": {
+      "additionalProperties": false,
+      "properties": {
+        "approvals": {
+          "items": {
+            "$ref": "#/$defs/Approval"
+          },
+          "title": "Approvals",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "ledger": {
+          "$ref": "#/$defs/SourceLedger"
+        },
+        "nodes": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "action": "#/$defs/Action",
+                "actor": "#/$defs/Actor",
+                "actor_mapping": "#/$defs/ActorMapping",
+                "alias": "#/$defs/Alias",
+                "ambiguity": "#/$defs/Ambiguity",
+                "atomic_criterion": "#/$defs/AtomicCriterion",
+                "channel": "#/$defs/Channel",
+                "conflict": "#/$defs/Conflict",
+                "constraint": "#/$defs/Constraint",
+                "entity": "#/$defs/Entity",
+                "event": "#/$defs/Event",
+                "existing_result": "#/$defs/ExistingResult",
+                "existing_test": "#/$defs/ExistingTest",
+                "field": "#/$defs/ModelField",
+                "generated_test": "#/$defs/GeneratedTest",
+                "group": "#/$defs/Group",
+                "integration": "#/$defs/Integration",
+                "interface": "#/$defs/Interface",
+                "invariant": "#/$defs/Invariant",
+                "permission": "#/$defs/Permission",
+                "relationship": "#/$defs/Relationship",
+                "requirement": "#/$defs/Requirement",
+                "risk": "#/$defs/Risk",
+                "role": "#/$defs/Role",
+                "scenario": "#/$defs/Scenario",
+                "state": "#/$defs/State",
+                "transition": "#/$defs/Transition",
+                "verified_path": "#/$defs/VerifiedPath"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Entity"
+              },
+              {
+                "$ref": "#/$defs/ModelField"
+              },
+              {
+                "$ref": "#/$defs/Constraint"
+              },
+              {
+                "$ref": "#/$defs/Relationship"
+              },
+              {
+                "$ref": "#/$defs/Actor"
+              },
+              {
+                "$ref": "#/$defs/Role"
+              },
+              {
+                "$ref": "#/$defs/Group"
+              },
+              {
+                "$ref": "#/$defs/ActorMapping"
+              },
+              {
+                "$ref": "#/$defs/Permission"
+              },
+              {
+                "$ref": "#/$defs/State"
+              },
+              {
+                "$ref": "#/$defs/Transition"
+              },
+              {
+                "$ref": "#/$defs/Channel"
+              },
+              {
+                "$ref": "#/$defs/Action"
+              },
+              {
+                "$ref": "#/$defs/Event"
+              },
+              {
+                "$ref": "#/$defs/Interface"
+              },
+              {
+                "$ref": "#/$defs/Integration"
+              },
+              {
+                "$ref": "#/$defs/Requirement"
+              },
+              {
+                "$ref": "#/$defs/AtomicCriterion"
+              },
+              {
+                "$ref": "#/$defs/Invariant"
+              },
+              {
+                "$ref": "#/$defs/Ambiguity"
+              },
+              {
+                "$ref": "#/$defs/Conflict"
+              },
+              {
+                "$ref": "#/$defs/Alias"
+              },
+              {
+                "$ref": "#/$defs/Risk"
+              },
+              {
+                "$ref": "#/$defs/Scenario"
+              },
+              {
+                "$ref": "#/$defs/ExistingTest"
+              },
+              {
+                "$ref": "#/$defs/ExistingResult"
+              },
+              {
+                "$ref": "#/$defs/GeneratedTest"
+              },
+              {
+                "$ref": "#/$defs/VerifiedPath"
+              }
+            ]
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "oracles": {
+          "items": {
+            "$ref": "#/$defs/Oracle"
+          },
+          "title": "Oracles",
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "proposals": {
+          "items": {
+            "$ref": "#/$defs/Proposal"
+          },
+          "title": "Proposals",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "tests": {
+          "$ref": "#/$defs/TestModel"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "ledger",
+        "claims",
+        "oracles",
+        "nodes",
+        "tests"
+      ],
+      "title": "ProjectModel",
+      "type": "object"
+    },
     "Proposal": {
       "additionalProperties": false,
       "properties": {
@@ -4044,177 +4284,31 @@
       "type": "object"
     }
   },
-  "$id": "urn:qe-skill:1.0:project-model",
+  "$id": "urn:qe-skill:1.0:project-build",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
-    "approvals": {
-      "items": {
-        "$ref": "#/$defs/Approval"
-      },
-      "title": "Approvals",
-      "type": "array"
-    },
-    "claims": {
-      "items": {
-        "$ref": "#/$defs/Claim"
-      },
-      "title": "Claims",
-      "type": "array"
-    },
     "id": {
       "minLength": 1,
       "pattern": "\\S",
       "title": "Id",
       "type": "string"
     },
-    "ledger": {
-      "$ref": "#/$defs/SourceLedger"
-    },
-    "nodes": {
+    "issues": {
       "items": {
-        "discriminator": {
-          "mapping": {
-            "action": "#/$defs/Action",
-            "actor": "#/$defs/Actor",
-            "actor_mapping": "#/$defs/ActorMapping",
-            "alias": "#/$defs/Alias",
-            "ambiguity": "#/$defs/Ambiguity",
-            "atomic_criterion": "#/$defs/AtomicCriterion",
-            "channel": "#/$defs/Channel",
-            "conflict": "#/$defs/Conflict",
-            "constraint": "#/$defs/Constraint",
-            "entity": "#/$defs/Entity",
-            "event": "#/$defs/Event",
-            "existing_result": "#/$defs/ExistingResult",
-            "existing_test": "#/$defs/ExistingTest",
-            "field": "#/$defs/ModelField",
-            "generated_test": "#/$defs/GeneratedTest",
-            "group": "#/$defs/Group",
-            "integration": "#/$defs/Integration",
-            "interface": "#/$defs/Interface",
-            "invariant": "#/$defs/Invariant",
-            "permission": "#/$defs/Permission",
-            "relationship": "#/$defs/Relationship",
-            "requirement": "#/$defs/Requirement",
-            "risk": "#/$defs/Risk",
-            "role": "#/$defs/Role",
-            "scenario": "#/$defs/Scenario",
-            "state": "#/$defs/State",
-            "transition": "#/$defs/Transition",
-            "verified_path": "#/$defs/VerifiedPath"
-          },
-          "propertyName": "kind"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Entity"
-          },
-          {
-            "$ref": "#/$defs/ModelField"
-          },
-          {
-            "$ref": "#/$defs/Constraint"
-          },
-          {
-            "$ref": "#/$defs/Relationship"
-          },
-          {
-            "$ref": "#/$defs/Actor"
-          },
-          {
-            "$ref": "#/$defs/Role"
-          },
-          {
-            "$ref": "#/$defs/Group"
-          },
-          {
-            "$ref": "#/$defs/ActorMapping"
-          },
-          {
-            "$ref": "#/$defs/Permission"
-          },
-          {
-            "$ref": "#/$defs/State"
-          },
-          {
-            "$ref": "#/$defs/Transition"
-          },
-          {
-            "$ref": "#/$defs/Channel"
-          },
-          {
-            "$ref": "#/$defs/Action"
-          },
-          {
-            "$ref": "#/$defs/Event"
-          },
-          {
-            "$ref": "#/$defs/Interface"
-          },
-          {
-            "$ref": "#/$defs/Integration"
-          },
-          {
-            "$ref": "#/$defs/Requirement"
-          },
-          {
-            "$ref": "#/$defs/AtomicCriterion"
-          },
-          {
-            "$ref": "#/$defs/Invariant"
-          },
-          {
-            "$ref": "#/$defs/Ambiguity"
-          },
-          {
-            "$ref": "#/$defs/Conflict"
-          },
-          {
-            "$ref": "#/$defs/Alias"
-          },
-          {
-            "$ref": "#/$defs/Risk"
-          },
-          {
-            "$ref": "#/$defs/Scenario"
-          },
-          {
-            "$ref": "#/$defs/ExistingTest"
-          },
-          {
-            "$ref": "#/$defs/ExistingResult"
-          },
-          {
-            "$ref": "#/$defs/GeneratedTest"
-          },
-          {
-            "$ref": "#/$defs/VerifiedPath"
-          }
-        ]
+        "$ref": "#/$defs/BuildIssue"
       },
-      "title": "Nodes",
+      "title": "Issues",
       "type": "array"
     },
-    "oracles": {
-      "items": {
-        "$ref": "#/$defs/Oracle"
-      },
-      "title": "Oracles",
-      "type": "array"
+    "model": {
+      "$ref": "#/$defs/ProjectModel"
     },
     "project_id": {
       "minLength": 1,
       "pattern": "\\S",
       "title": "Project Id",
       "type": "string"
-    },
-    "proposals": {
-      "items": {
-        "$ref": "#/$defs/Proposal"
-      },
-      "title": "Proposals",
-      "type": "array"
     },
     "schema_version": {
       "const": "1.0",
@@ -4228,20 +4322,24 @@
       "title": "Snapshot Id",
       "type": "string"
     },
-    "tests": {
-      "$ref": "#/$defs/TestModel"
+    "status": {
+      "enum": [
+        "BUILT",
+        "PARTIAL",
+        "FAILED"
+      ],
+      "title": "Status",
+      "type": "string"
     }
   },
   "required": [
     "id",
     "project_id",
     "snapshot_id",
-    "ledger",
-    "claims",
-    "oracles",
-    "nodes",
-    "tests"
+    "status",
+    "model",
+    "issues"
   ],
-  "title": "ProjectModel",
+  "title": "ProjectBuild",
   "type": "object"
 }

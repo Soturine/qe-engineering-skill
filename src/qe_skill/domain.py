@@ -388,6 +388,14 @@ class Conflict(Node):
     resolution_claim: Ref | None = None
 
 
+class Alias(Node):
+    kind: Literal["alias"] = "alias"
+    canonical: Ref
+    alias: Text
+    confidence: Annotated[float, Field(ge=0, le=1)]
+    status: Literal["confirmed", "proposed", "conflicting"]
+
+
 class Risk(Node):
     kind: Literal["risk"] = "risk"
     category: Text
@@ -443,6 +451,15 @@ class ExistingTest(Node):
     ]
 
 
+class ExistingResult(Node):
+    kind: Literal["existing_result"] = "existing_result"
+    historical: HistoricalIdentity
+    test: Ref | None = None
+    outcome: Literal["PASS", "FAIL", "BLOCKED", "NOT_RUN", "UNKNOWN"]
+    observed_at: Timestamp | None = None
+    original_text: Text
+
+
 class GeneratedTest(Node):
     kind: Literal["generated_test"] = "generated_test"
     test_case: Ref
@@ -483,9 +500,11 @@ SemanticNode = Annotated[
     | Invariant
     | Ambiguity
     | Conflict
+    | Alias
     | Risk
     | Scenario
     | ExistingTest
+    | ExistingResult
     | GeneratedTest
     | VerifiedPath,
     Field(discriminator="kind"),
