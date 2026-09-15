@@ -39,6 +39,7 @@ from qe_skill.m3 import (
 )
 from qe_skill.parsers import ParseResult
 from qe_skill.project_builder import ProjectBuild
+from qe_skill.reasoning import ReasoningRequest, ReasoningResult
 
 CONTRACTS: dict[str, type[BaseModel]] = {
     "run-manifest": RunManifest,
@@ -69,6 +70,8 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "parameter-candidate": ParameterCandidate,
     "generation-traceability": GenerationTraceabilityEdge,
     "generation-manifest": GenerationManifest,
+    "reasoning-request": ReasoningRequest,
+    "reasoning-result": ReasoningResult,
 }
 
 

@@ -38,7 +38,11 @@ Builds structured manual Test Models only from approved/supported scenarios. Mis
 Machine-checks schema, source completeness, provenance, inference leakage, model integrity, manual executability, isolation and publication safety. Human review handles semantic authority decisions where needed.
 
 ### 10. Provider Boundary
-Typed model-provider adapters support semantic work without embedding one vendor into the core. Outputs are schema-validated and versioned.
+Typed model-provider adapters support bounded extract, relate, synthesize and scenario-probe work
+without embedding one vendor into the core. Requests bind exact project/snapshot evidence excerpts,
+hashes, limits and prompt/config versions. Results bind provider/model/adapter identity and expose
+failure/timeout states. Outputs remain untrusted proposals until candidate and trust gates validate
+them. Deterministic-only operation requires no provider.
 
 ### 11. TMS / Output Adapters
 Azure DevOps first, later other TMS/report/automation renderers. Adapters cannot redefine Test Model semantics.

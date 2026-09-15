@@ -38,6 +38,7 @@ Use this page as the canonical reading map.
 ## Architecture, retrieval and security
 
 - `ARCHITECTURE.md`
+- `adr/0002-provider-neutral-semantic-boundary.md`
 - `RETRIEVAL_STRATEGY.md`
 - `SECURITY_THREAT_MODEL.md`
 - `AGENT_SKILL_SPEC.md`

@@ -42,7 +42,7 @@ Use the cheapest reliable layer and avoid model calls for already-structured fac
 
 ## FSR-04 — M4 Semantic Reasoning Provider
 
-Status: **DEFERRED_TO_M4**
+Status: **provider-neutral boundary implemented in M4.H1; live provider adapters not implemented**
 
 M4 owns a typed, bounded `ReasoningProvider` boundary for extraction, relation and synthesis
 requests/results. Deterministic-only operation remains available. Real project inputs may produce

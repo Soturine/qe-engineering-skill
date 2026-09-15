@@ -1,0 +1,226 @@
+{
+  "$defs": {
+    "EvidenceExcerpt": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "location": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Location",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "source",
+        "source_hash",
+        "location",
+        "text"
+      ],
+      "title": "EvidenceExcerpt",
+      "type": "object"
+    },
+    "ReasoningLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_candidates": {
+          "default": 200,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Max Candidates",
+          "type": "integer"
+        },
+        "max_chars_per_excerpt": {
+          "default": 20000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Chars Per Excerpt",
+          "type": "integer"
+        },
+        "max_excerpts": {
+          "default": 64,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Excerpts",
+          "type": "integer"
+        },
+        "max_total_chars": {
+          "default": 200000,
+          "maximum": 5000000,
+          "minimum": 1,
+          "title": "Max Total Chars",
+          "type": "integer"
+        },
+        "timeout_ms": {
+          "default": 30000,
+          "maximum": 600000,
+          "minimum": 1,
+          "title": "Timeout Ms",
+          "type": "integer"
+        }
+      },
+      "title": "ReasoningLimits",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:reasoning-request",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "excerpts": {
+      "items": {
+        "$ref": "#/$defs/EvidenceExcerpt"
+      },
+      "minItems": 1,
+      "title": "Excerpts",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/ReasoningLimits"
+    },
+    "operation": {
+      "enum": [
+        "EXTRACT",
+        "RELATE",
+        "SYNTHESIZE",
+        "PROBE_SCENARIOS"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "prompt_version": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Prompt Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "supported_facts": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Supported Facts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "operation",
+    "excerpts",
+    "prompt_version",
+    "configuration_hash"
+  ],
+  "title": "ReasoningRequest",
+  "type": "object"
+}

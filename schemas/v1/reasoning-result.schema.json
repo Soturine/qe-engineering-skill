@@ -1,0 +1,251 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "ProviderIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model",
+          "type": "string"
+        },
+        "model_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model Version",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "model_version",
+        "adapter_version"
+      ],
+      "title": "ProviderIdentity",
+      "type": "object"
+    },
+    "ProviderProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Candidate Type",
+          "type": "string"
+        },
+        "inferred": {
+          "const": true,
+          "default": true,
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "source_excerpt_ids": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Excerpt Ids",
+          "type": "array"
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statement"
+        },
+        "structured_value": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Structured Value",
+          "type": "object"
+        }
+      },
+      "required": [
+        "candidate_type",
+        "source_excerpt_ids"
+      ],
+      "title": "ProviderProposal",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:reasoning-result",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_changed": {
+      "const": false,
+      "default": false,
+      "title": "Authority Changed",
+      "type": "boolean"
+    },
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
+    },
+    "failure": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "pattern": "\\S",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Failure"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "network_used": {
+      "default": false,
+      "title": "Network Used",
+      "type": "boolean"
+    },
+    "operation": {
+      "enum": [
+        "EXTRACT",
+        "RELATE",
+        "SYNTHESIZE",
+        "PROBE_SCENARIOS"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "proposals": {
+      "items": {
+        "$ref": "#/$defs/ProviderProposal"
+      },
+      "title": "Proposals",
+      "type": "array"
+    },
+    "provider_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProviderIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "provider_invoked": {
+      "title": "Provider Invoked",
+      "type": "boolean"
+    },
+    "request": {
+      "$ref": "#/$defs/Ref"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "NOT_REQUESTED",
+        "COMPLETE",
+        "PARTIAL",
+        "FAILED",
+        "TIMED_OUT",
+        "REJECTED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "request",
+    "request_hash",
+    "operation",
+    "status",
+    "proposals",
+    "provider_invoked"
+  ],
+  "title": "ReasoningResult",
+  "type": "object"
+}

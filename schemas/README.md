@@ -36,6 +36,8 @@ Implemented schemas in `v1/`:
 - `parameter-candidate.schema.json`
 - `generation-traceability.schema.json`
 - `generation-manifest.schema.json`
+- `reasoning-request.schema.json`
+- `reasoning-result.schema.json`
 
 JSON Schema handles shape/basic constraints. Cross-artifact invariants are implemented
 in `qe_skill.validation` and `qe_skill.integrity`, with negative tests and evals.
