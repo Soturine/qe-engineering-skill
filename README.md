@@ -357,19 +357,17 @@ Future automation renderers
 
 ## Roadmap
 
-The project is deliberately incremental:
+The project is deliberately incremental. The earlier fine-grained M0-M10 plan was consolidated without removing planned capabilities:
 
-- **M0** — Foundations & Trust Model
-- **M1** — Source Inventory & Parsing
-- **M2** — Project Knowledge Model
-- **M3** — Traceability & Existing-Test Audit
-- **M4** — Risk & Scenario Engine
-- **M5** — Manual Test Case Generator
-- **M6** — Optional TMS Adapter / Azure DevOps first
-- **M7** — Production Agent Skill
-- **M8** — Automation-ready renderers
-- **M9** — Advanced retrieval/change impact
-- **M10** — Controlled execution assistance, optional
+- **M0** — Foundations & Trust Model ✅
+- **M1** — Source Ingestion & Project Model
+- **M2** — Audit, Traceability & Risk Analysis
+- **M3** — Test Generation & Improvement
+- **M4** — Integrations & Production Agent Skill
+- **M5** — Automation & Execution Assistance
+- **M6** — Advanced Retrieval & Change Impact
+
+M0-M3 form the standalone core product: local evidence can be ingested, modeled, audited and turned into reviewable manual Test Models without Azure DevOps, MCP or another TMS. Later milestones add optional integration, automation and advanced retrieval/change-impact capabilities.
 
 Later milestones must not bypass trust foundations.
 
