@@ -4,7 +4,11 @@ The roadmap is intentionally incremental. Later milestones must not bypass trust
 
 The product must remain general, TMS-independent at the core, manual-first, human-approved for external writes and non-destructive toward existing quality history.
 
+This roadmap consolidates the earlier finer-grained M0-M10 plan into M0-M6. No planned capability was removed; closely related stages were grouped so each milestone represents a complete product outcome rather than an internal implementation slice.
+
 ## M0 — Foundations & Trust Model
+
+Status: **implemented and validated**.
 
 Deliver:
 
@@ -32,9 +36,11 @@ Exit criteria:
 - no live model is required for deterministic-core tests;
 - no external write capability is required to exercise the core.
 
-## M1 — Source Inventory & Parsing
+## M1 — Source Ingestion & Project Model
 
-Deliver:
+Turn project evidence into a normalized, provenance-backed Project Model.
+
+Deliver source inventory and ingestion:
 
 - filesystem/repository inventory;
 - hashes/snapshot metadata;
@@ -45,8 +51,6 @@ Deliver:
 - malicious/untrusted input safeguards;
 - prompt-injection-safe content handling;
 - TMS-independent ingestion contract for exported/manual test artifacts.
-
-## M2 — Project Knowledge Model
 
 Deliver extraction/normalization for:
 
@@ -60,11 +64,20 @@ Deliver extraction/normalization for:
 - source conflicts, aliases, ambiguity and staleness;
 - existing test assets/results as evidence nodes.
 
+Exit expectation:
+
+- every modeled fact that can influence normative output resolves to source provenance;
+- incomplete or unreadable sources remain explicit rather than silently skipped;
+- project/snapshot isolation remains enforced end to end;
+- the Project Model can be produced without Azure DevOps, MCP or another TMS.
+
 Optional semantic retrieval may be evaluated only after deterministic source accounting works.
 
-## M3 — Traceability & Existing-Test Audit
+## M2 — Audit, Traceability & Risk Analysis
 
-Deliver:
+Audit existing quality assets and build the defensible scenario/coverage picture before generating tests.
+
+Deliver traceability and existing-test audit:
 
 - greenfield/brownfield/clone mode dispatch for audit behavior;
 - requirement atomicity decomposition;
@@ -81,15 +94,7 @@ Deliver:
 - non-destructive improvement proposals;
 - clone/migration revalidation against destination evidence.
 
-Exit expectation:
-
-- existing Test Cases/history remain unchanged by audit itself;
-- audit can run from local/exported evidence with no TMS/MCP connection;
-- proposed deltas are explicit and reviewable.
-
-## M4 — Risk & Scenario Engine
-
-Deliver:
+Deliver risk/scenario analysis:
 
 - equivalence partitions;
 - boundary analysis;
@@ -102,7 +107,17 @@ Deliver:
 - explicit distinction between contractual, implementation-derived, policy-derived, risk-derived and exploratory scenarios;
 - missing-scenario proposals usable in both greenfield and audit modes.
 
-## M5 — Manual Test Case Generator & Rewriter
+Exit expectation:
+
+- existing Test Cases/history remain unchanged by audit itself;
+- audit can run from local/exported evidence with no TMS/MCP connection;
+- proposed deltas are explicit and reviewable;
+- risk-derived scenarios never silently become contractual requirements;
+- coverage claims distinguish nominal linkage from atomic behavioral coverage.
+
+## M3 — Test Generation & Improvement
+
+Generate new manual tests and improve existing/cloned tests from the audited Project Model and scenario set.
 
 Deliver structured manual cases/proposals containing:
 
@@ -127,13 +142,16 @@ This milestone must support:
 - generating a manual Test Plan from zero;
 - generating missing cases found during an audit;
 - proposing detailed step-by-step rewrites for existing cases;
-- regenerating/revalidating cloned case procedures for a destination project.
+- regenerating/revalidating cloned case procedures for a destination project;
+- rendering local structured JSON/YAML/Markdown and human-reviewable report/preview formats.
 
-No external system is required. Output must be renderable locally as structured JSON/YAML/Markdown or equivalent.
+No external system is required. Generated output remains proposal-only until explicitly approved for an external write.
 
-## M6 — Optional TMS Integration / Azure DevOps First
+## M4 — Integrations & Production Agent Skill
 
-Deliver:
+Make the stable core usable through optional external integrations and a portable Agent Skills interface without coupling the core to any provider or TMS.
+
+Deliver optional TMS integration, Azure DevOps first:
 
 - read/inventory adapter capabilities;
 - native Test Case rendering;
@@ -152,9 +170,7 @@ Deliver:
 
 REST and/or MCP may be implemented behind adapters. The core must not require either.
 
-## M7 — Production Agent Skill
-
-Turn the stable engine into a portable Agent Skills interface for compatible runtimes:
+Deliver production Agent Skill packaging:
 
 - progressive disclosure;
 - minimal tool permissions;
@@ -165,13 +181,25 @@ Turn the stable engine into a portable Agent Skills interface for compatible run
 - runtime failure transparency;
 - portability/provider-neutral tests.
 
-## M8 — Automation-Ready Renderers
+## M5 — Automation & Execution Assistance
 
-Render approved Test Models to selected frameworks (API, browser, mobile, unit/integration, hardware harness). Automation must not redefine oracle semantics.
+Use approved Test Models as the source for automation and controlled execution support. Automation must not redefine oracle semantics.
 
-## M9 — Advanced Retrieval & Change Impact
+Deliver automation-ready renderers for selected frameworks where justified, including API, browser, mobile, unit/integration or hardware harness targets.
 
-Evaluate:
+After manual-generation trust is demonstrated, optionally add:
+
+- guided manual execution;
+- evidence capture assistance;
+- safe browser/API execution adapters;
+- bounded autonomous execution for approved cases;
+- mandatory human escalation on ambiguity/high consequence.
+
+Execution autonomy is optional and must remain bounded by approved cases, evidence and safety policy.
+
+## M6 — Advanced Retrieval & Change Impact
+
+Evaluate advanced intelligence only after the deterministic core, audit and generation workflows are measurable and stable:
 
 - vector retrieval;
 - GraphRAG/knowledge-graph assistance;
@@ -180,16 +208,18 @@ Evaluate:
 - regression selection;
 - incremental source re-indexing.
 
-Adopt only when evals show measurable gain without weakening provenance/completeness.
+Adopt only when evals show measurable gain without weakening provenance/completeness. Retrieval-derived claims must still resolve back to primary evidence before influencing a normative oracle.
 
-## M10 — Controlled Execution Assistance (optional)
+## Milestone summary
 
-Only after manual-generation trust is demonstrated:
+```text
+M0  Foundations & Trust Model                  ✅ implemented
+M1  Source Ingestion & Project Model
+M2  Audit, Traceability & Risk Analysis
+M3  Test Generation & Improvement
+M4  Integrations & Production Agent Skill
+M5  Automation & Execution Assistance
+M6  Advanced Retrieval & Change Impact
+```
 
-- guided manual execution;
-- evidence capture assistance;
-- safe browser/API execution adapters;
-- bounded autonomous execution for approved cases;
-- mandatory human escalation on ambiguity/high consequence.
-
-Execution autonomy is an optional later capability, not a prerequisite for the core skill.
+A useful standalone product exists before optional live integrations or automation: M0-M3 must be able to ingest local evidence, understand the project, audit coverage and generate reviewable manual Test Models without Azure DevOps/MCP.
