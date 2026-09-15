@@ -10,7 +10,7 @@ def binding() -> dict[str, object]:
     return {
         "project_model_hash": "a" * 64,
         "m2_analysis_hash": "b" * 64,
-        "generator_version": "0.3.0",
+        "generator_version": "0.4.0",
         "configuration_hash": "c" * 64,
     }
 
@@ -93,7 +93,7 @@ def test_report_rejects_manifest_binding_mismatch() -> None:
             "configuration": {},
             "artifact_refs": [ref("case-proposal")],
             "created_at": "2026-01-01T00:00:00Z",
-            "tool_version": "0.3.0",
+            "tool_version": "0.4.0",
         },
         "limitations": ["Executable evidence remains incomplete."],
     }

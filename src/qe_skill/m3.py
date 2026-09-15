@@ -77,7 +77,7 @@ class OracleMaterialization(d.Record):
 
 
 class AuthoringConfig(d.Record):
-    generator_version: d.Text = "0.3.0"
+    generator_version: d.Text = "0.4.0"
     generated_at: d.Timestamp = "1970-01-01T00:00:00Z"
     max_cases: int = Field(default=100, ge=1, le=10_000)
     environment_claim: d.Ref | None = None

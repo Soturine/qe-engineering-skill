@@ -266,7 +266,9 @@ def write_m3_outputs(output: Path, report: M3GenerationReport, formats: set[str]
                 encoding="utf-8",
             )
         if "yaml" in formats:
-            (output / "test-model.yaml").write_text(render_yaml(report), encoding="utf-8")
+            (output / "test-model.yaml").write_text(
+                render_yaml(report.test_model.model_dump(mode="json")), encoding="utf-8"
+            )
         if "markdown" in formats:
             markdown = render_markdown(report)
             (output / "test-plan.md").write_text(markdown, encoding="utf-8")

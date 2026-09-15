@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import yaml
+
 from qe_skill.cli import main
 from qe_skill.m2 import analyze_project
 
@@ -48,6 +50,9 @@ def test_generate_cli_writes_only_local_review_artifacts(tmp_path: Path) -> None
         "generation-manifest.json",
     }
     assert {path.name for path in output.iterdir()} == expected
+    test_model = yaml.safe_load((output / "test-model.yaml").read_text(encoding="utf-8"))
+    report = json.loads((output / "m3-generation-report.json").read_text(encoding="utf-8"))
+    assert test_model == report["test_model"]
 
 
 def test_generate_cli_rejects_stale_analysis(tmp_path: Path) -> None:
