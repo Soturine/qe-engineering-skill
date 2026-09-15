@@ -15,7 +15,9 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from qe_skill import domain as d
-from qe_skill.validation import validate_claim, validate_oracle
+from qe_skill.integrity import artifacts, validate_project_model, validate_test_case
+from qe_skill.m2 import M2AnalysisReport, ScenarioRecord, validate_analysis_report
+from qe_skill.validation import Result, validate_claim, validate_oracle
 
 GenerationMode = Literal["GREENFIELD", "BROWNFIELD", "CLONE_REUSE"]
 ProposalAction = Literal["NEW", "KEEP", "IMPROVE", "REVISE", "REPLACE"]
@@ -67,6 +69,17 @@ class OracleMaterialization(d.Record):
     oracle: d.Oracle | None = None
     rationale: d.Text
     source_claim: d.Ref | None = None
+
+
+class AuthoringConfig(d.Record):
+    generator_version: d.Text = "0.3.0"
+    generated_at: d.Timestamp = "1970-01-01T00:00:00Z"
+    max_cases: int = Field(default=100, ge=1, le=10_000)
+    environment_claim: d.Ref | None = None
+    cleanup_claim: d.Ref | None = None
+    isolation_claim: d.Ref | None = None
+    build: str | None = None
+    profile: str | None = None
 
 
 def canonical_hash(value: BaseModel | dict[str, object]) -> str:
@@ -392,3 +405,265 @@ class M3GenerationReport(d.Artifact):
         if self.manifest.input_binding != self.input_binding:
             raise ValueError("manifest input binding differs from report binding")
         return self
+
+
+def _ref(record: d.Artifact) -> d.Ref:
+    return d.Ref(id=record.id, project_id=record.project_id, snapshot_id=record.snapshot_id)
+
+
+def _claim_text(model: d.ProjectModel, refs: list[d.Ref]) -> DraftSupportedText:
+    for claim_ref in refs:
+        claim = next((item for item in model.claims if item.id == claim_ref.id), None)
+        if claim is not None and validate_claim(claim, model).valid and not claim.inferred:
+            return DraftSupportedText(text=claim.statement, claims=[claim_ref])
+    return DraftSupportedText(
+        unresolved_reasons=["No validated exact supporting claim is available."]
+    )
+
+
+def _configured_text(
+    model: d.ProjectModel, claim_ref: d.Ref | None, missing: str
+) -> DraftSupportedText:
+    if claim_ref is None:
+        return DraftSupportedText(unresolved_reasons=[missing])
+    return _claim_text(model, [claim_ref])
+
+
+def _scenario_path(
+    scenario: ScenarioRecord, model: d.ProjectModel
+) -> tuple[d.VerifiedPath | None, DraftSupportedText]:
+    index = artifacts(model)
+    channel = index.get(scenario.channel.id) if scenario.channel else None
+    paths = sorted(
+        (node for node in model.nodes if isinstance(node, d.VerifiedPath)), key=lambda node: node.id
+    )
+    for path in paths:
+        if path.verification_status != "verified" or not path.steps:
+            continue
+        if isinstance(channel, d.Channel) and path.path_type != channel.channel_type:
+            continue
+        first = path.steps[0]
+        return path, DraftSupportedText(text=first.instruction, claims=[first.claim])
+    stimulus = index.get(scenario.stimulus.id) if scenario.stimulus else None
+    claims = stimulus.claims if isinstance(stimulus, d.Action | d.Event) else []
+    action = _claim_text(model, claims)
+    action.unresolved_reasons.append("No verified operational path supports this action.")
+    return None, action
+
+
+def _case_from_scenario(
+    scenario: ScenarioRecord,
+    model: d.ProjectModel,
+    config: AuthoringConfig,
+) -> tuple[GeneratedCaseProposal, d.Oracle | None]:
+    index = artifacts(model)
+    atom = index.get(scenario.source_atom.id) if scenario.source_atom else None
+    requirement = index.get(scenario.source_requirement.id) if scenario.source_requirement else None
+    objective_refs = atom.claims if isinstance(atom, d.AtomicCriterion) else []
+    if not objective_refs and isinstance(requirement, d.Requirement):
+        objective_refs = requirement.claims
+    objective = _claim_text(model, objective_refs)
+    path, action = _scenario_path(scenario, model)
+    oracle_result = reuse_oracle(scenario.oracle, model) if scenario.oracle else None
+    oracle = oracle_result.oracle if oracle_result else None
+    exploratory = scenario.origin in {"RISK", "EXPLORATORY"} or (
+        oracle is not None and not oracle.normative
+    )
+    blockers = list(action.unresolved_reasons + objective.unresolved_reasons)
+    if oracle is None and not exploratory:
+        blockers.append("No defensible normative oracle is available.")
+    environment = _configured_text(
+        model, config.environment_claim, "Environment evidence is not available."
+    )
+    cleanup = _configured_text(model, config.cleanup_claim, "Cleanup evidence is not available.")
+    isolation = _configured_text(
+        model, config.isolation_claim, "Isolation evidence is not available."
+    )
+    blockers.extend(environment.unresolved_reasons)
+    blockers.extend(cleanup.unresolved_reasons)
+    blockers.extend(isolation.unresolved_reasons)
+    if config.build is None:
+        blockers.append("Build or version context is not available.")
+    actor = scenario.actor
+    if actor is None:
+        blockers.append("Actor/profile evidence is not available.")
+    readiness: d.Readiness
+    if exploratory:
+        readiness = "EXPLORATORY_ONLY"
+    elif blockers:
+        readiness = "BLOCKED_SOURCE"
+    else:
+        readiness = "READY_WITH_REVIEW"
+    scenario_ref = _ref(scenario)
+    step = DraftManualStep(
+        number=1,
+        action=action,
+        path=_ref(path) if path else None,
+        oracle=_ref(oracle) if oracle else None,
+        expected_result=oracle.statement if oracle else None,
+        evidence_expectation="Record the observation for any Fail or Blocked result.",
+        blocking_reasons=blockers,
+    )
+    proposal = GeneratedCaseProposal(
+        id=stable_id("m3.case", model.project_id, model.snapshot_id, scenario.id),
+        project_id=model.project_id,
+        snapshot_id=model.snapshot_id,
+        action="NEW",
+        title=f"Review scenario {scenario.id}",
+        objective=objective,
+        origin=scenario.origin,
+        primary_provenance=objective.claims,
+        requirements=[scenario.source_requirement] if scenario.source_requirement else [],
+        criteria=[scenario.source_atom] if scenario.source_atom else [],
+        risks=[scenario.source_risk] if scenario.source_risk else [],
+        scenarios=[scenario_ref],
+        priority_rationale=scenario.rationale,
+        environment=environment,
+        build=config.build,
+        actor=actor,
+        profile=config.profile,
+        permissions=[],
+        steps=[step],
+        pass_rule=None if exploratory else "All required steps satisfy their cited oracles.",
+        fail_rule=None if exploratory else "A required observation contradicts its cited oracle.",
+        blocked_rule="Required evidence, preparation, action, or observation cannot be completed.",
+        cleanup=cleanup,
+        isolation=isolation,
+        evidence_expectations=["Record the failed or blocked step and relevant observation."],
+        readiness=readiness,
+        blocking_notes=sorted(set(blockers)),
+        review_status="REVIEW_REQUIRED",
+        rationale="Generated from an explicitly selected M2 scenario without adding behavior.",
+    )
+    return proposal, oracle if oracle and oracle.id not in {
+        item.id for item in model.oracles
+    } else None
+
+
+def generate_m3(
+    model: d.ProjectModel,
+    analysis: M2AnalysisReport,
+    config: AuthoringConfig | None = None,
+) -> M3GenerationReport:
+    """Generate deterministic proposal-only M3 artifacts from exact M1/M2 inputs."""
+
+    config = config or AuthoringConfig()
+    model_result = validate_project_model(model)
+    analysis_result = validate_analysis_report(analysis, model)
+    if not model_result.valid or not analysis_result.valid:
+        raise ValueError("Project Model and M2 analysis must validate against the same snapshot.")
+    selected = {
+        item.scenario.id
+        for item in analysis.dispositions
+        if item.disposition in {"SELECTED", "EXPLORATORY"}
+    }
+    scenarios = [item for item in analysis.scenarios if item.id in selected][: config.max_cases]
+    cases: list[GeneratedCaseProposal] = []
+    generated_oracles: list[d.Oracle] = []
+    for scenario in scenarios:
+        case, oracle = _case_from_scenario(scenario, model, config)
+        cases.append(case)
+        if oracle is not None:
+            generated_oracles.append(oracle)
+    cases.sort(key=lambda item: item.id)
+    edges: list[GenerationTraceabilityEdge] = []
+    for case in cases:
+        case_ref = _ref(case)
+        for relation, sources in (
+            ("REQUIREMENT_TO_CASE", case.requirements),
+            ("CRITERION_TO_CASE", case.criteria),
+            ("RISK_TO_CASE", case.risks),
+            ("SCENARIO_TO_CASE", case.scenarios),
+        ):
+            for source in sources:
+                edges.append(
+                    GenerationTraceabilityEdge(
+                        id=stable_id(
+                            "m3.edge",
+                            model.project_id,
+                            model.snapshot_id,
+                            relation,
+                            source.id,
+                            case.id,
+                        ),
+                        project_id=model.project_id,
+                        snapshot_id=model.snapshot_id,
+                        source=source,
+                        target=case_ref,
+                        relation=relation,  # type: ignore[arg-type]
+                        evidence=case.primary_provenance,
+                    )
+                )
+    config_hash = canonical_hash(config)
+    binding = GenerationInputBinding(
+        project_model_hash=canonical_hash(model),
+        m2_analysis_hash=canonical_hash(analysis),
+        generator_version=config.generator_version,
+        configuration_hash=config_hash,
+    )
+    test_model = d.TestModel(
+        id=stable_id("m3.tests", model.project_id, model.snapshot_id, binding.m2_analysis_hash),
+        project_id=model.project_id,
+        snapshot_id=model.snapshot_id,
+        test_cases=[case.materialized_test for case in cases if case.materialized_test],
+        proposal_only=True,
+    )
+    artifact_refs = [_ref(case) for case in cases]
+    manifest = GenerationManifest(
+        id=stable_id("m3.manifest", model.project_id, model.snapshot_id, config_hash),
+        project_id=model.project_id,
+        snapshot_id=model.snapshot_id,
+        mode=analysis.mode,
+        input_binding=binding,
+        configuration={key: str(value) for key, value in config.model_dump(mode="json").items()},
+        artifact_refs=artifact_refs,
+        created_at=config.generated_at,
+        tool_version=config.generator_version,
+    )
+    limitations = sorted({note for case in cases for note in case.blocking_notes})
+    return M3GenerationReport(
+        id=stable_id(
+            "m3.report", model.project_id, model.snapshot_id, canonical_hash(analysis), config_hash
+        ),
+        project_id=model.project_id,
+        snapshot_id=model.snapshot_id,
+        mode=analysis.mode,
+        status="COMPLETE"
+        if cases and all(not case.blocking_notes for case in cases)
+        else "PARTIAL",
+        input_binding=binding,
+        cases=cases,
+        test_model=test_model,
+        revisions=[],
+        shared_steps=[],
+        parameters=[],
+        traceability=sorted(edges, key=lambda item: item.id),
+        materialized_oracles=generated_oracles,
+        manifest=manifest,
+        limitations=limitations or ["No selected M2 scenarios were available."],
+    )
+
+
+def validate_generation_report(
+    report: M3GenerationReport, model: d.ProjectModel, analysis: M2AnalysisReport
+) -> Result:
+    result = Result()
+    if report.project_id != model.project_id or report.snapshot_id != model.snapshot_id:
+        result.add("M3_SCOPE", report, "M3 report and Project Model scopes differ.")
+    if report.input_binding.project_model_hash != canonical_hash(model):
+        result.add("M3_STALE_MODEL", report, "Project Model hash differs from the M3 binding.")
+    if report.input_binding.m2_analysis_hash != canonical_hash(analysis):
+        result.add("M3_STALE_ANALYSIS", report, "M2 analysis hash differs from the M3 binding.")
+    if not validate_analysis_report(analysis, model).valid:
+        result.add("M3_INVALID_ANALYSIS", report, "M2 analysis is invalid for the Project Model.")
+    working = model.model_copy(deep=True)
+    working.oracles.extend(report.materialized_oracles)
+    for case in report.cases:
+        if case.readiness == "READY":
+            if case.materialized_test is None:
+                result.add("M3_READY_DRAFT", case, "READY proposal lacks a materialized TestCase.")
+            else:
+                result.issues.extend(validate_test_case(case.materialized_test, working).issues)
+        if case.origin in {"RISK", "EXPLORATORY"} and case.readiness != "EXPLORATORY_ONLY":
+            result.add("M3_RISK_LEAKAGE", case, "Risk/exploratory proposal became normative.")
+    return result
