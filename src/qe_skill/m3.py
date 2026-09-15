@@ -540,6 +540,82 @@ def _case_from_scenario(
     } else None
 
 
+def _brownfield_revisions(
+    model: d.ProjectModel,
+    analysis: M2AnalysisReport,
+    cases: list[GeneratedCaseProposal],
+) -> list[TestRevisionProposal]:
+    tests = {node.id: node for node in model.nodes if isinstance(node, d.ExistingTest)}
+    revisions: list[TestRevisionProposal] = []
+    for finding in analysis.findings:
+        if finding.kind != "EXISTING_TEST_AUDIT" or finding.asset is None:
+            continue
+        existing = tests.get(finding.asset.id)
+        if existing is None:
+            continue
+        if finding.classification == "VALID_AS_IS":
+            action: Literal["KEEP", "IMPROVE", "REVISE", "REPLACE"] = "KEEP"
+        elif finding.classification == "VALID_WITH_IMPROVEMENT":
+            action = "IMPROVE"
+        elif finding.classification in {"STALE", "OBSOLETE_CANDIDATE", "CONFLICTING"}:
+            action = "REPLACE"
+        else:
+            action = "REVISE"
+        related = next(
+            (
+                case
+                for case in cases
+                if {ref.id for ref in case.criteria} & {ref.id for ref in existing.criterion_ids}
+            ),
+            None,
+        )
+        field_diffs = (
+            []
+            if action == "KEEP"
+            else [
+                FieldDiff(
+                    field="classification",
+                    kind="CHANGED",
+                    before=existing.classification,
+                    after=finding.classification,
+                    rationale=finding.rationale,
+                    evidence=finding.supporting_evidence,
+                )
+            ]
+        )
+        step_diffs = (
+            [
+                StepDiff(
+                    kind="CHANGED",
+                    rationale=(
+                        "Procedure requires evidence-backed review; historical steps remain "
+                        "unchanged."
+                    ),
+                    evidence=finding.supporting_evidence,
+                )
+            ]
+            if action in {"REVISE", "REPLACE"}
+            else []
+        )
+        revisions.append(
+            TestRevisionProposal(
+                id=stable_id(
+                    "m3.revision", model.project_id, model.snapshot_id, existing.id, action
+                ),
+                project_id=model.project_id,
+                snapshot_id=model.snapshot_id,
+                original_test=_ref(existing),
+                action=action,
+                proposed_case=_ref(related) if related else None,
+                field_diffs=field_diffs,
+                step_diffs=step_diffs,
+                rationale=finding.rationale,
+                evidence=finding.supporting_evidence,
+            )
+        )
+    return sorted(revisions, key=lambda item: item.id)
+
+
 def generate_m3(
     model: d.ProjectModel,
     analysis: M2AnalysisReport,
@@ -608,7 +684,10 @@ def generate_m3(
         test_cases=[case.materialized_test for case in cases if case.materialized_test],
         proposal_only=True,
     )
-    artifact_refs = [_ref(case) for case in cases]
+    revisions = (
+        _brownfield_revisions(model, analysis, cases) if analysis.mode == "BROWNFIELD" else []
+    )
+    artifact_refs = [_ref(case) for case in cases] + [_ref(item) for item in revisions]
     manifest = GenerationManifest(
         id=stable_id("m3.manifest", model.project_id, model.snapshot_id, config_hash),
         project_id=model.project_id,
@@ -634,7 +713,7 @@ def generate_m3(
         input_binding=binding,
         cases=cases,
         test_model=test_model,
-        revisions=[],
+        revisions=revisions,
         shared_steps=[],
         parameters=[],
         traceability=sorted(edges, key=lambda item: item.id),
