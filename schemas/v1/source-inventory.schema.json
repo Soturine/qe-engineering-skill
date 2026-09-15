@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "InventoryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "entry_kind": {
+          "enum": [
+            "file",
+            "directory",
+            "symlink"
+          ],
+          "title": "Entry Kind",
+          "type": "string"
+        },
+        "extension": {
+          "title": "Extension",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "modified_ns": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Ns"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "INVENTORIED",
+            "IGNORED",
+            "UNSUPPORTED",
+            "UNREADABLE",
+            "LIMIT_EXCEEDED",
+            "SYMLINK_ESCAPES_ROOT"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "symlink": {
+          "default": false,
+          "title": "Symlink",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "path",
+        "entry_kind",
+        "extension",
+        "source_type",
+        "state"
+      ],
+      "title": "InventoryEntry",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:source-inventory",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/InventoryEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "excludes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Excludes",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "ignored_directories": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Ignored Directories",
+      "type": "array"
+    },
+    "includes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Includes",
+      "type": "array"
+    },
+    "inventory_complete": {
+      "title": "Inventory Complete",
+      "type": "boolean"
+    },
+    "issues": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "limits": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "root": {
+      "minLength": 1,
+      "title": "Root",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "root",
+    "includes",
+    "excludes",
+    "limits",
+    "entries",
+    "ignored_directories",
+    "inventory_complete",
+    "issues"
+  ],
+  "title": "InventoryReport",
+  "type": "object"
+}

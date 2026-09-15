@@ -17,6 +17,7 @@ from qe_skill.domain import (
     TestCase,
     TestModel,
 )
+from qe_skill.inventory import InventoryReport
 
 CONTRACTS: dict[str, type[BaseModel]] = {
     "run-manifest": RunManifest,
@@ -29,6 +30,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "project-model": ProjectModel,
     "test-case": TestCase,
     "test-model": TestModel,
+    "source-inventory": InventoryReport,
 }
 
 
