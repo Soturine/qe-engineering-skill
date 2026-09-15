@@ -2,12 +2,12 @@
 
 ## Current stage
 
-**M1 - Source Ingestion & Project Model: implemented and locally validated.**
+**M1 - Source Ingestion & Project Model: implemented and validated.**
 
 M0 trust contracts remain binding. M1 adds deterministic local evidence accounting, bounded
 parsing, provenance-bearing extraction and conservative Project Model population. See
-`M1_EVIDENCE.md` for supported types, tests, boundaries and exit criteria. The current commit
-must remain green on Linux and Windows CI before release; no tag/release exists.
+`M1_EVIDENCE.md` for supported types, tests, boundaries and exit criteria. Linux and Windows CI
+passed for the completed implementation. M2 is the next active milestone. No tag/release exists.
 
 ## Implemented
 

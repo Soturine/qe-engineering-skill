@@ -2,7 +2,7 @@
 
 This repository is intended to be implementable and auditable without conversation history.
 
-The roadmap is consolidated as M0-M6. M0 is complete and validated; the active implementation milestone is **M1 — Source Ingestion & Project Model**. Later milestones must not bypass M0 trust guarantees.
+The roadmap is consolidated as M0-M6. M0 and M1 are complete and validated; the active implementation milestone is **M2 — Audit, Traceability & Risk Analysis**. Later milestones must not bypass M0 trust guarantees or M1 ingestion boundaries.
 
 ## When implementing
 
@@ -19,7 +19,7 @@ Before code:
 
 Do not use or request a real customer/project as the design baseline. Build against generic contracts and synthetic fixtures.
 
-For M1 specifically, source inventory/parsing/extraction must remain deterministic where possible, preserve provenance and project/snapshot isolation, report partial/failed reads explicitly, and treat analyzed content as untrusted data. Do not jump ahead into production audit/generation, live TMS writes, automation or advanced retrieval.
+For M2 specifically, audit/traceability/risk analysis must consume the approved M1 Project Model, preserve provenance and existing history, and keep risk-derived output distinct from contract. Do not jump ahead into production test generation, live TMS writes, automation or advanced retrieval.
 
 ## Product behavior to preserve
 

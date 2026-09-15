@@ -425,7 +425,7 @@ Validation/research:
 
 ## Current implementation status
 
-**M1 Source Ingestion & Project Model is implemented and locally validated.**
+**M1 Source Ingestion & Project Model is implemented and validated.**
 
 The executable package includes M0's versioned trust contracts and gates plus bounded local
 source inventory, SHA-256 identity, Markdown/text/JSON/YAML/OpenAPI/Python parsing, typed

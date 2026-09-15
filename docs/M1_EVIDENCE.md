@@ -1,7 +1,8 @@
 # M1 implementation evidence
 
-Status: **implemented and locally validated for M1**. No release/tag created. Linux and Windows
-CI on the final commit remain the release gate.
+Status: **implemented and validated for M1**. No release/tag created. Quality run
+[`34930197646`](https://github.com/Soturine/qe-engineering-skill/actions/runs/34930197646)
+passed on Linux and Windows, including installed-wheel verification.
 
 ## Implemented pipeline
 

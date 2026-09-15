@@ -38,7 +38,7 @@ Exit criteria:
 
 ## M1 — Source Ingestion & Project Model
 
-Status: **implemented and locally validated; final Linux/Windows CI is the release gate**.
+Status: **implemented and validated**.
 
 Turn project evidence into a normalized, provenance-backed Project Model.
 
@@ -216,7 +216,7 @@ Adopt only when evals show measurable gain without weakening provenance/complete
 
 ```text
 M0  Foundations & Trust Model                  ✅ implemented
-M1  Source Ingestion & Project Model
+M1  Source Ingestion & Project Model             ✓ implemented
 M2  Audit, Traceability & Risk Analysis
 M3  Test Generation & Improvement
 M4  Integrations & Production Agent Skill
