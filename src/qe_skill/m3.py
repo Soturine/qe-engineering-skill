@@ -702,6 +702,69 @@ def _clone_revisions(model: d.ProjectModel) -> list[TestRevisionProposal]:
     return revisions
 
 
+def propose_shared_steps(cases: list[GeneratedCaseProposal]) -> list[SharedStepCandidate]:
+    groups: dict[tuple[str, tuple[str, ...]], list[GeneratedCaseProposal]] = {}
+    for case in cases:
+        for precondition in case.preconditions:
+            if precondition.text and precondition.claims and not precondition.unresolved_reasons:
+                key = (precondition.text, tuple(sorted(ref.id for ref in precondition.claims)))
+                groups.setdefault(key, []).append(case)
+    candidates: list[SharedStepCandidate] = []
+    for (text, _), users in sorted(groups.items()):
+        unique_users = {case.id: case for case in users}
+        if len(unique_users) < 2:
+            continue
+        first = next(iter(unique_users.values()))
+        precondition = next(item for item in first.preconditions if item.text == text)
+        candidates.append(
+            SharedStepCandidate(
+                id=stable_id("m3.shared", first.project_id, first.snapshot_id, text),
+                project_id=first.project_id,
+                snapshot_id=first.snapshot_id,
+                title=f"Prepare: {text}",
+                steps=[DraftManualStep(number=1, action=precondition, required=True)],
+                supporting_evidence=precondition.claims,
+                claim_refs=precondition.claims,
+                used_by=[
+                    _ref(case) for case in sorted(unique_users.values(), key=lambda item: item.id)
+                ],
+                rationale="The same evidence-backed preparation is repeated across proposals.",
+                readiness="READY_WITH_REVIEW",
+                review_status="REVIEW_REQUIRED",
+            )
+        )
+    return candidates
+
+
+def propose_parameters(cases: list[GeneratedCaseProposal]) -> list[ParameterCandidate]:
+    groups: dict[str, list[tuple[GeneratedCaseProposal, DraftTestData]]] = {}
+    for case in cases:
+        for datum in case.data:
+            groups.setdefault(datum.name, []).append((case, datum))
+    candidates: list[ParameterCandidate] = []
+    for name, uses in sorted(groups.items()):
+        first_case, first_data = uses[0]
+        evidence = sorted(
+            {ref.id: ref for _, data in uses for ref in data.properties.claims}.values(),
+            key=lambda ref: ref.id,
+        )
+        if not evidence:
+            continue
+        candidates.append(
+            ParameterCandidate(
+                id=stable_id("m3.parameter", first_case.project_id, first_case.snapshot_id, name),
+                project_id=first_case.project_id,
+                snapshot_id=first_case.snapshot_id,
+                name=name,
+                properties=first_data.properties,
+                source_evidence=evidence,
+                used_by=[_ref(case) for case, _ in uses],
+                rationale="Explicit evidence-backed test data can be supplied as a parameter.",
+            )
+        )
+    return candidates
+
+
 def generate_m3(
     model: d.ProjectModel,
     analysis: M2AnalysisReport,
@@ -798,7 +861,14 @@ def generate_m3(
         if analysis.mode == "CLONE_REUSE"
         else []
     )
-    artifact_refs = [_ref(case) for case in cases] + [_ref(item) for item in revisions]
+    shared_steps = propose_shared_steps(cases)
+    parameters = propose_parameters(cases)
+    artifact_refs = (
+        [_ref(case) for case in cases]
+        + [_ref(item) for item in revisions]
+        + [_ref(item) for item in shared_steps]
+        + [_ref(item) for item in parameters]
+    )
     manifest = GenerationManifest(
         id=stable_id("m3.manifest", model.project_id, model.snapshot_id, config_hash),
         project_id=model.project_id,
@@ -825,8 +895,8 @@ def generate_m3(
         cases=cases,
         test_model=test_model,
         revisions=revisions,
-        shared_steps=[],
-        parameters=[],
+        shared_steps=shared_steps,
+        parameters=parameters,
         traceability=sorted(edges, key=lambda item: item.id),
         materialized_oracles=generated_oracles,
         manifest=manifest,
