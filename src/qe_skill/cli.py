@@ -24,6 +24,8 @@ from qe_skill.m2 import (
     analyze_project,
     validate_analysis_report,
 )
+from qe_skill.m3 import AuthoringConfig, M3GenerationReport, generate_m3, validate_generation_report
+from qe_skill.m3_render import render_html, render_json, render_markdown, render_yaml
 from qe_skill.parsers import ParserLimits
 from qe_skill.schemas import schema_text
 from qe_skill.validation import Issue, Result, TrustContext, timestamp_valid, validate_ledger
@@ -233,6 +235,44 @@ def write_m2_outputs(output: Path, report: object) -> None:
         raise InputFailure("SRC_OUTPUT", "Local audit report could not be written.") from error
 
 
+def write_m3_outputs(output: Path, report: M3GenerationReport) -> None:
+    try:
+        if output.exists() and (output.is_symlink() or not output.is_dir()):
+            raise InputFailure("SRC_OUTPUT", "Output must be a regular local directory.")
+        output.mkdir(parents=True, exist_ok=True)
+        (output / "m3-generation-report.json").write_text(render_json(report), encoding="utf-8")
+        (output / "test-model.json").write_text(
+            json.dumps(report.test_model.model_dump(mode="json"), indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        (output / "test-model.yaml").write_text(render_yaml(report), encoding="utf-8")
+        markdown = render_markdown(report)
+        page = render_html(report)
+        (output / "test-plan.md").write_text(markdown, encoding="utf-8")
+        (output / "test-plan.html").write_text(page, encoding="utf-8")
+        write_json(
+            output / "improvement-proposals.json",
+            [item.model_dump(mode="json") for item in report.revisions],
+        )
+        (output / "improvement-report.md").write_text(markdown, encoding="utf-8")
+        (output / "improvement-report.html").write_text(page, encoding="utf-8")
+        write_json(
+            output / "shared-step-candidates.json",
+            [item.model_dump(mode="json") for item in report.shared_steps],
+        )
+        write_json(
+            output / "parameter-candidates.json",
+            [item.model_dump(mode="json") for item in report.parameters],
+        )
+        write_json(
+            output / "generation-traceability.json",
+            [item.model_dump(mode="json") for item in report.traceability],
+        )
+        write_json(output / "generation-manifest.json", report.manifest.model_dump(mode="json"))
+    except OSError as error:
+        raise InputFailure("SRC_OUTPUT", "Local M3 output could not be written.") from error
+
+
 class Parser(argparse.ArgumentParser):
     def error(self, message: str) -> NoReturn:
         emit(Result([Issue("MODEL_COMMAND", "input", "Invalid command arguments; use --help.")]))
@@ -251,6 +291,7 @@ def main(argv: list[str] | None = None) -> int:
             "inventory",
             "ingest",
             "analyze",
+            "generate",
         ],
     )
     parser.add_argument(
@@ -290,8 +331,63 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--max-scenarios", type=int, default=100)
     parser.add_argument("--max-pairwise-combinations", type=int, default=24)
+    parser.add_argument("--analysis", type=Path, help="M2 analysis report required by generate")
     args = parser.parse_args(argv)
     try:
+        if args.command == "generate":
+            if args.analysis is None or args.output_dir is None:
+                raise InputFailure(
+                    "MODEL_COMMAND", "generate requires --analysis and --output-dir."
+                )
+            model_value = read_json(args.file)
+            analysis_value = read_json(args.analysis)
+            if (
+                next(
+                    Draft202012Validator(json.loads(schema_text("project-model"))).iter_errors(
+                        model_value
+                    ),
+                    None,
+                )
+                is not None
+                or next(
+                    Draft202012Validator(json.loads(schema_text("m2-analysis-report"))).iter_errors(
+                        analysis_value
+                    ),
+                    None,
+                )
+                is not None
+            ):
+                raise InputFailure(
+                    "MODEL_SCHEMA", "M3 input does not satisfy its versioned schema."
+                )
+            from qe_skill.m2 import M2AnalysisReport
+
+            model = ProjectModel.model_validate(model_value)
+            analysis = M2AnalysisReport.model_validate(analysis_value)
+            try:
+                m3_report = generate_m3(
+                    model, analysis, AuthoringConfig(max_cases=args.max_scenarios)
+                )
+            except ValueError as error:
+                raise InputFailure("M3_STALE_INPUT", str(error)) from error
+            validation = validate_generation_report(m3_report, model, analysis)
+            if validation.valid:
+                write_m3_outputs(args.output_dir, m3_report)
+            emit_json(
+                {
+                    "schema_version": "1.0",
+                    "command": "generate",
+                    "status": m3_report.status,
+                    "mode": m3_report.mode,
+                    "cases": len(m3_report.cases),
+                    "validation_issues": [asdict(issue) for issue in validation.issues],
+                    "output_dir": str(args.output_dir),
+                    "network_used": False,
+                    "external_writes": False,
+                    "proposal_only": True,
+                }
+            )
+            return 0 if validation.valid and m3_report.status != "INVALID" else 1
         if args.command == "analyze":
             if args.artifact_id or args.trusted_approvals:
                 raise InputFailure(
