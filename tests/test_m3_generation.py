@@ -1,7 +1,8 @@
+from qe_skill import domain as d
 from qe_skill.m2 import analyze_project
 from qe_skill.m3 import AuthoringConfig, generate_m3, validate_generation_report
 
-from .helpers import representative
+from .helpers import claim_copy, reference, representative
 
 
 def test_greenfield_selected_scenarios_generate_deterministic_proposals() -> None:
@@ -51,3 +52,42 @@ def test_complete_supported_context_materializes_strict_ready_case() -> None:
     ready = [case for case in generated.cases if case.readiness == "READY"]
     assert ready and ready[0].materialized_test is not None
     assert validate_generation_report(generated, model, analysis).valid
+
+
+def test_verified_multistep_path_becomes_complete_ordered_procedure() -> None:
+    model = representative()
+    path = next(node for node in model.nodes if node.id == "path")
+    assert hasattr(path, "steps")
+    navigation = claim_copy(model, "navigate-claim")
+    navigation.statement = "Open the synthetic records collection."
+    action = claim_copy(model, "select-claim")
+    action.statement = "Select the prepared synthetic record."
+    model.claims.extend([navigation, action])
+    path.steps = [
+        {
+            "instruction": navigation.statement,
+            "claim": reference(navigation.id),
+            "phase": "NAVIGATION",
+        },
+        {"instruction": action.statement, "claim": reference(action.id), "phase": "ACTION"},
+    ]
+    generated = generate_m3(model, analyze_project(model))
+    case = next(item for item in generated.cases if item.origin == "CONTRACT")
+    assert [step.number for step in case.steps] == [1, 2]
+    assert [step.phase for step in case.steps] == ["NAVIGATION", "ACTION"]
+    assert case.steps[0].oracle is None
+    assert case.steps[1].oracle is not None
+
+
+def test_partial_path_preserves_known_steps_without_fabricating_remainder() -> None:
+    model = representative()
+    model.tests.test_cases = []
+    model.nodes = [node for node in model.nodes if not isinstance(node, d.GeneratedTest)]
+    path = next(node for node in model.nodes if node.id == "path")
+    assert hasattr(path, "verification_status")
+    path.verification_status = "partial"
+    generated = generate_m3(model, analyze_project(model))
+    case = next(item for item in generated.cases if item.origin == "CONTRACT")
+    assert len(case.steps) == 1
+    assert case.readiness == "BLOCKED_SOURCE"
+    assert any("no remainder was invented" in note for note in case.blocking_notes)

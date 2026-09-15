@@ -66,6 +66,25 @@
           ],
           "default": null
         },
+        "phase": {
+          "anyOf": [
+            {
+              "enum": [
+                "PREPARATION",
+                "NAVIGATION",
+                "ACTION",
+                "VALIDATION",
+                "CLEANUP"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase"
+        },
         "required": {
           "default": true,
           "title": "Required",

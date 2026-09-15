@@ -511,6 +511,7 @@ class GeneratedTest(Node):
 class PathStep(Record):
     instruction: Text
     claim: Ref
+    phase: Literal["PREPARATION", "NAVIGATION", "ACTION", "VALIDATION", "CLEANUP"] | None = None
 
 
 class VerifiedPath(Node):

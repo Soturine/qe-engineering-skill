@@ -2702,6 +2702,25 @@
           "pattern": "\\S",
           "title": "Instruction",
           "type": "string"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "enum": [
+                "PREPARATION",
+                "NAVIGATION",
+                "ACTION",
+                "VALIDATION",
+                "CLEANUP"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase"
         }
       },
       "required": [

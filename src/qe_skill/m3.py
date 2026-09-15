@@ -216,6 +216,7 @@ class DraftTestData(d.Record):
 
 class DraftManualStep(d.Record):
     number: int = Field(ge=1)
+    phase: Literal["PREPARATION", "NAVIGATION", "ACTION", "VALIDATION", "CLEANUP"] | None = None
     action: DraftSupportedText
     path: d.Ref | None = None
     oracle: d.Ref | None = None
@@ -431,24 +432,49 @@ def _configured_text(
 
 def _scenario_path(
     scenario: ScenarioRecord, model: d.ProjectModel
-) -> tuple[d.VerifiedPath | None, DraftSupportedText]:
+) -> tuple[d.VerifiedPath | None, list[DraftManualStep]]:
     index = artifacts(model)
     channel = index.get(scenario.channel.id) if scenario.channel else None
     paths = sorted(
         (node for node in model.nodes if isinstance(node, d.VerifiedPath)), key=lambda node: node.id
     )
+    compatible: list[d.VerifiedPath] = []
     for path in paths:
-        if path.verification_status != "verified" or not path.steps:
-            continue
         if isinstance(channel, d.Channel) and path.path_type != channel.channel_type:
             continue
-        first = path.steps[0]
-        return path, DraftSupportedText(text=first.instruction, claims=[first.claim])
+        compatible.append(path)
+    compatible.sort(key=lambda path: (path.verification_status != "verified", path.id))
+    if compatible:
+        path = compatible[0]
+        path_blockers = (
+            []
+            if path.verification_status == "verified"
+            else ["Operational path is partial or unresolved; no remainder was invented."]
+        )
+        return path, [
+            DraftManualStep(
+                number=number,
+                phase=path_step.phase,
+                action=DraftSupportedText(text=path_step.instruction, claims=[path_step.claim]),
+                path=_ref(path),
+                required=True,
+                evidence_expectation="Record the observed result if this step cannot be completed.",
+                blocking_reasons=path_blockers,
+            )
+            for number, path_step in enumerate(path.steps, 1)
+        ]
     stimulus = index.get(scenario.stimulus.id) if scenario.stimulus else None
     claims = stimulus.claims if isinstance(stimulus, d.Action | d.Event) else []
     action = _claim_text(model, claims)
-    action.unresolved_reasons.append("No verified operational path supports this action.")
-    return None, action
+    action.unresolved_reasons.append("No operational path supports this action.")
+    return None, [
+        DraftManualStep(
+            number=1,
+            phase="ACTION",
+            action=action,
+            blocking_reasons=["No verified operational path supports this action."],
+        )
+    ]
 
 
 def _case_from_scenario(
@@ -463,7 +489,7 @@ def _case_from_scenario(
     if not objective_refs and isinstance(requirement, d.Requirement):
         objective_refs = requirement.claims
     objective = _claim_text(model, objective_refs)
-    path, action = _scenario_path(scenario, model)
+    path, steps = _scenario_path(scenario, model)
     oracle_result = reuse_oracle(scenario.oracle, model) if scenario.oracle else None
     if oracle_result is None and objective.claims:
         oracle_result = materialize_oracle(objective.claims[0], model)
@@ -471,7 +497,9 @@ def _case_from_scenario(
     exploratory = scenario.origin in {"RISK", "EXPLORATORY"} or (
         oracle is not None and not oracle.normative
     )
-    blockers = list(action.unresolved_reasons + objective.unresolved_reasons)
+    blockers = list(objective.unresolved_reasons)
+    blockers.extend(reason for step in steps for reason in step.action.unresolved_reasons)
+    blockers.extend(reason for step in steps for reason in step.blocking_reasons)
     if oracle is None and not exploratory:
         blockers.append("No defensible normative oracle is available.")
     environment = _configured_text(
@@ -519,15 +547,15 @@ def _case_from_scenario(
         readiness = "READY_WITH_REVIEW"
     case_id = stable_id("m3.case", model.project_id, model.snapshot_id, scenario.id)
     scenario_ref = _ref(scenario)
-    step = DraftManualStep(
-        number=1,
-        action=action,
-        path=_ref(path) if path else None,
-        oracle=_ref(oracle) if oracle else None,
-        expected_result=oracle.statement if oracle else None,
-        evidence_expectation="Record the observation for any Fail or Blocked result.",
-        blocking_reasons=blockers,
-    )
+    if steps and oracle is not None:
+        final = steps[-1]
+        steps[-1] = final.model_copy(
+            update={
+                "phase": final.phase or "VALIDATION",
+                "oracle": _ref(oracle),
+                "expected_result": oracle.statement,
+            }
+        )
     materialized: d.TestCase | None = None
     if readiness == "READY_WITH_REVIEW" and path and oracle and oracle.normative:
         materialized = d.TestCase(
@@ -550,14 +578,16 @@ def _case_from_scenario(
             data=[],
             steps=[
                 d.ManualStep(
-                    number=1,
-                    action=d.SupportedText(text=action.text or "", claims=action.claims),
+                    number=step.number,
+                    action=d.SupportedText(text=step.action.text or "", claims=step.action.claims),
                     path=_ref(path),
-                    oracle=_ref(oracle),
-                    expected_result=oracle.statement,
-                    required=True,
-                    evidence_expectation="Record the observation for any Fail or Blocked result.",
+                    oracle=step.oracle,
+                    expected_result=step.expected_result,
+                    required=step.required,
+                    evidence_expectation=step.evidence_expectation
+                    or "Record the observation for any Fail or Blocked result.",
                 )
+                for step in steps
             ],
             pass_rule="All required steps satisfy their cited oracles.",
             fail_rule="A required observation contradicts its cited oracle.",
@@ -600,7 +630,7 @@ def _case_from_scenario(
         actor=actor,
         profile=config.profile,
         permissions=permissions,
-        steps=[step],
+        steps=steps,
         pass_rule=None if exploratory else "All required steps satisfy their cited oracles.",
         fail_rule=None if exploratory else "A required observation contradicts its cited oracle.",
         blocked_rule="Required evidence, preparation, action, or observation cannot be completed.",
