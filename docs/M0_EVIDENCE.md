@@ -1,6 +1,8 @@
-﻿# M0 implementation evidence
+# M0 implementation evidence
 
 Status: **implemented and validated for M0**. No release/tag created.
+
+The roadmap is now consolidated as M0-M6. References below describe M0 evidence only; no post-M0 ingestion, extraction, audit, generation, integration, automation or advanced retrieval capability was added during this milestone.
 
 ## Deliverables and exit criteria
 
@@ -71,8 +73,9 @@ extracted statements true or guarantee undiscoverable-source completeness. These
 are visible in CLI output and `STATUS.md`. Review-dependent cases remain non-READY.
 Historical data and conflicts remain preserved, not silently rewritten.
 
-No M1/M2 extraction, production generator, external CRUD, TMS/MCP, automation or retrieval
-system was added. Only M0-required semantic/history/approval hooks anticipate later work.
+No post-M0 source ingestion/Project Model population, production audit/generation,
+external CRUD, TMS/MCP integration, automation or advanced retrieval system was added.
+Only M0-required semantic/history/approval hooks anticipate later work.
 
 ## Commits
 
@@ -84,7 +87,7 @@ system was added. Only M0-required semantic/history/approval hooks anticipate la
 6. `1bdf73c` — bounded validation CLI
 7. `08f10b5` — audited dependency pins and Linux/Windows wheel CI
 8. `b7e6cf3` — evidence-content approval invalidation and conflict-resolution hardening
+9. `1fdae0c` — final M0 evidence and implementation-status documentation
 
 Each checkpoint was tested before commit, pushed to `main`, and checked with
-`git rev-parse HEAD origin/main`. A subsequent documentation checkpoint records final
-scope. Per-commit CI evidence is in the repository Actions history.
+`git rev-parse HEAD origin/main`. Per-commit CI evidence is in the repository Actions history.
