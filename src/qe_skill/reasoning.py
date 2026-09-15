@@ -57,6 +57,8 @@ class ProviderProposal(d.Record):
     statement: d.Text | None = None
     structured_value: dict[str, JsonValue] = Field(default_factory=dict)
     source_excerpt_ids: list[d.Text] = Field(min_length=1)
+    interpretation: Literal["inferred", "unresolved"] = "inferred"
+    confidence: float = Field(default=0.5, ge=0, le=1)
     inferred: Literal[True] = True
 
     @model_validator(mode="after")
