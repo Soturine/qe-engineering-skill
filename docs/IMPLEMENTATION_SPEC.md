@@ -97,6 +97,19 @@ M0 is complete only when automated tests prove:
 - no live model is required to test deterministic core behavior;
 - no TMS/MCP connection is required to exercise core trust contracts.
 
+## M1 implemented boundary
+
+M1 adds deterministic local inventory, M0 Source Ledger population, bounded parsers for
+Markdown/text/JSON/YAML/OpenAPI/Python, typed extraction records, conservative Project Model
+population and local CLI artifacts. Only explicit `qe_model` records and raw OpenAPI structural
+declarations create semantic nodes. Natural-language structure and Python symbols remain evidence;
+they are not guessed into requirements, routes, roles or business rules.
+
+Unsupported, unreadable, partial, mutated and root-escaping evidence remains explicit and prevents
+false completeness. The implementation has no live model, retrieval database, network reference
+resolution, TMS dependency or publication capability. See `M1_EVIDENCE.md` for exact supported
+types, automated evidence and limitations.
+
 ## Project Model design expectations
 
 The M0 skeleton must leave room for structured, provenance-bearing nodes for:

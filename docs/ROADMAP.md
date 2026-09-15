@@ -38,6 +38,8 @@ Exit criteria:
 
 ## M1 — Source Ingestion & Project Model
 
+Status: **implemented and locally validated; final Linux/Windows CI is the release gate**.
+
 Turn project evidence into a normalized, provenance-backed Project Model.
 
 Deliver source inventory and ingestion:

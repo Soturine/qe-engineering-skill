@@ -1,6 +1,6 @@
 # Evaluation Fixtures
 
-Status: **M0 deterministic synthetic evals implemented**
+Status: **M1 deterministic synthetic evals implemented**
 
 Run `python -m pytest evals`. Rebuild committed JSON using
 `python -m evals.build_fixtures`; tests reject drift. The eleven fixtures cover
@@ -13,6 +13,10 @@ Each fixture declares expected error codes; valid partial evidence is accepted w
 visible warnings, while normative output depending on unavailable evidence fails.
 Validation must not mutate history. Mode dispatch, semantic audit, external write
 execution and live provider parity are deferred; mode fixtures test contract shapes.
+
+`test_m1_ingestion.py` adds live synthetic temporary-project evals for representative
+provenance-backed normalization, inert prompt injection, visible parser failure and blocked
+remote references. These evals use no model, network service or TMS.
 
 Committed fixtures must be synthetic and generic. Do not copy confidential requirements, production data, real customer repositories or proprietary artifacts into this directory.
 

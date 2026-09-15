@@ -7,8 +7,8 @@ Use this page as the canonical reading map.
 1. `../README.md` — product purpose and current status.
 2. `../AGENTS.md` — implementation contract for coding agents.
 3. `ENGINEERING_CONSTITUTION.md` — non-negotiable engineering principles.
-4. `IMPLEMENTATION_SPEC.md` — concrete M0 build order.
-5. `CODEX_M0_TASK.md` — direct first implementation handoff.
+4. `IMPLEMENTATION_SPEC.md` — implemented M0/M1 build boundaries.
+5. `M0_EVIDENCE.md` and `M1_EVIDENCE.md` — executable milestone evidence.
 6. `ROADMAP.md` — milestone sequence and exit criteria.
 7. `STATUS.md` — what is documented versus actually implemented.
 
@@ -46,6 +46,8 @@ Use this page as the canonical reading map.
 ## Validation and independent review
 
 - `EVAL_STRATEGY.md`
+- `M0_EVIDENCE.md`
+- `M1_EVIDENCE.md`
 - `AUDIT_GUIDE.md`
 - `AI_IMPLEMENTATION_GUIDE.md`
 - `../CLAUDE.md`

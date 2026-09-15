@@ -433,13 +433,16 @@ The implementation must eventually enforce at least:
 9. scenario generation preserves the reason a scenario exists and why it was selected/rejected;
 10. model serialization is versioned and reproducible.
 
-## M0 versus later milestones
+## Implemented milestone boundary
 
 M0 does **not** need to implement the full extraction engine. It must, however, create a Project Model skeleton and contracts that do not make the later semantics impossible or require a destructive redesign.
 
 M0 should define stable IDs, project/snapshot scoping, provenance-bearing base types and enough schema shape for representative nodes such as entities, actors/roles, states/transitions, interfaces, requirement atoms, risks/scenarios and tests.
 
-M2 expands extraction/normalization and graph/matrix construction.
+M1 implements bounded local inventory/parsing and conservative population from explicit
+structured evidence plus raw OpenAPI declarations. Arbitrary natural-language semantic
+interpretation is not implemented. M2 adds audit, atomic traceability, risk/scenario analysis
+and coverage views; M3 adds manual test generation.
 
 ## Model versioning
 

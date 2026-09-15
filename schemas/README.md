@@ -1,6 +1,6 @@
 # Schemas
 
-Status: **M0 version 1.0 contracts and policy validators implemented**
+Status: **M1 version 1.0 contracts and policy validators implemented**
 
 Schemas are in `v1/`. Reproduce with `python -m qe_skill.schemas`.
 Tests check Draft 2020-12 validity and byte-for-byte agreement with typed contracts.

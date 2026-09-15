@@ -380,7 +380,7 @@ Start here:
 - `docs/INDEX.md` — documentation map;
 - `docs/ENGINEERING_CONSTITUTION.md` — engineering rules;
 - `docs/IMPLEMENTATION_SPEC.md` — implementation plan;
-- `docs/CODEX_M0_TASK.md` — first implementation handoff;
+- `docs/M0_EVIDENCE.md` and `docs/M1_EVIDENCE.md` — milestone evidence;
 - `docs/ROADMAP.md` — milestone sequence;
 - `docs/STATUS.md` — documented vs implemented capability.
 
@@ -425,16 +425,17 @@ Validation/research:
 
 ## Current implementation status
 
-**M0 Foundations & Trust Model is implemented and validated.**
+**M1 Source Ingestion & Project Model is implemented and locally validated.**
 
-The executable package includes versioned schemas, strict domain contracts, deterministic
-trust/model/readiness validators, a read-only CLI and synthetic adversarial evals.
-The broader workflows described above remain target behavior: no production generator,
-source extraction engine or external write adapter is implemented.
+The executable package includes M0's versioned trust contracts and gates plus bounded local
+source inventory, SHA-256 identity, Markdown/text/JSON/YAML/OpenAPI/Python parsing, typed
+extraction records, conservative semantic normalization and a local ingestion CLI. Arbitrary
+natural-language semantics are not claimed.
 
 Install with `python -m pip install -r requirements-dev.lock`, followed by
-`python -m pip install --no-deps --no-build-isolation -e .`. Run `qe --help` for the four
-validation commands. See `docs/CLI.md` for inputs and `docs/M0_EVIDENCE.md` for the
-107-test evidence matrix, CI reproduction and limitations.
+`python -m pip install --no-deps --no-build-isolation -e .`. Run `qe --help` for validation,
+inventory and ingestion commands. See `docs/CLI.md`, `docs/M0_EVIDENCE.md` and
+`docs/M1_EVIDENCE.md` for contracts, reproduction evidence and limitations.
 
-Read `docs/STATUS.md` for the authoritative current state. Coding agents should start with `AGENTS.md` and `docs/CODEX_M0_TASK.md`.
+M2 audit/risk analysis, M3 test generation, external integrations/publication, automation and
+advanced retrieval remain deferred. Read `docs/STATUS.md` for the authoritative current state.
