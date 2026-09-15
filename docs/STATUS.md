@@ -1,4 +1,4 @@
-﻿# Implementation Status
+# Implementation Status
 
 ## Current stage
 
@@ -7,6 +7,9 @@
 M0 completion covers deterministic contracts and gates, not production generation or
 project understanding. See `M0_EVIDENCE.md` for tests, boundaries and exit criteria.
 The current commit must remain green in CI.
+
+The implementation roadmap is now consolidated as M0-M6. The earlier finer-grained
+M0-M10 plan was regrouped without removing planned capabilities.
 
 ## Implemented
 
@@ -32,15 +35,27 @@ The current commit must remain green in CI.
 - Conflicts: unresolved conflicts block affected normative output; M0 does not choose
   precedence or synthesize resolutions. Supplied resolutions need authority.
 
-## Deferred
+## Deferred by consolidated milestone
 
-M1 inventory/parsers; M2 extraction/normalization and graph/matrix construction;
-M3 existing-test audit; risk/scenario generation and coverage optimization; production
-manual generator/rewriter; providers; Azure/MCP/TMS; publication, target-drift checks,
-read-back and idempotency execution; production Agent Skill; automation; RAG/GraphRAG.
+- **M1 — Source Ingestion & Project Model:** inventory/parsers, document extraction,
+  AST/symbol inventory, semantic extraction/normalization, Project Model population and
+  source conflict/alias/staleness handling.
+- **M2 — Audit, Traceability & Risk Analysis:** existing-test audit, atomic coverage,
+  duplicate/conflict/stale classification, risk/scenario generation and coverage optimization.
+- **M3 — Test Generation & Improvement:** production manual generator/rewriter,
+  greenfield plans, missing-case generation and step-by-step rewrite proposals.
+- **M4 — Integrations & Production Agent Skill:** Azure/MCP/TMS adapters, preview/sync,
+  target-drift/read-back/idempotency execution and production Agent Skill packaging.
+- **M5 — Automation & Execution Assistance:** automation renderers and optional bounded
+  execution/evidence-capture assistance.
+- **M6 — Advanced Retrieval & Change Impact:** RAG/GraphRAG evaluation, richer code
+  dependency graphs, PR/diff impact analysis and regression selection.
 
-The only adjacent foundations are M0-required semantic nodes, historical identity and
-approval/proposal hooks. No later-milestone execution capability was introduced.
+M0-M3 are intended to form a useful standalone product that works from local/exported
+evidence without requiring Azure DevOps, MCP or another TMS.
+
+The only adjacent foundations already present are M0-required semantic nodes, historical
+identity and approval/proposal hooks. No later-milestone execution capability is currently implemented.
 
 ## Safety interpretation
 
