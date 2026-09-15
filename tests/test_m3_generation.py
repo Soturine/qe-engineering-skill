@@ -35,3 +35,19 @@ def test_generation_rejects_stale_m2_input() -> None:
         assert "same snapshot" in str(error)
     else:
         raise AssertionError("stale M2 input was accepted")
+
+
+def test_complete_supported_context_materializes_strict_ready_case() -> None:
+    model = representative()
+    analysis = analyze_project(model)
+    config = AuthoringConfig(
+        environment_claim={"id": "instruction-2", "project_id": "synthetic", "snapshot_id": "v1"},
+        cleanup_claim={"id": "instruction-6", "project_id": "synthetic", "snapshot_id": "v1"},
+        isolation_claim={"id": "instruction-7", "project_id": "synthetic", "snapshot_id": "v1"},
+        build="synthetic-1",
+        profile="synthetic role",
+    )
+    generated = generate_m3(model, analysis, config)
+    ready = [case for case in generated.cases if case.readiness == "READY"]
+    assert ready and ready[0].materialized_test is not None
+    assert validate_generation_report(generated, model, analysis).valid

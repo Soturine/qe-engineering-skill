@@ -465,6 +465,8 @@ def _case_from_scenario(
     objective = _claim_text(model, objective_refs)
     path, action = _scenario_path(scenario, model)
     oracle_result = reuse_oracle(scenario.oracle, model) if scenario.oracle else None
+    if oracle_result is None and objective.claims:
+        oracle_result = materialize_oracle(objective.claims[0], model)
     oracle = oracle_result.oracle if oracle_result else None
     exploratory = scenario.origin in {"RISK", "EXPLORATORY"} or (
         oracle is not None and not oracle.normative
@@ -487,6 +489,27 @@ def _case_from_scenario(
     actor = scenario.actor
     if actor is None:
         blockers.append("Actor/profile evidence is not available.")
+    if config.profile is None:
+        blockers.append("Actor profile context is not available.")
+    permissions: list[d.Ref] = []
+    if actor is not None:
+        mappings = [
+            node
+            for node in model.nodes
+            if isinstance(node, d.ActorMapping)
+            and node.actor == actor
+            and node.status == "confirmed"
+        ]
+        subjects = {actor.id} | {
+            ref.id for mapping in mappings for ref in mapping.roles + mapping.groups
+        }
+        permissions = [
+            _ref(node)
+            for node in model.nodes
+            if isinstance(node, d.Permission)
+            and node.subject.id in subjects
+            and (scenario.stimulus is None or node.action == scenario.stimulus)
+        ]
     readiness: d.Readiness
     if exploratory:
         readiness = "EXPLORATORY_ONLY"
@@ -494,6 +517,7 @@ def _case_from_scenario(
         readiness = "BLOCKED_SOURCE"
     else:
         readiness = "READY_WITH_REVIEW"
+    case_id = stable_id("m3.case", model.project_id, model.snapshot_id, scenario.id)
     scenario_ref = _ref(scenario)
     step = DraftManualStep(
         number=1,
@@ -504,8 +528,61 @@ def _case_from_scenario(
         evidence_expectation="Record the observation for any Fail or Blocked result.",
         blocking_reasons=blockers,
     )
+    materialized: d.TestCase | None = None
+    if readiness == "READY_WITH_REVIEW" and path and oracle and oracle.normative:
+        materialized = d.TestCase(
+            id=case_id,
+            project_id=model.project_id,
+            snapshot_id=model.snapshot_id,
+            title=f"Review scenario {scenario.id}",
+            objective=objective.text or oracle.statement,
+            origin=oracle.origin,
+            claims=objective.claims,
+            criteria=[scenario.source_atom] if scenario.source_atom else [],
+            risks=[scenario.source_risk] if scenario.source_risk else [],
+            scenarios=[],
+            environment=d.SupportedText(text=environment.text or "", claims=environment.claims),
+            build=config.build or "",
+            actor=actor,
+            profile=config.profile or "",
+            permissions=permissions,
+            preconditions=[],
+            data=[],
+            steps=[
+                d.ManualStep(
+                    number=1,
+                    action=d.SupportedText(text=action.text or "", claims=action.claims),
+                    path=_ref(path),
+                    oracle=_ref(oracle),
+                    expected_result=oracle.statement,
+                    required=True,
+                    evidence_expectation="Record the observation for any Fail or Blocked result.",
+                )
+            ],
+            pass_rule="All required steps satisfy their cited oracles.",
+            fail_rule="A required observation contradicts its cited oracle.",
+            blocked_rule=(
+                "Required evidence, preparation, action, or observation cannot be completed."
+            ),
+            cleanup=d.SupportedText(text=cleanup.text or "", claims=cleanup.claims),
+            isolation=d.SupportedText(text=isolation.text or "", claims=isolation.claims),
+            shared_step_candidates=[],
+            parameter_candidates=[],
+            readiness="READY",
+            blocking_notes=[],
+            review_required=False,
+        )
+        working = model.model_copy(deep=True)
+        if oracle.id not in {item.id for item in working.oracles}:
+            working.oracles.append(oracle)
+        if validate_test_case(materialized, working).valid:
+            readiness = "READY"
+        else:
+            materialized = None
+            blockers.append("Strict READY validation requires additional supported context.")
+            readiness = "BLOCKED_SOURCE"
     proposal = GeneratedCaseProposal(
-        id=stable_id("m3.case", model.project_id, model.snapshot_id, scenario.id),
+        id=case_id,
         project_id=model.project_id,
         snapshot_id=model.snapshot_id,
         action="NEW",
@@ -522,7 +599,7 @@ def _case_from_scenario(
         build=config.build,
         actor=actor,
         profile=config.profile,
-        permissions=[],
+        permissions=permissions,
         steps=[step],
         pass_rule=None if exploratory else "All required steps satisfy their cited oracles.",
         fail_rule=None if exploratory else "A required observation contradicts its cited oracle.",
@@ -532,8 +609,9 @@ def _case_from_scenario(
         evidence_expectations=["Record the failed or blocked step and relevant observation."],
         readiness=readiness,
         blocking_notes=sorted(set(blockers)),
-        review_status="REVIEW_REQUIRED",
+        review_status="NOT_REQUIRED" if readiness == "READY" else "REVIEW_REQUIRED",
         rationale="Generated from an explicitly selected M2 scenario without adding behavior.",
+        materialized_test=materialized,
     )
     return proposal, oracle if oracle and oracle.id not in {
         item.id for item in model.oracles
