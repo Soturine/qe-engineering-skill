@@ -4,6 +4,8 @@ Status: **Build plan**
 
 This document exists so a coding agent can implement the repository without relying on conversation history or a specific example project.
 
+The roadmap is consolidated as M0-M6. Earlier references to separate parsing, knowledge-model, audit, risk, integration, skill, automation and execution milestones are now grouped into larger product outcomes without removing planned capability.
+
 ## Target repository shape
 
 ```text
@@ -50,6 +52,16 @@ The architecture must support, without project-specific hard-coding:
 The core must work without Azure DevOps, MCP or any TMS connection. External systems are optional adapters.
 
 Generation/audit/rewrite are proposal-producing operations. They do not imply CRUD authority. Any external write path must require an explicit, scoped human approval and must preserve historical evidence by default.
+
+## Consolidated milestone map
+
+- **M0 — Foundations & Trust Model:** deterministic contracts, validators, schemas, evals, CLI and CI.
+- **M1 — Source Ingestion & Project Model:** inventory, parsing, extraction and normalized evidence-backed project understanding.
+- **M2 — Audit, Traceability & Risk Analysis:** existing-test audit, atomic traceability, risk/scenario analysis and coverage optimization.
+- **M3 — Test Generation & Improvement:** greenfield generation plus missing-case and step-by-step rewrite proposals.
+- **M4 — Integrations & Production Agent Skill:** optional TMS/Azure adapters and portable Agent Skill packaging.
+- **M5 — Automation & Execution Assistance:** approved-model renderers and optional bounded execution assistance.
+- **M6 — Advanced Retrieval & Change Impact:** retrieval experiments, richer dependency analysis and regression/change-impact selection.
 
 ## M0 implementation order
 
@@ -99,11 +111,11 @@ The M0 skeleton must leave room for structured, provenance-bearing nodes for:
 - risks/scenarios;
 - existing/generated test references.
 
-Do not collapse these into untyped arrays of strings if that would prevent M2/M3/M5 semantics.
+Do not collapse these into untyped arrays of strings if that would prevent M1/M2/M3 semantics.
 
 ## Manual Test Model design expectations
 
-Even before M5 generation exists, the contract should be compatible with a future manual case containing:
+Even before M3 generation exists, the contract should be compatible with a future manual case containing:
 
 - title/objective;
 - provenance/origin;
