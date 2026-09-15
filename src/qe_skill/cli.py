@@ -25,7 +25,13 @@ from qe_skill.m2 import (
     validate_analysis_report,
 )
 from qe_skill.m3 import AuthoringConfig, M3GenerationReport, generate_m3, validate_generation_report
-from qe_skill.m3_render import render_html, render_json, render_markdown, render_yaml
+from qe_skill.m3_render import (
+    render_canonical,
+    render_html,
+    render_json,
+    render_markdown,
+    render_yaml,
+)
 from qe_skill.parsers import ParserLimits
 from qe_skill.schemas import schema_text
 from qe_skill.validation import Issue, Result, TrustContext, timestamp_valid, validate_ledger
@@ -235,27 +241,44 @@ def write_m2_outputs(output: Path, report: object) -> None:
         raise InputFailure("SRC_OUTPUT", "Local audit report could not be written.") from error
 
 
-def write_m3_outputs(output: Path, report: M3GenerationReport) -> None:
+def requested_formats(value: str) -> set[str]:
+    supported = {"json", "yaml", "markdown", "html"}
+    formats = supported if value == "all" else {item.strip() for item in value.split(",")}
+    if not formats or not formats <= supported:
+        raise InputFailure("MODEL_COMMAND", "Formats must be json,yaml,markdown,html or all.")
+    return formats
+
+
+def ensure_local_output_dir(output: Path) -> None:
+    if output.exists() and (output.is_symlink() or not output.is_dir()):
+        raise InputFailure("SRC_OUTPUT", "Output must be a regular local directory.")
+    output.mkdir(parents=True, exist_ok=True)
+
+
+def write_m3_outputs(output: Path, report: M3GenerationReport, formats: set[str]) -> None:
     try:
-        if output.exists() and (output.is_symlink() or not output.is_dir()):
-            raise InputFailure("SRC_OUTPUT", "Output must be a regular local directory.")
-        output.mkdir(parents=True, exist_ok=True)
+        ensure_local_output_dir(output)
         (output / "m3-generation-report.json").write_text(render_json(report), encoding="utf-8")
-        (output / "test-model.json").write_text(
-            json.dumps(report.test_model.model_dump(mode="json"), indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        (output / "test-model.yaml").write_text(render_yaml(report), encoding="utf-8")
-        markdown = render_markdown(report)
-        page = render_html(report)
-        (output / "test-plan.md").write_text(markdown, encoding="utf-8")
-        (output / "test-plan.html").write_text(page, encoding="utf-8")
+        if "json" in formats:
+            (output / "test-model.json").write_text(
+                json.dumps(report.test_model.model_dump(mode="json"), indent=2, sort_keys=True)
+                + "\n",
+                encoding="utf-8",
+            )
+        if "yaml" in formats:
+            (output / "test-model.yaml").write_text(render_yaml(report), encoding="utf-8")
+        if "markdown" in formats:
+            markdown = render_markdown(report)
+            (output / "test-plan.md").write_text(markdown, encoding="utf-8")
+            (output / "improvement-report.md").write_text(markdown, encoding="utf-8")
+        if "html" in formats:
+            page = render_html(report)
+            (output / "test-plan.html").write_text(page, encoding="utf-8")
+            (output / "improvement-report.html").write_text(page, encoding="utf-8")
         write_json(
             output / "improvement-proposals.json",
             [item.model_dump(mode="json") for item in report.revisions],
         )
-        (output / "improvement-report.md").write_text(markdown, encoding="utf-8")
-        (output / "improvement-report.html").write_text(page, encoding="utf-8")
         write_json(
             output / "shared-step-candidates.json",
             [item.model_dump(mode="json") for item in report.shared_steps],
@@ -292,6 +315,7 @@ def main(argv: list[str] | None = None) -> int:
             "ingest",
             "analyze",
             "generate",
+            "render",
         ],
     )
     parser.add_argument(
@@ -332,8 +356,36 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-scenarios", type=int, default=100)
     parser.add_argument("--max-pairwise-combinations", type=int, default=24)
     parser.add_argument("--analysis", type=Path, help="M2 analysis report required by generate")
+    parser.add_argument("--format", dest="output_formats", default="all")
     args = parser.parse_args(argv)
     try:
+        if args.command == "render":
+            if args.output_dir is None:
+                raise InputFailure("MODEL_COMMAND", "render requires --output-dir.")
+            value = read_json(args.file)
+            if not isinstance(value, dict):
+                raise InputFailure("MODEL_SCHEMA", "Canonical M3 report must be a JSON object.")
+            formats = requested_formats(args.output_formats)
+            ensure_local_output_dir(args.output_dir)
+            extensions = {"json": "json", "yaml": "yaml", "markdown": "md", "html": "html"}
+            for output_format in sorted(formats):
+                try:
+                    rendered = render_canonical(value, output_format)  # type: ignore[arg-type]
+                except ValueError as error:
+                    raise InputFailure("MODEL_SCHEMA", str(error)) from error
+                (args.output_dir / f"m3-report.{extensions[output_format]}").write_text(
+                    rendered, encoding="utf-8"
+                )
+            emit_json(
+                {
+                    "schema_version": "1.0",
+                    "command": "render",
+                    "formats": sorted(formats),
+                    "reasoning_invoked": False,
+                    "network_used": False,
+                }
+            )
+            return 0
         if args.command == "generate":
             if args.analysis is None or args.output_dir is None:
                 raise InputFailure(
@@ -372,7 +424,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise InputFailure("M3_STALE_INPUT", str(error)) from error
             validation = validate_generation_report(m3_report, model, analysis)
             if validation.valid:
-                write_m3_outputs(args.output_dir, m3_report)
+                write_m3_outputs(args.output_dir, m3_report, requested_formats(args.output_formats))
             emit_json(
                 {
                     "schema_version": "1.0",

@@ -4,7 +4,14 @@ import yaml
 
 from qe_skill.m2 import analyze_project
 from qe_skill.m3 import generate_m3
-from qe_skill.m3_render import render_html, render_json, render_markdown, render_yaml
+from qe_skill.m3_render import (
+    ReportTheme,
+    render_canonical,
+    render_html,
+    render_json,
+    render_markdown,
+    render_yaml,
+)
 
 from .helpers import representative
 
@@ -32,3 +39,52 @@ def test_html_escapes_untrusted_project_content() -> None:
     page = render_html(report)
     assert "<script>" not in page
     assert "&lt;script&gt;" in page
+
+
+def test_optional_empty_sections_are_omitted() -> None:
+    _, _, report = _report()
+    page = render_html(report)
+    assert 'id="shared"' not in page
+    assert 'id="parameters"' not in page
+    assert 'id="changes"' not in page
+
+
+def test_additive_future_field_is_ignored_but_major_version_fails() -> None:
+    _, _, report = _report()
+    payload = report.model_dump(mode="json")
+    payload["future_additive"] = {"safe": True}
+    assert "Test Cases" in render_canonical(payload, "html")
+    payload["schema_version"] = "2.0"
+    try:
+        render_canonical(payload, "html")
+    except ValueError as error:
+        assert "major version" in str(error)
+    else:
+        raise AssertionError("incompatible schema rendered")
+
+
+def test_renderer_is_offline_and_theme_changes_presentation_only() -> None:
+    _, _, report = _report()
+    canonical = render_json(report)
+    page = render_html(report, ReportTheme(project_name="Synthetic Review", accent="#123456"))
+    assert "Synthetic Review" in page and "#123456" in page
+    assert "http://" not in page and "https://" not in page
+    assert render_json(report) == canonical
+
+
+def test_brownfield_original_and_proposed_are_visible() -> None:
+    from .test_m2 import existing
+
+    model = representative()
+    model.ledger.manifest.mode = "BROWNFIELD"
+    model.nodes.append(existing("legacy", actions=[]))
+    report = generate_m3(model, analyze_project(model))
+    page = render_html(report)
+    assert "Original" in page and "Proposed" in page
+    assert "Historical asset modified? NO" in page
+
+
+def _report():
+    model = representative()
+    analysis = analyze_project(model)
+    return model, analysis, generate_m3(model, analysis)

@@ -68,3 +68,38 @@ def test_generate_cli_rejects_stale_analysis(tmp_path: Path) -> None:
         )
         == 1
     )
+
+
+def test_render_cli_reuses_canonical_report_without_authoring(tmp_path: Path) -> None:
+    model_path, analysis_path = write_inputs(tmp_path)
+    generated = tmp_path / "generated"
+    assert (
+        main(
+            [
+                "generate",
+                str(model_path),
+                "--analysis",
+                str(analysis_path),
+                "--output-dir",
+                str(generated),
+                "--format",
+                "json",
+            ]
+        )
+        == 0
+    )
+    rendered = tmp_path / "rendered"
+    assert (
+        main(
+            [
+                "render",
+                str(generated / "m3-generation-report.json"),
+                "--output-dir",
+                str(rendered),
+                "--format",
+                "html,markdown",
+            ]
+        )
+        == 0
+    )
+    assert {path.name for path in rendered.iterdir()} == {"m3-report.html", "m3-report.md"}
