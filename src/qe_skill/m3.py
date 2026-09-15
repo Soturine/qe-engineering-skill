@@ -7,17 +7,28 @@ M3 stages; these records perform shape, readiness, and scope checks only.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Iterator
 from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
 from qe_skill import domain as d
+from qe_skill.validation import validate_claim, validate_oracle
 
 GenerationMode = Literal["GREENFIELD", "BROWNFIELD", "CLONE_REUSE"]
 ProposalAction = Literal["NEW", "KEEP", "IMPROVE", "REVISE", "REPLACE"]
 ReviewStatus = Literal["NOT_REQUIRED", "REVIEW_REQUIRED", "APPROVED", "REJECTED"]
 DiffKind = Literal["ADDED", "REMOVED", "CHANGED", "UNCHANGED"]
+OracleMaterializationStatus = Literal[
+    "MATERIALIZED_NORMATIVE",
+    "MATERIALIZED_CHARACTERIZATION",
+    "EXPLORATORY_ONLY",
+    "BLOCKED_SOURCE",
+    "CONFLICTING",
+    "UNSUPPORTED",
+]
 
 
 def _records(value: object) -> Iterator[BaseModel]:
@@ -49,6 +60,132 @@ class GenerationInputBinding(d.Record):
     generator_version: d.Text
     schema_version: Literal["1.0"] = "1.0"
     configuration_hash: d.Digest
+
+
+class OracleMaterialization(d.Record):
+    status: OracleMaterializationStatus
+    oracle: d.Oracle | None = None
+    rationale: d.Text
+    source_claim: d.Ref | None = None
+
+
+def canonical_hash(value: BaseModel | dict[str, object]) -> str:
+    payload = value.model_dump(mode="json") if isinstance(value, BaseModel) else value
+    encoded = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    )
+    return hashlib.sha256(encoded.encode()).hexdigest()
+
+
+def stable_id(prefix: str, project_id: str, snapshot_id: str, *parts: object) -> str:
+    payload = {"scope": [project_id, snapshot_id], "parts": list(parts)}
+    return f"{prefix}.{canonical_hash(payload)[:24]}"
+
+
+def materialize_oracle(
+    claim_ref: d.Ref,
+    model: d.ProjectModel,
+    *,
+    expected_text: str | None = None,
+) -> OracleMaterialization:
+    """Create only the oracle semantics already supported by an exact current claim."""
+
+    claim = next((item for item in model.claims if item.id == claim_ref.id), None)
+    if (
+        claim is None
+        or claim_ref.project_id != model.project_id
+        or claim_ref.snapshot_id != model.snapshot_id
+    ):
+        return OracleMaterialization(
+            status="BLOCKED_SOURCE",
+            rationale="The source claim is missing or outside the current project snapshot.",
+            source_claim=claim_ref,
+        )
+    claim_result = validate_claim(claim, model)
+    if not claim_result.valid:
+        status: OracleMaterializationStatus = (
+            "CONFLICTING"
+            if any(issue.code == "PROV_CONFLICT" for issue in claim_result.issues)
+            else "BLOCKED_SOURCE"
+        )
+        return OracleMaterialization(
+            status=status,
+            rationale="The current claim does not pass provenance validation.",
+            source_claim=claim_ref,
+        )
+    if expected_text is not None and expected_text != claim.statement:
+        return OracleMaterialization(
+            status="UNSUPPORTED",
+            rationale="Expected Result text must exactly preserve the supporting claim.",
+            source_claim=claim_ref,
+        )
+    normative = claim.origin in {"CONTRACT", "ORGANIZATIONAL_POLICY"} and not claim.inferred
+    if claim.origin == "IMPLEMENTATION":
+        status = "MATERIALIZED_CHARACTERIZATION"
+        usage: Literal["acceptance", "characterization", "exploration"] = "characterization"
+    elif normative:
+        status = "MATERIALIZED_NORMATIVE"
+        usage = "acceptance"
+    else:
+        status = "EXPLORATORY_ONLY"
+        usage = "exploration"
+    oracle = d.Oracle(
+        id=stable_id("m3.oracle", model.project_id, model.snapshot_id, claim.id, status),
+        project_id=model.project_id,
+        snapshot_id=model.snapshot_id,
+        statement=claim.statement,
+        origin=claim.origin,
+        claim=claim_ref,
+        normative=normative,
+        inferred=claim.inferred,
+        confidence=claim.confidence,
+        usage=usage,
+    )
+    check_model = model.model_copy(deep=True)
+    check_model.oracles.append(oracle)
+    if not validate_oracle(oracle, check_model).valid:
+        return OracleMaterialization(
+            status="UNSUPPORTED",
+            rationale="The candidate oracle did not pass the repository trust validator.",
+            source_claim=claim_ref,
+        )
+    return OracleMaterialization(
+        status=status,
+        oracle=oracle,
+        rationale="Oracle semantics exactly preserve the validated current claim.",
+        source_claim=claim_ref,
+    )
+
+
+def reuse_oracle(oracle_ref: d.Ref, model: d.ProjectModel) -> OracleMaterialization:
+    oracle = next((item for item in model.oracles if item.id == oracle_ref.id), None)
+    if (
+        oracle is None
+        or oracle_ref.project_id != model.project_id
+        or oracle_ref.snapshot_id != model.snapshot_id
+    ):
+        return OracleMaterialization(
+            status="BLOCKED_SOURCE",
+            rationale="Oracle reuse requires an oracle in the exact current project snapshot.",
+        )
+    if not validate_oracle(oracle, model).valid:
+        return OracleMaterialization(
+            status="UNSUPPORTED",
+            rationale="The existing oracle does not pass current provenance validation.",
+            source_claim=oracle.claim,
+        )
+    if oracle.normative:
+        status: OracleMaterializationStatus = "MATERIALIZED_NORMATIVE"
+    elif oracle.usage == "characterization":
+        status = "MATERIALIZED_CHARACTERIZATION"
+    else:
+        status = "EXPLORATORY_ONLY"
+    return OracleMaterialization(
+        status=status,
+        oracle=oracle,
+        rationale="The existing oracle is current and passes provenance validation.",
+        source_claim=oracle.claim,
+    )
 
 
 class DraftSupportedText(d.Record):
