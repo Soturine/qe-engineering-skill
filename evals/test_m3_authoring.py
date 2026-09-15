@@ -11,7 +11,7 @@ from qe_skill.m3 import (
     validate_generation_report,
 )
 from qe_skill.m3_render import render_html
-from tests.helpers import representative
+from tests.helpers import claim_copy, reference, representative
 from tests.test_m2 import existing
 from tests.test_m3_candidates import proposal
 
@@ -136,3 +136,75 @@ def test_identical_input_produces_identical_output_and_valid_binding() -> None:
     second = generate_m3(model, analysis)
     assert first == second
     assert validate_generation_report(first, model, analysis).valid
+
+
+def test_complete_verified_path_produces_ordered_multistep_procedure() -> None:
+    model = representative()
+    path = next(node for node in model.nodes if isinstance(node, d.VerifiedPath))
+    first = claim_copy(model, "eval-navigation")
+    first.statement = "Open the synthetic records collection."
+    second = claim_copy(model, "eval-action")
+    second.statement = "Select the prepared synthetic record."
+    model.claims.extend([first, second])
+    path.steps = [
+        {"instruction": first.statement, "claim": reference(first.id), "phase": "NAVIGATION"},
+        {"instruction": second.statement, "claim": reference(second.id), "phase": "ACTION"},
+    ]
+    generated = generate_m3(model, analyze_project(model))
+    case = next(item for item in generated.cases if item.origin == "CONTRACT")
+    assert [step.number for step in case.steps] == [1, 2]
+    assert [step.action.text for step in case.steps] == [first.statement, second.statement]
+
+
+def test_partial_path_retains_only_known_navigation() -> None:
+    model = representative()
+    model.tests.test_cases = []
+    model.nodes = [node for node in model.nodes if not isinstance(node, d.GeneratedTest)]
+    path = next(node for node in model.nodes if isinstance(node, d.VerifiedPath))
+    path.verification_status = "partial"
+    generated = generate_m3(model, analyze_project(model))
+    case = next(item for item in generated.cases if item.origin == "CONTRACT")
+    assert len(case.steps) == len(path.steps)
+    assert case.readiness == "BLOCKED_SOURCE"
+    assert any("no remainder was invented" in note for note in case.blocking_notes)
+
+
+def test_unsupported_brownfield_repair_stays_blocked_and_preserved() -> None:
+    model = representative()
+    model.ledger.manifest.mode = "BROWNFIELD"
+    asset = existing(
+        "unsupported-repair", requirement_ids=[], criterion_ids=[], oracle_ids=[], path_ids=[]
+    )
+    model.nodes.append(asset)
+    before = asset.model_dump(mode="json")
+    generated = generate_m3(model, analyze_project(model))
+    revision = next(item for item in generated.revisions if item.original_test.id == asset.id)
+    assert revision.readiness == "BLOCKED_SOURCE" and revision.proposed_case is None
+    assert asset.model_dump(mode="json") == before
+
+
+def test_explicit_m2_partition_produces_parameter_but_one_off_setup_is_not_shared() -> None:
+    model = representative()
+    constraint = next(node for node in model.nodes if isinstance(node, d.Constraint))
+    atom = next(node for node in model.nodes if isinstance(node, d.AtomicCriterion))
+    constraint.partitions = ["explicit valid partition"]
+    atom.boundaries = [reference(constraint.id)]
+    generated = generate_m3(model, analyze_project(model))
+    assert any(
+        candidate.partitions == ["explicit valid partition"] for candidate in generated.parameters
+    )
+    assert propose_shared_steps([proposal("one-off")]) == []
+
+
+def test_explicit_high_risk_strengthens_evidence_without_normative_leakage() -> None:
+    low_model = representative()
+    low = generate_m3(low_model, analyze_project(low_model))
+    high_model = representative()
+    risk = next(node for node in high_model.nodes if isinstance(node, d.Risk))
+    risk.severity = "critical"
+    high = generate_m3(high_model, analyze_project(high_model))
+    low_case = next(case for case in low.cases if case.origin == "RISK")
+    high_case = next(case for case in high.cases if case.origin == "RISK")
+    assert len(high_case.evidence_expectations) > len(low_case.evidence_expectations)
+    assert high_case.pass_rule is None and high_case.fail_rule is None
+    assert high_case.steps[-1].oracle is None
