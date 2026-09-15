@@ -26,6 +26,7 @@ Before changing code, read in this order:
 12. `docs/MANUAL_TEST_AUTHORING.md`
 13. `docs/QUALITY_GATES.md`
 14. `docs/ROADMAP.md`
+15. `docs/STATUS.md`
 
 For generation/risk/retrieval/TMS work also read the relevant policy documents.
 
@@ -53,11 +54,11 @@ For generation/risk/retrieval/TMS work also read the relevant policy documents.
 
 ## Current build rule
 
-The active foundation milestone is M0. Do not implement a production generator first.
+**M0 is complete and validated. The active implementation milestone is M1 — Source Ingestion & Project Model.**
 
-Follow `docs/IMPLEMENTATION_SPEC.md`:
+Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M1 may add source inventory, parsing/extraction boundaries and normalized Project Model population, but it must not jump ahead into production audit/generation, Azure/TMS writes, automation or advanced retrieval.
 
-`schemas → domain contracts → validators → synthetic evals → minimal CLI → then M1`.
+M0 trust contracts remain binding throughout M1 and later milestones. New source-processing code must preserve project/snapshot isolation, explicit completeness states, provenance, prompt-injection-safe handling and non-execution of analyzed content.
 
 ## Development workflow
 
