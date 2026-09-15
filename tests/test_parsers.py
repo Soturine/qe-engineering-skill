@@ -77,6 +77,11 @@ paths:
   /records/{record_id}:
     get:
       operationId: getRecord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Record'
       parameters:
         - name: record_id
           in: path
@@ -88,10 +93,16 @@ paths:
       responses:
         '200':
           description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
 components:
   schemas:
     Record:
       required: [record_id]
+      properties:
+        record_id: {type: string}
 """,
     )
     assert result.status == "PARTIAL"
@@ -105,8 +116,11 @@ components:
     } <= kinds
     operation = next(item for item in result.extractions if item.kind == "openapi_operation")
     assert operation.attributes["method"] == "GET"
+    assert operation.attributes["request_schema_refs"] == ["#/components/schemas/Record"]
     parameter = next(item for item in result.extractions if item.kind == "openapi_parameter")
     assert parameter.attributes["required"] is True
+    response = next(item for item in result.extractions if item.kind == "openapi_response")
+    assert response.attributes["schema_refs"] == ["#/components/schemas/Record"]
     assert result.issues == ["Remote references were recorded but not fetched (1 blocked)."]
 
 

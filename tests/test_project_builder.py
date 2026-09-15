@@ -4,6 +4,7 @@ from pathlib import Path
 from qe_skill import domain as d
 from qe_skill.ingestion import ingest_local
 from qe_skill.integrity import validate_project_model
+from qe_skill.project_builder import build_project_model
 
 
 def historical(identifier: str) -> dict[str, object]:
@@ -301,3 +302,69 @@ def test_repeated_runs_are_deterministic_and_project_isolated(tmp_path: Path) ->
         {claim.id for claim in other.build.model.claims}
     )
     assert all(claim.project_id == "other" for claim in other.build.model.claims)
+
+
+def test_raw_openapi_builds_structural_interface_nodes(tmp_path: Path) -> None:
+    (tmp_path / "openapi.yaml").write_text(
+        """openapi: 3.1.0
+paths:
+  /records/{record_id}:
+    get:
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+      security:
+        - bearer: []
+      responses:
+        '200': {description: Found}
+components:
+  schemas:
+    Record:
+      required: [record_id]
+      properties:
+        record_id: {type: string}
+        label: {type: string}
+""",
+        encoding="utf-8",
+    )
+    report = ingest_local(
+        tmp_path,
+        project_id="synthetic",
+        snapshot_id="v1",
+        collected_at="2026-01-01T00:00:00Z",
+        authority_class="TECHNICAL_CONTRACT",
+        lifecycle="approved",
+    )
+    assert report.status == "COMPLETE"
+    assert validate_project_model(report.build.model).valid
+    assert {d.Interface, d.Action, d.Channel, d.Constraint, d.Entity, d.ModelField} <= {
+        type(node) for node in report.build.model.nodes
+    }
+    interface = next(node for node in report.build.model.nodes if isinstance(node, d.Interface))
+    assert interface.authorization is not None
+    fields = [node for node in report.build.model.nodes if isinstance(node, d.ModelField)]
+    assert {(field.name, field.data_type, field.required) for field in fields} == {
+        ("label", "string", False),
+        ("record_id", "string", True),
+    }
+
+
+def test_foreign_and_heuristic_extractions_cannot_enter_builder(tmp_path: Path) -> None:
+    report = ingest_document(tmp_path, representative_document())
+    foreign = report.parses[0].model_copy(deep=True)
+    semantic = next(item for item in foreign.extractions if item.kind == "project_model_record")
+    semantic.project_id = "foreign"
+    semantic.source.project_id = "foreign"
+    result = build_project_model(report.ledger, [foreign])
+    assert "BUILD_SOURCE_UNUSABLE" in {issue.code for issue in result.issues}
+    assert all(claim.project_id == "synthetic" for claim in result.model.claims)
+
+    heuristic = report.parses[0].model_copy(deep=True)
+    for extraction in heuristic.extractions:
+        if extraction.kind == "project_model_record":
+            extraction.interpretation = "heuristic"
+            extraction.inferred = True
+    result = build_project_model(report.ledger, [heuristic])
+    assert "BUILD_INFERENCE_BLOCKED" in {issue.code for issue in result.issues}
+    assert result.model.oracles == []

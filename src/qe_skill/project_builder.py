@@ -120,6 +120,11 @@ def _claim_id(extraction: ExtractionRecord, suffix: str = "") -> str:
     return f"claim.{hashlib.sha256(payload).hexdigest()[:24]}"
 
 
+def _semantic_id(prefix: str, extraction: ExtractionRecord, suffix: str = "") -> str:
+    payload = f"{extraction.id}\0{suffix}".encode()
+    return f"{prefix}.{hashlib.sha256(payload).hexdigest()[:24]}"
+
+
 def _claim(
     extraction: ExtractionRecord,
     source: d.Source,
@@ -527,21 +532,151 @@ def build_project_model(ledger: d.SourceLedger, parses: Iterable[ParseResult]) -
     node_payloads: dict[str, str] = {}
     node_claims: dict[str, list[d.Ref]] = {}
     deferred_conflicts: list[tuple[ExtractionRecord, Mapping[str, JsonValue], d.Claim]] = []
+    openapi_actions: dict[str, d.Action] = {}
+    openapi_interfaces: dict[str, d.Interface] = {}
 
     records = sorted(
-        (record for parse in parses for record in parse.extractions),
+        (record for parse in parses if parse.status == "PARSED" for record in parse.extractions),
         key=lambda record: (record.source.id, record.location, record.kind, record.id),
     )
     for extraction in records:
         source = sources.get(extraction.source.id)
-        if source is None or source.content_hash != extraction.source_hash:
+        if (
+            source is None
+            or source.content_hash != extraction.source_hash
+            or extraction.project_id != ledger.project_id
+            or extraction.snapshot_id != ledger.snapshot_id
+            or extraction.source.project_id != ledger.project_id
+            or extraction.source.snapshot_id != ledger.snapshot_id
+        ):
             issues.append(
                 _issue(
                     extraction, "BUILD_SOURCE_UNUSABLE", "Extraction source is absent or mutated."
                 )
             )
             continue
+        if extraction.kind.startswith("openapi_"):
+            if extraction.interpretation != "explicit" or extraction.inferred:
+                issues.append(
+                    _issue(
+                        extraction,
+                        "BUILD_INFERENCE_BLOCKED",
+                        "Non-explicit OpenAPI extraction cannot enter the Project Model.",
+                    )
+                )
+                continue
+            claim = _claim(extraction, source, extraction.text)
+            claims.append(claim)
+            claim_ref = _ref(claim.id, ledger.project_id, ledger.snapshot_id)
+            operation = extraction.attributes.get("operation")
+            if extraction.kind == "openapi_operation":
+                name = extraction.name or extraction.text
+                action = d.Action(
+                    id=_semantic_id("action.openapi", extraction),
+                    project_id=ledger.project_id,
+                    snapshot_id=ledger.snapshot_id,
+                    name=name,
+                    claims=[claim_ref],
+                )
+                interface = d.Interface(
+                    id=_semantic_id("interface.openapi", extraction),
+                    project_id=ledger.project_id,
+                    snapshot_id=ledger.snapshot_id,
+                    name=name,
+                    claims=[claim_ref],
+                    interface_type="http_api",
+                    producer="unknown",
+                    consumer="unknown",
+                    contract_sources=[extraction.source],
+                )
+                channel = d.Channel(
+                    id=_semantic_id("channel.openapi", extraction),
+                    project_id=ledger.project_id,
+                    snapshot_id=ledger.snapshot_id,
+                    name=f"API channel for {name}",
+                    claims=[claim_ref],
+                    channel_type="api",
+                    interfaces=[_ref(interface.id, ledger.project_id, ledger.snapshot_id)],
+                )
+                nodes.extend([action, interface, channel])
+                openapi_actions[name] = action
+                openapi_interfaces[name] = interface
+            elif extraction.kind == "openapi_parameter" and isinstance(operation, str):
+                parameter_action = openapi_actions.get(operation)
+                if parameter_action is not None:
+                    constraint = d.Constraint(
+                        id=_semantic_id("constraint.openapi", extraction),
+                        project_id=ledger.project_id,
+                        snapshot_id=ledger.snapshot_id,
+                        name=extraction.name or extraction.text,
+                        claims=[claim_ref],
+                        statement=extraction.text,
+                    )
+                    nodes.append(constraint)
+                    parameter_action.input_constraints.append(
+                        _ref(constraint.id, ledger.project_id, ledger.snapshot_id)
+                    )
+            elif extraction.kind == "openapi_response" and isinstance(operation, str):
+                response_action = openapi_actions.get(operation)
+                if response_action is not None:
+                    response_action.output_claims.append(claim_ref)
+            elif extraction.kind == "openapi_security" and isinstance(operation, str):
+                secured_interface = openapi_interfaces.get(operation)
+                if secured_interface is not None:
+                    secured_interface.authorization = claim_ref
+            elif extraction.kind == "openapi_schema":
+                entity = d.Entity(
+                    id=_semantic_id("entity.openapi", extraction),
+                    project_id=ledger.project_id,
+                    snapshot_id=ledger.snapshot_id,
+                    name=extraction.name or extraction.text,
+                    claims=[claim_ref],
+                    category="technical",
+                )
+                required = extraction.attributes.get("required_fields")
+                required_names = (
+                    {item for item in required if isinstance(item, str)}
+                    if isinstance(required, list)
+                    else set()
+                )
+                properties = extraction.attributes.get("properties")
+                property_types: dict[str, str] = {}
+                if isinstance(properties, list):
+                    for property_record in properties:
+                        if not isinstance(property_record, dict):
+                            continue
+                        property_name = property_record.get("name")
+                        property_type = property_record.get("type")
+                        if isinstance(property_name, str):
+                            property_types[property_name] = (
+                                property_type if isinstance(property_type, str) else "unknown"
+                            )
+                field_names = sorted(required_names | property_types.keys())
+                for index, field_name in enumerate(field_names):
+                    field = d.ModelField(
+                        id=_semantic_id("field.openapi", extraction, str(index)),
+                        project_id=ledger.project_id,
+                        snapshot_id=ledger.snapshot_id,
+                        name=field_name,
+                        claims=[claim_ref],
+                        entity=_ref(entity.id, ledger.project_id, ledger.snapshot_id),
+                        data_type=property_types.get(field_name, "unknown"),
+                        required=field_name in required_names,
+                    )
+                    nodes.append(field)
+                    entity.fields.append(_ref(field.id, ledger.project_id, ledger.snapshot_id))
+                nodes.append(entity)
+            continue
         if extraction.kind == "project_model_record":
+            if extraction.interpretation != "explicit" or extraction.inferred:
+                issues.append(
+                    _issue(
+                        extraction,
+                        "BUILD_INFERENCE_BLOCKED",
+                        "Inferred semantic records cannot enter the normative Project Model.",
+                    )
+                )
+                continue
             collection = extraction.attributes.get("collection")
             value = extraction.attributes.get("value")
             if (

@@ -548,17 +548,21 @@ def _schema_ref(schema: object) -> str | None:
     return None
 
 
-def _request_schema_ref(operation: dict[str, JsonValue]) -> str | None:
-    request = operation.get("requestBody")
-    if not isinstance(request, dict):
-        return None
-    content = request.get("content")
+def _content_schema_refs(container: JsonValue | None) -> list[str]:
+    if not isinstance(container, dict):
+        return []
+    direct = _schema_ref(container)
+    references = [direct] if direct else []
+    content = container.get("content")
     if not isinstance(content, dict):
-        return None
-    media = content.get("application/json")
-    if not isinstance(media, dict):
-        return None
-    return _schema_ref(media.get("schema"))
+        return references
+    for media in content.values():
+        if not isinstance(media, dict):
+            continue
+        reference = _schema_ref(media.get("schema"))
+        if reference:
+            references.append(reference)
+    return sorted(set(references))
 
 
 def _openapi_records(
@@ -567,6 +571,7 @@ def _openapi_records(
     if not isinstance(value, dict) or not isinstance(value.get("openapi"), str):
         return []
     records: list[ExtractionRecord] = []
+    global_security = value.get("security")
     paths = value.get("paths")
     if isinstance(paths, dict):
         for path in sorted(paths):
@@ -595,7 +600,10 @@ def _openapi_records(
                             "operation_id": operation.get("operationId")
                             if isinstance(operation.get("operationId"), str)
                             else None,
-                            "request_schema_ref": _request_schema_ref(operation),
+                            "request_schema_refs": cast(
+                                list[JsonValue],
+                                _content_schema_refs(operation.get("requestBody")),
+                            ),
                         },
                         method="openapi-structure",
                         interpretation="explicit",
@@ -637,6 +645,7 @@ def _openapi_records(
                 responses = operation.get("responses")
                 if isinstance(responses, dict):
                     for status in sorted(responses):
+                        response = responses[status]
                         records.append(
                             _record(
                                 entry,
@@ -646,12 +655,18 @@ def _openapi_records(
                                 line_start=1,
                                 line_end=max(line_count, 1),
                                 name=status,
-                                attributes={"operation": operation_name, "status": status},
+                                attributes={
+                                    "operation": operation_name,
+                                    "status": status,
+                                    "schema_refs": cast(
+                                        list[JsonValue], _content_schema_refs(response)
+                                    ),
+                                },
                                 method="openapi-structure",
                                 interpretation="explicit",
                             )
                         )
-                security = operation.get("security")
+                security = operation.get("security", global_security)
                 if isinstance(security, list):
                     records.append(
                         _record(
@@ -673,6 +688,21 @@ def _openapi_records(
         for name in sorted(schemas):
             schema = schemas[name]
             required = schema.get("required") if isinstance(schema, dict) else None
+            properties = schema.get("properties") if isinstance(schema, dict) else None
+            property_records: list[JsonValue] = []
+            if isinstance(properties, dict):
+                for property_name in sorted(properties):
+                    property_schema = properties[property_name]
+                    property_records.append(
+                        {
+                            "name": property_name,
+                            "type": property_schema.get("type")
+                            if isinstance(property_schema, dict)
+                            and isinstance(property_schema.get("type"), str)
+                            else "unknown",
+                            "schema_ref": _schema_ref(property_schema),
+                        }
+                    )
             records.append(
                 _record(
                     entry,
@@ -686,7 +716,8 @@ def _openapi_records(
                         "required_fields": required
                         if isinstance(required, list)
                         and all(isinstance(item, str) for item in required)
-                        else []
+                        else [],
+                        "properties": property_records,
                     },
                     method="openapi-structure",
                     interpretation="explicit",
