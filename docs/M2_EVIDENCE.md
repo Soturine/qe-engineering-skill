@@ -1,7 +1,9 @@
 # M2 implementation evidence
 
-Status: **implemented and locally validated; cross-platform CI validation pending**. No release/tag
-created. M0 trust contracts and M1 ingestion boundaries remain binding.
+Status: **implemented and validated for M2**. No release/tag created. Quality run
+[`34970224467`](https://github.com/Soturine/qe-engineering-skill/actions/runs/34970224467)
+passed on Linux and Windows for implementation commit `9403b81`. M0 trust contracts and M1
+ingestion boundaries remain binding.
 
 ## Implemented pipeline
 
@@ -78,7 +80,8 @@ tests** and **32 evals**, including six M2 adversarial evals. One filesystem-sym
 because this Windows account lacks symlink privileges and remains enabled for capable CI runners.
 The published PyPI advisory audit checked 22 locked packages with zero active findings at this
 checkpoint; it is point-in-time evidence, not a guarantee of vulnerability absence. Dependency
-pins did not change. Cross-platform CI evidence will be recorded after the pushed commit is green.
+pins did not change. The same checks passed on Linux and Windows CI, including installed-wheel
+verification.
 
 ## Known limitations and M3+ boundary
 

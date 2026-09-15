@@ -361,7 +361,7 @@ The project is deliberately incremental. The earlier fine-grained M0-M10 plan wa
 
 - **M0** — Foundations & Trust Model ✅
 - **M1** — Source Ingestion & Project Model
-- **M2** — Audit, Traceability & Risk Analysis (implemented locally; CI validation pending)
+- **M2** — Audit, Traceability & Risk Analysis ✅
 - **M3** — Test Generation & Improvement
 - **M4** — Integrations & Production Agent Skill
 - **M5** — Automation & Execution Assistance
@@ -425,8 +425,8 @@ Validation/research:
 
 ## Current implementation status
 
-**M2 Audit, Traceability & Risk Analysis is implemented and locally validated; cross-platform CI
-validation is pending.**
+**M2 Audit, Traceability & Risk Analysis is implemented and validated. M3 Test Generation &
+Improvement is the next active milestone.**
 
 The executable package includes M0/M1 trust and ingestion behavior plus deterministic audit and
 traceability contracts, nominal versus atomic coverage, conservative existing-test/oracle/history

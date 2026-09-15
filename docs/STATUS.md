@@ -2,13 +2,12 @@
 
 ## Current stage
 
-**M2 - Audit, Traceability & Risk Analysis: implemented and locally validated; cross-platform CI
-validation pending.**
+**M2 - Audit, Traceability & Risk Analysis: implemented and validated.**
 
 M0 trust contracts and M1 ingestion boundaries remain binding. M2 adds deterministic audit,
 traceability, atomic coverage, risk/scenario analysis and proposal-only local reports. See
-`M2_EVIDENCE.md` for implemented semantics and current validation evidence. M2 remains the active
-milestone until the pushed implementation passes Linux and Windows CI. No tag/release exists.
+`M2_EVIDENCE.md` for implemented semantics and validation evidence. Linux and Windows CI passed
+for the completed implementation. M3 is the next active milestone. No tag/release exists.
 
 ## Implemented
 

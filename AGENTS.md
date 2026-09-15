@@ -54,11 +54,11 @@ For generation/risk/retrieval/TMS work also read the relevant policy documents.
 
 ## Current build rule
 
-**M0 and M1 are complete and validated. The active implementation milestone is M2 — Audit, Traceability & Risk Analysis.**
+**M0, M1 and M2 are complete and validated. The active implementation milestone is M3 — Test Generation & Improvement.**
 
-Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M2 may add existing-asset audit, atomic traceability, risk/scenario analysis and coverage optimization, but it must not jump ahead into production test generation, Azure/TMS writes, automation or advanced retrieval.
+Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M3 may add final manual Test Case generation and non-destructive improvement/replacement proposals from the approved M2 scenario universe, but it must not jump ahead into Azure/TMS writes, automation or advanced retrieval.
 
-M0 trust contracts and M1 ingestion boundaries remain binding throughout M2 and later milestones. New analysis code must preserve project/snapshot isolation, explicit completeness states, provenance, prompt-injection-safe handling and non-execution of analyzed content.
+M0 trust contracts, M1 ingestion boundaries and M2 audit/scenario semantics remain binding throughout M3 and later milestones. New generation code must preserve project/snapshot isolation, explicit completeness states, provenance, prompt-injection-safe handling, historical assets and non-execution of analyzed content.
 
 ## Development workflow
 

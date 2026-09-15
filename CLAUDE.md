@@ -2,7 +2,7 @@
 
 This repository is intended to be implementable and auditable without conversation history.
 
-The roadmap is consolidated as M0-M6. M0 and M1 are complete and validated; the active implementation milestone is **M2 — Audit, Traceability & Risk Analysis**. Later milestones must not bypass M0 trust guarantees or M1 ingestion boundaries.
+The roadmap is consolidated as M0-M6. M0, M1 and M2 are complete and validated; the active implementation milestone is **M3 — Test Generation & Improvement**. Later milestones must not bypass M0 trust guarantees, M1 ingestion boundaries or M2 audit/scenario semantics.
 
 ## When implementing
 
@@ -19,7 +19,7 @@ Before code:
 
 Do not use or request a real customer/project as the design baseline. Build against generic contracts and synthetic fixtures.
 
-For M2 specifically, audit/traceability/risk analysis must consume the approved M1 Project Model, preserve provenance and existing history, and keep risk-derived output distinct from contract. Do not jump ahead into production test generation, live TMS writes, automation or advanced retrieval.
+For M3 specifically, generation must consume the approved M2 analysis/scenario artifacts, preserve provenance and existing history, and keep risk-derived output distinct from contract. Do not jump ahead into live TMS writes, automation or advanced retrieval.
 
 ## Product behavior to preserve
 
