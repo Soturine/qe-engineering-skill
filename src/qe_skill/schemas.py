@@ -18,6 +18,7 @@ from qe_skill.domain import (
     TestModel,
 )
 from qe_skill.inventory import InventoryReport
+from qe_skill.parsers import ParseResult
 
 CONTRACTS: dict[str, type[BaseModel]] = {
     "run-manifest": RunManifest,
@@ -31,6 +32,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "test-case": TestCase,
     "test-model": TestModel,
     "source-inventory": InventoryReport,
+    "source-extraction": ParseResult,
 }
 
 

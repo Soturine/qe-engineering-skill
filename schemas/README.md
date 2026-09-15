@@ -19,6 +19,7 @@ Implemented schemas in `v1/`:
 - `proposal.schema.json`
 - `test-model.schema.json`
 - `source-inventory.schema.json`
+- `source-extraction.schema.json`
 
 JSON Schema handles shape/basic constraints. Cross-artifact invariants are implemented
 in `qe_skill.validation` and `qe_skill.integrity`, with negative tests and evals.
