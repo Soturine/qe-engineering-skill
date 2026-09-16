@@ -152,3 +152,34 @@ def questions_from_normalization(
         project_locale=normalization.project_locale,
         output_language=language,
     )
+
+
+def bind_answer(
+    question: ClarificationQuestion,
+    *,
+    text: str,
+    provenance: list[d.Ref],
+    reviewer: str,
+    answered_at: str,
+) -> ClarificationQuestion:
+    """Bind a human answer without treating the answer itself as authority or model promotion."""
+
+    if question.status != "OPEN":
+        raise ValueError("clarification question is already answered")
+    if not provenance:
+        raise ValueError("clarification answer requires explicit provenance")
+    allowed = {item.id for item in question.sources + question.conflicting_sources}
+    if any(item.id not in allowed for item in provenance):
+        raise ValueError("clarification answer cites evidence outside the question source set")
+    return question.model_copy(
+        deep=True,
+        update={
+            "answer": ClarificationAnswer(
+                text=text,
+                provenance=provenance,
+                reviewer=reviewer,
+                answered_at=answered_at,
+            ),
+            "status": "ANSWERED",
+        },
+    )

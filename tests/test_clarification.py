@@ -1,4 +1,6 @@
-from qe_skill.clarification import questions_from_normalization
+import pytest
+
+from qe_skill.clarification import bind_answer, questions_from_normalization
 from qe_skill.normalization import normalize_candidate_set
 from tests.normalization_helpers import constraint, prepared, simple_meaning
 
@@ -34,3 +36,22 @@ def test_semantic_failure_generates_unanswered_ptbr_clarification_with_provenanc
     assert question.affected[0].id == candidates.candidates[0].id
     assert question.answer is None and question.status == "OPEN"
     assert not questions.answers_fabricated and not question.authority_changed
+
+    answered = bind_answer(
+        question,
+        text="Preserve a modalidade literal da fonte.",
+        provenance=question.sources,
+        reviewer="synthetic-reviewer",
+        answered_at="2026-09-16T12:00:00Z",
+    )
+    assert answered.status == "ANSWERED"
+    assert answered.answer is not None
+    assert answered.authority_changed is False
+    with pytest.raises(ValueError, match="already answered"):
+        bind_answer(
+            answered,
+            text="again",
+            provenance=question.sources,
+            reviewer="synthetic-reviewer",
+            answered_at="2026-09-16T12:01:00Z",
+        )

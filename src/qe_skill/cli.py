@@ -35,6 +35,7 @@ from qe_skill.m3_render import (
 )
 from qe_skill.parsers import ParserLimits
 from qe_skill.review import ReviewContext
+from qe_skill.run import execute_run, load_agent_response
 from qe_skill.schemas import schema_text
 from qe_skill.validation import Issue, Result, TrustContext, timestamp_valid, validate_ledger
 
@@ -328,10 +329,15 @@ def main(argv: list[str] | None = None) -> int:
             "analyze",
             "generate",
             "render",
+            "doctor",
+            "run",
         ],
     )
     parser.add_argument(
-        "file", type=Path, help="Validation JSON file, or explicit local root for M1 commands"
+        "file",
+        type=Path,
+        nargs="?",
+        help="Validation JSON file, or explicit local project root for local commands",
     )
     parser.add_argument("--id", dest="artifact_id", help="Required oracle/test identifier")
     parser.add_argument(
@@ -374,8 +380,83 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--project-locale", choices=["pt-BR", "en", "mixed", "und"])
     parser.add_argument("--output-language", choices=["pt-BR", "en", "source"])
+    parser.add_argument(
+        "--semantic-mode",
+        choices=["agent-runtime", "external-provider", "deterministic-only"],
+        default="agent-runtime",
+    )
+    parser.add_argument("--agent-response", type=Path)
+    parser.add_argument("--requirements", action="append", default=[])
+    parser.add_argument("--implementation", action="append", default=[])
+    parser.add_argument("--tests", action="append", default=[])
+    parser.add_argument("--ignore", action="append", default=[])
     args = parser.parse_args(argv)
     try:
+        if args.command == "doctor":
+            emit_json(
+                {
+                    "schema_version": "1.0",
+                    "command": "doctor",
+                    "status": "READY",
+                    "primary_experience": "Agent Skill + AI agent",
+                    "engine_version": __import__("qe_skill").__version__,
+                    "semantic_modes": [
+                        "agent-runtime",
+                        "external-provider",
+                        "deterministic-only",
+                    ],
+                    "readers": [
+                        "markdown",
+                        "text",
+                        "json",
+                        "yaml",
+                        "openapi",
+                        "python",
+                        "html",
+                        "docx",
+                        "pdf-text",
+                    ],
+                    "external_writes": False,
+                    "credentials_required": False,
+                }
+            )
+            return 0
+        if args.command == "run":
+            if args.file is None:
+                raise InputFailure("MODEL_COMMAND", "run requires a local project directory.")
+            response = load_agent_response(args.agent_response) if args.agent_response else None
+            qe_run = execute_run(
+                args.file,
+                semantic_mode=args.semantic_mode,
+                agent_response=response,
+                requirements=tuple(args.requirements),
+                implementation=tuple(args.implementation),
+                tests=tuple(args.tests),
+                ignore=tuple(args.ignore),
+                project_locale=args.project_locale or "und",
+                output_language=args.output_language or "source",
+            )
+            emit_json(
+                {
+                    "schema_version": "1.0",
+                    "command": "run",
+                    "status": qe_run.status,
+                    "run_id": qe_run.run_id,
+                    "workspace": qe_run.workspace,
+                    "report": str(args.file.resolve() / ".qe" / "report.html"),
+                    "sources": len(qe_run.ingestion.ledger.sources),
+                    "questions": len(qe_run.clarifications.questions)
+                    if qe_run.clarifications
+                    else 0,
+                    "test_cases": len(qe_run.generation.cases) if qe_run.generation else 0,
+                    "network_used": qe_run.network_used,
+                    "external_writes": False,
+                    "proposal_only": True,
+                }
+            )
+            return 1 if qe_run.status == "BLOCKED" else 0
+        if args.file is None:
+            raise InputFailure("MODEL_COMMAND", f"{args.command} requires an input path.")
         theme = ReportTheme(
             project_locale=args.project_locale, output_language=args.output_language
         )
