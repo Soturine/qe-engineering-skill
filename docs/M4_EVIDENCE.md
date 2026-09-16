@@ -79,5 +79,9 @@ Remote Linux/Windows validation passed at `8ed0bdb7c6233e6db6c5e0e0d2695f06932f6
 - synthetic PT-BR demo builder and concise reproduction instructions under
   `examples/technical-preview/`.
 
-D1 is implemented locally; full/package/remote evidence is pending. It does not implement H5
-real-document semantic orchestration, `qe run`, `qe doctor`, a live provider or any external write.
+D1 local validation (2026-09-16): 324 tests/evals passed against source and the installed wheel,
+with one Windows symlink-permission skip. Ruff, formatting, mypy, schema reproduction, pip check,
+dependency audit and the reproducible demo smoke passed. Wheel SHA-256:
+`8ad4b73cb50f3a6dfe7f681aa158fa0a841066121b202e6309fba7cc6311cd5a`.
+Remote Linux/Windows validation is pending. D1 does not implement H5 real-document semantic
+orchestration, `qe run`, `qe doctor`, a live provider or any external write.
