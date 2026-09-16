@@ -1,6 +1,6 @@
 # Semantic Reasoning Roadmap
 
-Status: **M4 implementation plan; H1 provider boundary and H2 candidate/cache contracts implemented and validated**
+Status: **M4 implementation plan; H1-H3 provider, candidate/cache and grounded multilingual normalization implemented and validated**
 
 The target architecture is hybrid: deterministic structure first, bounded heuristic discovery
 second, and an optional semantic provider only where natural-language interpretation adds value.
@@ -8,7 +8,7 @@ Provider output is a candidate interpretation, never authority.
 
 ## FSR-01 — Hybrid ingestion
 
-Status: **DEFERRED_TO_M4**
+Status: **typed H3 normalization implemented; real-document orchestration remains H5**
 
 Documents, Git, OpenAPI, tests and history flow through bounded deterministic extraction of text,
 structure, hashes, spans and symbols. Cheap heuristics may propose obvious identifiers, Gherkin
@@ -39,6 +39,11 @@ Status: **DEFERRED_TO_M4**
   semantic relationships.
 
 Use the cheapest reliable layer and avoid model calls for already-structured facts.
+
+H3 adds non-normative normalized records with explicit record kind, modality, polarity,
+constraints, grounded domain terms and alias relations. PT-BR is first-class and mixed technical
+identifiers remain literal. Comparable keys never imply identity, authority or approval. See
+`MULTILINGUAL_POLICY.md`, `M4_EVIDENCE.md` and ADR 0003.
 
 ## FSR-04 — M4 Semantic Reasoning Provider
 

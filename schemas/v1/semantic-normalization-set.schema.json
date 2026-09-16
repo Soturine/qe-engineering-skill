@@ -1,0 +1,868 @@
+{
+  "$defs": {
+    "AliasRelation": {
+      "additionalProperties": false,
+      "description": "An explicit relation; normalization never overwrites the source form.",
+      "properties": {
+        "alias": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Alias",
+          "type": "string"
+        },
+        "canonical_label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Canonical Label",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alias",
+        "canonical_label",
+        "evidence"
+      ],
+      "title": "AliasRelation",
+      "type": "object"
+    },
+    "GherkinMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "keyword": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Keyword",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "pt-BR",
+            "en"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "role": {
+          "enum": [
+            "FEATURE",
+            "SCENARIO",
+            "BACKGROUND",
+            "GIVEN",
+            "WHEN",
+            "THEN",
+            "AND",
+            "BUT",
+            "EXAMPLES"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line",
+        "keyword",
+        "role",
+        "language"
+      ],
+      "title": "GherkinMarker",
+      "type": "object"
+    },
+    "GroundedConcept": {
+      "additionalProperties": false,
+      "description": "Canonical candidate label grounded by literal forms in cited excerpts.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Label",
+          "type": "string"
+        },
+        "surface_forms": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Surface Forms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "surface_forms",
+        "evidence"
+      ],
+      "title": "GroundedConcept",
+      "type": "object"
+    },
+    "GroundedTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Label",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "ENTITY",
+            "STATE",
+            "FIELD",
+            "VALUE",
+            "ACTION",
+            "TECHNICAL_IDENTIFIER",
+            "OTHER"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "surface_forms": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Surface Forms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "surface_forms",
+        "evidence",
+        "role"
+      ],
+      "title": "GroundedTerm",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "MeaningConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "EQ",
+            "NE",
+            "LT",
+            "LE",
+            "GT",
+            "GE",
+            "IN",
+            "MATCHES",
+            "OTHER"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "surface_form": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Surface Form",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "kind",
+        "operator",
+        "value",
+        "surface_form",
+        "evidence"
+      ],
+      "title": "MeaningConstraint",
+      "type": "object"
+    },
+    "NormalizationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/Ref"
+        },
+        "code": {
+          "enum": [
+            "NORMALIZATION_MISSING",
+            "NORMALIZATION_INVALID",
+            "GROUNDING_MISSING",
+            "ALIAS_RELATION_MISSING",
+            "MODALITY_MISMATCH",
+            "NEGATION_LOST"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate",
+        "code",
+        "message"
+      ],
+      "title": "NormalizationIssue",
+      "type": "object"
+    },
+    "NormalizedSemanticRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_promoted": {
+          "const": false,
+          "default": false,
+          "title": "Authority Promoted",
+          "type": "boolean"
+        },
+        "candidate": {
+          "$ref": "#/$defs/Ref"
+        },
+        "candidate_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Candidate Hash",
+          "type": "string"
+        },
+        "candidate_statement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Statement"
+        },
+        "comparison_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Comparison Key",
+          "type": "string"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "extractor_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "interpretation": {
+          "enum": [
+            "explicit",
+            "structural",
+            "heuristic",
+            "inferred",
+            "unresolved"
+          ],
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "meaning": {
+          "$ref": "#/$defs/SemanticMeaning"
+        },
+        "normative": {
+          "const": false,
+          "default": false,
+          "title": "Normative",
+          "type": "boolean"
+        },
+        "original_statements": {
+          "items": {
+            "$ref": "#/$defs/OriginalStatement"
+          },
+          "minItems": 1,
+          "title": "Original Statements",
+          "type": "array"
+        },
+        "producer": {
+          "enum": [
+            "DETERMINISTIC",
+            "HEURISTIC",
+            "PROVIDER"
+          ],
+          "title": "Producer",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "provider_identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_state": {
+          "enum": [
+            "PENDING_REVIEW",
+            "REVIEW_REQUIRED",
+            "BLOCKED_SOURCE"
+          ],
+          "title": "Review State",
+          "type": "string"
+        },
+        "run_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "surface_guards": {
+          "$ref": "#/$defs/SurfaceGuards"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "candidate",
+        "candidate_hash",
+        "original_statements",
+        "meaning",
+        "surface_guards",
+        "comparison_key",
+        "interpretation",
+        "inferred",
+        "producer",
+        "prompt_version",
+        "configuration_hash",
+        "extractor_version",
+        "run_id",
+        "review_state"
+      ],
+      "title": "NormalizedSemanticRecord",
+      "type": "object"
+    },
+    "OriginalStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_class": {
+          "enum": [
+            "CONTRACT",
+            "TECHNICAL_CONTRACT",
+            "ORGANIZATIONAL_POLICY",
+            "IMPLEMENTATION",
+            "HISTORICAL",
+            "GUIDANCE"
+          ],
+          "title": "Authority Class",
+          "type": "string"
+        },
+        "excerpt": {
+          "$ref": "#/$defs/Ref"
+        },
+        "language_confidence": {
+          "enum": [
+            "HIGH",
+            "LOW"
+          ],
+          "title": "Language Confidence",
+          "type": "string"
+        },
+        "language_method": {
+          "enum": [
+            "DECLARED",
+            "BOUNDED",
+            "UNDETERMINED"
+          ],
+          "title": "Language Method",
+          "type": "string"
+        },
+        "location": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Location",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_language": {
+          "enum": [
+            "pt-BR",
+            "en",
+            "mixed",
+            "und"
+          ],
+          "title": "Source Language",
+          "type": "string"
+        },
+        "source_lifecycle": {
+          "enum": [
+            "draft",
+            "approved",
+            "active",
+            "superseded",
+            "deprecated",
+            "archived",
+            "unknown"
+          ],
+          "title": "Source Lifecycle",
+          "type": "string"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "excerpt",
+        "source",
+        "source_hash",
+        "location",
+        "text",
+        "source_language",
+        "language_method",
+        "language_confidence",
+        "authority_class",
+        "source_lifecycle"
+      ],
+      "title": "OriginalStatement",
+      "type": "object"
+    },
+    "ProviderIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model",
+          "type": "string"
+        },
+        "model_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model Version",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "model_version",
+        "adapter_version"
+      ],
+      "title": "ProviderIdentity",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "SemanticMeaning": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedConcept"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "aliases": {
+          "items": {
+            "$ref": "#/$defs/AliasRelation"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "capability": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedConcept"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/MeaningConstraint"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GroundedConcept"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "modality": {
+          "default": "UNSPECIFIED",
+          "enum": [
+            "MUST",
+            "MUST_NOT",
+            "SHOULD",
+            "MAY",
+            "OPTIONAL",
+            "CONDITIONAL",
+            "UNSPECIFIED"
+          ],
+          "title": "Modality",
+          "type": "string"
+        },
+        "polarity": {
+          "default": "UNSPECIFIED",
+          "enum": [
+            "POSITIVE",
+            "NEGATIVE",
+            "UNSPECIFIED"
+          ],
+          "title": "Polarity",
+          "type": "string"
+        },
+        "record_kind": {
+          "enum": [
+            "FACT",
+            "OBSERVATION",
+            "CLAIM",
+            "HYPOTHESIS",
+            "DECISION",
+            "ORACLE"
+          ],
+          "title": "Record Kind",
+          "type": "string"
+        },
+        "terms": {
+          "items": {
+            "$ref": "#/$defs/GroundedTerm"
+          },
+          "title": "Terms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "record_kind"
+      ],
+      "title": "SemanticMeaning",
+      "type": "object"
+    },
+    "SurfaceGuards": {
+      "additionalProperties": false,
+      "description": "Deterministic distinctions that a probabilistic interpretation cannot erase.",
+      "properties": {
+        "gherkin_markers": {
+          "items": {
+            "$ref": "#/$defs/GherkinMarker"
+          },
+          "title": "Gherkin Markers",
+          "type": "array"
+        },
+        "numeric_literals": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Numeric Literals",
+          "type": "array"
+        },
+        "observed_modality": {
+          "default": "UNSPECIFIED",
+          "enum": [
+            "MUST",
+            "MUST_NOT",
+            "SHOULD",
+            "MAY",
+            "OPTIONAL",
+            "CONDITIONAL",
+            "UNSPECIFIED"
+          ],
+          "title": "Observed Modality",
+          "type": "string"
+        },
+        "observed_polarity": {
+          "default": "UNSPECIFIED",
+          "enum": [
+            "POSITIVE",
+            "NEGATIVE",
+            "UNSPECIFIED"
+          ],
+          "title": "Observed Polarity",
+          "type": "string"
+        }
+      },
+      "title": "SurfaceGuards",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:semantic-normalization-set",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_changed": {
+      "const": false,
+      "default": false,
+      "title": "Authority Changed",
+      "type": "boolean"
+    },
+    "candidate_set": {
+      "$ref": "#/$defs/Ref"
+    },
+    "candidate_set_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Set Hash",
+      "type": "string"
+    },
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/NormalizationIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "output_language": {
+      "default": "source",
+      "enum": [
+        "source",
+        "pt-BR",
+        "en"
+      ],
+      "title": "Output Language",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "project_locale": {
+      "default": "und",
+      "enum": [
+        "pt-BR",
+        "en",
+        "mixed",
+        "und"
+      ],
+      "title": "Project Locale",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "$ref": "#/$defs/NormalizedSemanticRecord"
+      },
+      "title": "Records",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "NOT_REQUESTED",
+        "COMPLETE",
+        "PARTIAL",
+        "BLOCKED",
+        "STALE_INPUT",
+        "REJECTED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "candidate_set",
+    "candidate_set_hash",
+    "status",
+    "records"
+  ],
+  "title": "SemanticNormalizationSet",
+  "type": "object"
+}

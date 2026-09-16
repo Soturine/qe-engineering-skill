@@ -41,6 +41,7 @@ class EvidenceExcerpt(d.Artifact):
     location: d.Text
     span: d.Ref | None = None
     text: d.Text
+    source_language: d.LanguageCode = "und"
 
     @model_validator(mode="after")
     def validate_scope(self) -> EvidenceExcerpt:

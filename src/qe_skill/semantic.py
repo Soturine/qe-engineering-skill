@@ -154,6 +154,18 @@ def _candidate_id(result_hash: str, index: int, proposal: d.Record) -> str:
     return f"semantic-candidate.{hashlib.sha256(seed.encode()).hexdigest()[:24]}"
 
 
+def _inputs_stale(request: ReasoningRequest, ledger: d.SourceLedger) -> bool:
+    sources = {source.id: source for source in ledger.sources}
+    return not validate_ledger(ledger).valid or any(
+        (source := sources.get(excerpt.source.id)) is None
+        or source.content_hash != excerpt.source_hash
+        or source.study_status != "STUDIED"
+        or source.read_integrity != "COMPLETE"
+        or source.lifecycle in {"superseded", "deprecated", "archived"}
+        for excerpt in request.excerpts
+    )
+
+
 def materialize_provider_candidates(
     request: ReasoningRequest,
     result: ReasoningResult,
@@ -208,15 +220,7 @@ def materialize_provider_candidates(
         return candidate_set("REJECTED", [], ["Input artifact binding is invalid."])
     sources = {source.id: source for source in ledger.sources}
     excerpt_by_id = {excerpt.id: excerpt for excerpt in request.excerpts}
-    stale = any(
-        (source := sources.get(excerpt.source.id)) is None
-        or source.content_hash != excerpt.source_hash
-        or source.study_status != "STUDIED"
-        or source.read_integrity != "COMPLETE"
-        or source.lifecycle in {"superseded", "deprecated", "archived"}
-        for excerpt in request.excerpts
-    )
-    if stale or not validate_ledger(ledger).valid:
+    if _inputs_stale(request, ledger):
         return candidate_set(
             "STALE_INPUT",
             [],
@@ -321,7 +325,10 @@ def validate_candidate_set(
         "TIMED_OUT": "BLOCKED_PROVIDER",
         "REJECTED": "REJECTED",
     }
-    if artifact.status != expected_status[result_record.status]:
+    expected = (
+        "STALE_INPUT" if _inputs_stale(request, ledger) else expected_status[result_record.status]
+    )
+    if artifact.status != expected:
         result.add(
             "SEM_STATUS_BINDING",
             artifact,
@@ -329,7 +336,7 @@ def validate_candidate_set(
         )
     sources = {source.id: source for source in ledger.sources}
     excerpts = {excerpt.id: excerpt for excerpt in request.excerpts}
-    if len(artifact.candidates) != len(result_record.proposals):
+    if expected != "STALE_INPUT" and len(artifact.candidates) != len(result_record.proposals):
         result.add(
             "SEM_CANDIDATE_BINDING",
             artifact,

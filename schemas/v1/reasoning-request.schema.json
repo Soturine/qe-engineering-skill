@@ -41,6 +41,17 @@
           "title": "Source Hash",
           "type": "string"
         },
+        "source_language": {
+          "default": "und",
+          "enum": [
+            "pt-BR",
+            "en",
+            "mixed",
+            "und"
+          ],
+          "title": "Source Language",
+          "type": "string"
+        },
         "span": {
           "anyOf": [
             {

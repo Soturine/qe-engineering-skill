@@ -37,6 +37,11 @@ from qe_skill.m3 import (
     SharedStepCandidate,
     TestRevisionProposal,
 )
+from qe_skill.normalization import (
+    NormalizedSemanticRecord,
+    SemanticMeaning,
+    SemanticNormalizationSet,
+)
 from qe_skill.parsers import ParseResult
 from qe_skill.project_builder import ProjectBuild
 from qe_skill.reasoning import ReasoningRequest, ReasoningResult
@@ -76,6 +81,9 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "semantic-candidate": SemanticCandidate,
     "semantic-candidate-set": SemanticCandidateSet,
     "semantic-cache-binding": SemanticCacheBinding,
+    "semantic-meaning": SemanticMeaning,
+    "normalized-semantic-record": NormalizedSemanticRecord,
+    "semantic-normalization-set": SemanticNormalizationSet,
 }
 
 

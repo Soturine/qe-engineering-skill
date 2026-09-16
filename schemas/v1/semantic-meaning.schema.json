@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "AliasRelation": {
+      "additionalProperties": false,
+      "description": "An explicit relation; normalization never overwrites the source form.",
+      "properties": {
+        "alias": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Alias",
+          "type": "string"
+        },
+        "canonical_label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Canonical Label",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alias",
+        "canonical_label",
+        "evidence"
+      ],
+      "title": "AliasRelation",
+      "type": "object"
+    },
+    "GroundedConcept": {
+      "additionalProperties": false,
+      "description": "Canonical candidate label grounded by literal forms in cited excerpts.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Label",
+          "type": "string"
+        },
+        "surface_forms": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Surface Forms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "surface_forms",
+        "evidence"
+      ],
+      "title": "GroundedConcept",
+      "type": "object"
+    },
+    "GroundedTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Label",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "ENTITY",
+            "STATE",
+            "FIELD",
+            "VALUE",
+            "ACTION",
+            "TECHNICAL_IDENTIFIER",
+            "OTHER"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "surface_forms": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Surface Forms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "surface_forms",
+        "evidence",
+        "role"
+      ],
+      "title": "GroundedTerm",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "MeaningConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "EQ",
+            "NE",
+            "LT",
+            "LE",
+            "GT",
+            "GE",
+            "IN",
+            "MATCHES",
+            "OTHER"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "surface_form": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Surface Form",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "kind",
+        "operator",
+        "value",
+        "surface_form",
+        "evidence"
+      ],
+      "title": "MeaningConstraint",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:semantic-meaning",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GroundedConcept"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "aliases": {
+      "items": {
+        "$ref": "#/$defs/AliasRelation"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "capability": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GroundedConcept"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "constraints": {
+      "items": {
+        "$ref": "#/$defs/MeaningConstraint"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "intent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GroundedConcept"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "modality": {
+      "default": "UNSPECIFIED",
+      "enum": [
+        "MUST",
+        "MUST_NOT",
+        "SHOULD",
+        "MAY",
+        "OPTIONAL",
+        "CONDITIONAL",
+        "UNSPECIFIED"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "polarity": {
+      "default": "UNSPECIFIED",
+      "enum": [
+        "POSITIVE",
+        "NEGATIVE",
+        "UNSPECIFIED"
+      ],
+      "title": "Polarity",
+      "type": "string"
+    },
+    "record_kind": {
+      "enum": [
+        "FACT",
+        "OBSERVATION",
+        "CLAIM",
+        "HYPOTHESIS",
+        "DECISION",
+        "ORACLE"
+      ],
+      "title": "Record Kind",
+      "type": "string"
+    },
+    "terms": {
+      "items": {
+        "$ref": "#/$defs/GroundedTerm"
+      },
+      "title": "Terms",
+      "type": "array"
+    }
+  },
+  "required": [
+    "record_kind"
+  ],
+  "title": "SemanticMeaning",
+  "type": "object"
+}

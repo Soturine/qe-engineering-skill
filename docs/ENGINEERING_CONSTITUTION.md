@@ -22,6 +22,13 @@ Prefer clear modules and explicit boundaries in one deployable unit until scale 
 ## 6. Provider neutrality
 Core behavior must not be coupled to one model vendor or agent runtime. Provider-specific behavior belongs behind adapters. Agent Skills is an interface, not the domain model.
 
+## 6.1 Multilingual evidence is first-class
+
+The engine must preserve original multilingual evidence, Unicode and technical identifiers.
+Language, translation or canonicalization never changes source authority or replaces provenance.
+PT-BR is first-class; source language, project locale and output language remain independent. See
+`MULTILINGUAL_POLICY.md`.
+
 ## 7. Manual-first, automation-ready
 Manual test cases are the first-class output. Automation is derived later from the same approved structured Test Model. Never automate a poorly specified oracle merely because tooling allows it.
 

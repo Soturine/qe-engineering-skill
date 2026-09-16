@@ -18,6 +18,8 @@ Readiness = Literal[
     "REJECTED_DUPLICATE",
     "REJECTED_UNSUPPORTED_ORACLE",
 ]
+LanguageCode = Literal["pt-BR", "en", "mixed", "und"]
+OutputLanguage = Literal["source", "pt-BR", "en"]
 
 
 class Record(BaseModel):
@@ -92,6 +94,7 @@ class Source(Artifact):
     extraction: Extraction
     sensitivity: Text
     handling: Text
+    source_language: LanguageCode = "und"
 
 
 class ScopeEntry(Record):
@@ -111,6 +114,8 @@ class RunManifest(Artifact):
     created_at: Timestamp
     tool_version: Text
     authority_policy: Text
+    project_locale: LanguageCode = "und"
+    output_language: OutputLanguage = "source"
 
 
 class SourceLedger(Artifact):

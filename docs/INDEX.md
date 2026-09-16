@@ -44,6 +44,7 @@ Use this page as the canonical reading map.
 - `AGENT_SKILL_SPEC.md`
 - `AZURE_DEVOPS_ADAPTER.md`
 - `M4_PRODUCT_KISS_ADDENDUM.md` - accepted M4 product contract and KISS sequencing for H3-H11.
+- `MULTILINGUAL_POLICY.md` - cross-cutting PT-BR/mixed-language contract for M0-M6.
 
 ## Validation and independent review
 
@@ -52,9 +53,11 @@ Use this page as the canonical reading map.
 - `M1_EVIDENCE.md`
 - `M2_EVIDENCE.md`
 - `M3_EVIDENCE.md`
+- `M4_EVIDENCE.md`
 - `IMPLEMENTATION_STATE.md`
 - `M6_CATALOG.md`
 - `SEMANTIC_REASONING_ROADMAP.md`
+- `adr/0003-grounded-semantic-normalization.md`
 - `AUDIT_GUIDE.md`
 - `AI_IMPLEMENTATION_GUIDE.md`
 - `../CLAUDE.md`

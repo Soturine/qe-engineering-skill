@@ -3272,10 +3272,31 @@
           "title": "Mode",
           "type": "string"
         },
+        "output_language": {
+          "default": "source",
+          "enum": [
+            "source",
+            "pt-BR",
+            "en"
+          ],
+          "title": "Output Language",
+          "type": "string"
+        },
         "project_id": {
           "minLength": 1,
           "pattern": "\\S",
           "title": "Project Id",
+          "type": "string"
+        },
+        "project_locale": {
+          "default": "und",
+          "enum": [
+            "pt-BR",
+            "en",
+            "mixed",
+            "und"
+          ],
+          "title": "Project Locale",
           "type": "string"
         },
         "schema_version": {
@@ -3617,6 +3638,17 @@
           "minLength": 1,
           "pattern": "\\S",
           "title": "Snapshot Id",
+          "type": "string"
+        },
+        "source_language": {
+          "default": "und",
+          "enum": [
+            "pt-BR",
+            "en",
+            "mixed",
+            "und"
+          ],
+          "title": "Source Language",
           "type": "string"
         },
         "source_type": {

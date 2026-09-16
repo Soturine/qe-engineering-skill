@@ -257,7 +257,9 @@
         "id": "run",
         "inventory_complete": true,
         "mode": "GREENFIELD",
+        "output_language": "source",
         "project_id": "synthetic",
+        "project_locale": "und",
         "schema_version": "1.0",
         "scope": [
           {
@@ -304,6 +306,7 @@
           "schema_version": "1.0",
           "sensitivity": "public-synthetic",
           "snapshot_id": "v1",
+          "source_language": "und",
           "source_type": "specification",
           "study_status": "STUDIED",
           "version": "1"

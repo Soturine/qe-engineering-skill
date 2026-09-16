@@ -90,6 +90,7 @@ def test_source_mutation_invalidates_candidates_and_cache_identity() -> None:
         extractor_version="1",
     )
     assert artifact.status == "STALE_INPUT" and artifact.candidates == []
+    assert validate_candidate_set(artifact, request, result, mutated).valid
 
     _, request2, result2 = inputs()
     request2.excerpts[0].source_hash = "c" * 64

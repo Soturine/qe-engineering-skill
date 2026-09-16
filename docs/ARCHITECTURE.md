@@ -44,6 +44,13 @@ hashes, limits and prompt/config versions. Results bind provider/model/adapter i
 failure/timeout states. Outputs remain untrusted proposals until candidate and trust gates validate
 them. Deterministic-only operation requires no provider.
 
+### 10.1 Grounded Multilingual Normalization
+Validated candidates may become comparable, non-normative records. Canonical labels retain their
+literal surface forms and source/span/hash/authority provenance; differing labels require explicit
+alias relations. Record kind, modality, polarity, constraints and domain terms remain distinct.
+`source_language`, `project_locale` and `output_language` are separate contracts. See
+`MULTILINGUAL_POLICY.md` and ADR 0003.
+
 ### 11. TMS / Output Adapters
 Azure DevOps first, later other TMS/report/automation renderers. Adapters cannot redefine Test Model semantics.
 

@@ -1,6 +1,6 @@
 # Schemas
 
-Status: **M0–M3 and M4.H1–H2 version 1.0 contracts implemented and validated**
+Status: **M0–M3 and M4.H1–H3 version 1.0 contracts implemented and validated**
 
 Schemas are in `v1/`. Reproduce with `python -m qe_skill.schemas`.
 Tests check Draft 2020-12 validity and byte-for-byte agreement with typed contracts.
@@ -41,6 +41,9 @@ Implemented schemas in `v1/`:
 - `semantic-candidate.schema.json`
 - `semantic-candidate-set.schema.json`
 - `semantic-cache-binding.schema.json`
+- `semantic-meaning.schema.json`
+- `normalized-semantic-record.schema.json`
+- `semantic-normalization-set.schema.json`
 
 JSON Schema handles shape/basic constraints. Cross-artifact invariants are implemented
 in `qe_skill.validation` and `qe_skill.integrity`, with negative tests and evals.

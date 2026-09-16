@@ -167,6 +167,9 @@ M3. See `SEMANTIC_REASONING_ROADMAP.md`. H3-H11 also follow the accepted product
 decisions in `M4_PRODUCT_KISS_ADDENDUM.md`; where alternatives exist, implement the smallest
 useful path that preserves provenance, review, approval and external-write safety.
 
+The cross-cutting `MULTILINGUAL_POLICY.md` applies to every milestone. M4.H3-H10 must treat PT-BR
+and mixed PT-BR/English project material as first-class without pre-translation or authority drift.
+
 Make the stable core usable through optional external integrations and a portable Agent Skills interface without coupling the core to any provider or TMS.
 
 Deliver optional TMS integration, Azure DevOps first:

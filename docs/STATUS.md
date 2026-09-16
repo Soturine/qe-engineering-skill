@@ -50,11 +50,15 @@ sequencing. It is a target contract; only capabilities listed below as implement
   configuration/extractor cache binding, source mutation invalidation, provenance/authority tamper
   detection and cross-project isolation. This checkpoint is implemented and validated on Linux
   and Windows.
+- M4.H3 grounded multilingual normalization preserves literal source language/text/span/hash/
+  authority and provider/run provenance; requires grounded canonical labels plus explicit aliases;
+  and distinguishes record kind, modality, polarity, constraints and domain terms. PT-BR, English,
+  mixed text and bilingual Gherkin have synthetic regression/eval coverage.
 
 ## Current limitations
 
-- Arbitrary natural-language documents are structurally parsed but not promoted into domain
-  semantics. Semantic normalization requires the explicit generic `qe_model` structure.
+- Arbitrary natural-language documents are structurally parsed but not yet orchestrated into H3
+  typed candidates. Real-document semantic orchestration is H5 work.
 - Local and remote OpenAPI references are recorded but not resolved. Remote references are
   never fetched and make the affected parse partial.
 - PDF/DOCX, archives, binaries and code languages other than Python have no semantic parser.
@@ -67,8 +71,8 @@ sequencing. It is a target contract; only capabilities listed below as implement
 - Existing-test audit consumes explicit structured audit facts; it does not infer semantics from
   arbitrary historical prose.
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
-- H2 candidates are review artifacts only and are not yet normalized into the Project Model or
-  connected to the ingestion CLI. Natural-language normalization begins in M4.H3.
+- H3 normalized records remain review artifacts and are not promoted into the Project Model or
+  connected to the ingestion CLI. Relation/adjudication begins in M4.H4.
 
 ## Deferred by milestone
 
