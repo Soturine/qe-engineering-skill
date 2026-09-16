@@ -247,7 +247,8 @@
             "GROUNDING_MISSING",
             "ALIAS_RELATION_MISSING",
             "MODALITY_MISMATCH",
-            "NEGATION_LOST"
+            "NEGATION_LOST",
+            "CONSTRAINT_DIRECTION_MISMATCH"
           ],
           "title": "Code",
           "type": "string"
@@ -759,9 +760,80 @@
           ],
           "title": "Observed Polarity",
           "type": "string"
+        },
+        "signals": {
+          "items": {
+            "$ref": "#/$defs/SurfaceSignal"
+          },
+          "title": "Signals",
+          "type": "array"
         }
       },
       "title": "SurfaceGuards",
+      "type": "object"
+    },
+    "SurfaceSignal": {
+      "additionalProperties": false,
+      "description": "Literal, non-authoritative language signal retained for semantic-loss guards.",
+      "properties": {
+        "category": {
+          "enum": [
+            "MODALITY",
+            "NEGATION",
+            "CONSTRAINT",
+            "QUANTITY",
+            "TEMPORAL_ORDER"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "end": {
+          "minimum": 1,
+          "title": "End",
+          "type": "integer"
+        },
+        "language": {
+          "enum": [
+            "pt-BR",
+            "en",
+            "neutral"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "semantic_role": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Semantic Role",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "surface_form": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Surface Form",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "semantic_role",
+        "surface_form",
+        "line",
+        "start",
+        "end",
+        "language"
+      ],
+      "title": "SurfaceSignal",
       "type": "object"
     }
   },

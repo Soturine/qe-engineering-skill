@@ -1,6 +1,6 @@
 from qe_skill import domain as d
 from qe_skill.m2 import analyze_project
-from qe_skill.m3 import AuthoringConfig, generate_m3, validate_generation_report
+from qe_skill.m3 import AuthoringConfig, generate_m3, materialize_oracle, validate_generation_report
 
 from .helpers import claim_copy, reference, representative
 
@@ -52,6 +52,36 @@ def test_complete_supported_context_materializes_strict_ready_case() -> None:
     ready = [case for case in generated.cases if case.readiness == "READY"]
     assert ready and ready[0].materialized_test is not None
     assert validate_generation_report(generated, model, analysis).valid
+
+
+def test_ptbr_output_localizes_generated_case_but_preserves_evidence_and_identifiers() -> None:
+    model = representative()
+    model.ledger.manifest.project_locale = "pt-BR"
+    model.ledger.manifest.output_language = "pt-BR"
+    literal_oracle = "O endpoint POST /records deve manter status READY."
+    model.claims[0].statement = literal_oracle
+    model.oracles[0].statement = literal_oracle
+    model.tests.test_cases[0].steps[0].expected_result = literal_oracle
+    oracle_result = materialize_oracle(reference(model.claims[0].id), model)
+    assert oracle_result.rationale.startswith("A semântica do oráculo")
+    config = AuthoringConfig(
+        environment_claim={"id": "instruction-2", "project_id": "synthetic", "snapshot_id": "v1"},
+        cleanup_claim={"id": "instruction-6", "project_id": "synthetic", "snapshot_id": "v1"},
+        isolation_claim={"id": "instruction-7", "project_id": "synthetic", "snapshot_id": "v1"},
+        build="build-READY-1",
+        profile="role ADMIN",
+    )
+    generated = generate_m3(model, analyze_project(model), config)
+    ready = next(case for case in generated.cases if case.readiness == "READY")
+    assert ready.title.startswith("Revisar cenário ")
+    assert ready.pass_rule == "Todos os passos obrigatórios satisfazem os oráculos citados."
+    assert ready.rationale.startswith("Gerado a partir")
+    assert ready.materialized_test is not None
+    assert ready.materialized_test.steps[-1].expected_result == literal_oracle
+    assert ready.materialized_test.profile == "role ADMIN"
+    assert ready.materialized_test.build == "build-READY-1"
+    assert generated.test_model.test_cases[0].steps[-1].expected_result == literal_oracle
+    assert validate_generation_report(generated, model, analyze_project(model)).valid
 
 
 def test_verified_multistep_path_becomes_complete_ordered_procedure() -> None:

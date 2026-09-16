@@ -1,11 +1,12 @@
 from qe_skill.normalization import (
     detect_source_language,
+    detect_surface_signals,
     normalize_candidate_set,
     validate_normalization_set,
 )
 from qe_skill.reasoning import run_reasoning
 from qe_skill.semantic import materialize_provider_candidates
-from tests.normalization_helpers import meaning, prepared
+from tests.normalization_helpers import constraint, meaning, prepared, simple_meaning
 
 
 def test_normalization_preserves_original_provenance_and_aliases() -> None:
@@ -123,3 +124,51 @@ def test_language_detection_is_bounded_and_non_blocking() -> None:
     assert detect_source_language(
         "O usuário realiza login em POST /auth/login e recebe access_token."
     ) == ("mixed", "HIGH")
+
+
+def test_ptbr_surface_signals_cover_modality_limits_time_quantities_and_gherkin() -> None:
+    text = (
+        "Funcionalidade: política\n"
+        "Cenário: limites\n"
+        "Dado que somente ADMIN pode agir, exceto SUPPORT\n"
+        "Quando ocorrer antes do fechamento e depois da abertura\n"
+        "Então o processamento não pode demorar mais de 30 s, deve aceitar até 60 s, "
+        "no mínimo 1 item e no máximo 10 itens; o campo é obrigatório e outro é opcional."
+    )
+    signals = detect_surface_signals(text)
+    roles = {(item.category, item.semantic_role) for item in signals}
+    assert roles >= {
+        ("MODALITY", "MUST_NOT"),
+        ("MODALITY", "MUST"),
+        ("MODALITY", "MAY"),
+        ("MODALITY", "OPTIONAL"),
+        ("NEGATION", "NEGATIVE"),
+        ("TEMPORAL_ORDER", "BEFORE"),
+        ("TEMPORAL_ORDER", "AFTER"),
+        ("CONSTRAINT", "MAXIMUM"),
+        ("CONSTRAINT", "MINIMUM"),
+        ("CONSTRAINT", "ONLY"),
+        ("CONSTRAINT", "EXCEPT"),
+        ("QUANTITY", "MEASURED_QUANTITY"),
+    }
+    assert {item.surface_form for item in signals if item.category == "QUANTITY"} >= {
+        "30 s",
+        "60 s",
+    }
+
+
+def test_ptbr_explicit_limit_direction_cannot_be_reversed_by_provider() -> None:
+    value = simple_meaning(
+        actor_label="system",
+        actor_surface="sistema",
+        capability_label="accept_records",
+        capability_surface="aceita",
+        modality="UNSPECIFIED",
+        constraints=[constraint(kind="count", operator="GE", value=10, surface="10")],
+    )
+    model, request, result, candidates = prepared(
+        "O sistema aceita no máximo 10 registros.", value, source_language="pt-BR"
+    )
+    artifact = normalize_candidate_set(candidates, request, result, model.ledger)
+    assert artifact.status == "REJECTED"
+    assert artifact.issues[0].code == "CONSTRAINT_DIRECTION_MISMATCH"

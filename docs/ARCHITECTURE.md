@@ -4,6 +4,20 @@
 
 Transform heterogeneous project evidence into a structured, auditable Project Model and then into high-confidence manual test cases. Remain useful across web, API, mobile, data, embedded/IoT and industrial projects without hard-coded real-project rules.
 
+## Product experience hierarchy
+
+```text
+PRIMARY EXPERIENCE    Agent Skill + AI agent
+SECONDARY EXPERIENCE  qe run / qe doctor CLI
+FOUNDATION             deterministic trust engine
+```
+
+The agent performs discovery, semantic understanding, user interaction, bounded drafting and
+orchestration. The engine remains the authority for evidence integrity, provenance, source
+authority, scope isolation, oracle validation, readiness and safety gates. Deterministic-only mode
+is a fallback and validation path. Agent/provider output remains candidate material and cannot
+self-authorize or emulate a passed engine validation.
+
 ## Boundary rule
 
 **Discovery is not truth. Retrieval is not verification. Generation is not acceptance.**

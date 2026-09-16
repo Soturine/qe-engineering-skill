@@ -15,6 +15,7 @@ from typing import Literal
 from pydantic import Field, JsonValue, ValidationError, model_validator
 
 from qe_skill import domain as d
+from qe_skill.localization import localize_engine_text, resolve_output_language
 from qe_skill.reasoning import (
     ProviderIdentity,
     ReasoningRequest,
@@ -36,6 +37,13 @@ NormalizationStatus = Literal[
     "NOT_REQUESTED", "COMPLETE", "PARTIAL", "BLOCKED", "STALE_INPUT", "REJECTED"
 ]
 GroundingCode = Literal["GROUNDING_MISSING", "ALIAS_RELATION_MISSING"]
+SurfaceSignalCategory = Literal[
+    "MODALITY",
+    "NEGATION",
+    "CONSTRAINT",
+    "QUANTITY",
+    "TEMPORAL_ORDER",
+]
 
 
 class GroundedConcept(d.Record):
@@ -117,12 +125,25 @@ class GherkinMarker(d.Record):
     language: Literal["pt-BR", "en"]
 
 
+class SurfaceSignal(d.Record):
+    """Literal, non-authoritative language signal retained for semantic-loss guards."""
+
+    category: SurfaceSignalCategory
+    semantic_role: d.Text
+    surface_form: d.Text
+    line: int = Field(ge=1)
+    start: int = Field(ge=0)
+    end: int = Field(ge=1)
+    language: Literal["pt-BR", "en", "neutral"]
+
+
 class SurfaceGuards(d.Record):
     """Deterministic distinctions that a probabilistic interpretation cannot erase."""
 
     observed_modality: Modality = "UNSPECIFIED"
     observed_polarity: Polarity = "UNSPECIFIED"
     numeric_literals: list[d.Text] = Field(default_factory=list)
+    signals: list[SurfaceSignal] = Field(default_factory=list)
     gherkin_markers: list[GherkinMarker] = Field(default_factory=list)
 
 
@@ -135,6 +156,7 @@ class NormalizationIssue(d.Record):
         "ALIAS_RELATION_MISSING",
         "MODALITY_MISMATCH",
         "NEGATION_LOST",
+        "CONSTRAINT_DIRECTION_MISMATCH",
     ]
     message: d.Text
 
@@ -209,6 +231,32 @@ _NEGATION = re.compile(r"\b(?:not|never|without|n[aã]o|nunca|jamais|sem)\b", re
 _NUMBER = re.compile(
     r"(?<![\w.])-?\d{1,3}(?:\.\d{3})+(?:,\d+)?(?!\w)|"
     r"(?<![\w.])-?\d+(?:[.,]\d+)?(?!\w)"
+)
+_SURFACE_PATTERNS: tuple[
+    tuple[SurfaceSignalCategory, str, Literal["pt-BR", "en", "neutral"], re.Pattern[str]], ...
+] = (
+    ("MODALITY", "MUST_NOT", "pt-BR", re.compile(r"\bn[aã]o\s+(?:pode|deve|dever[aá])\b", re.I)),
+    ("MODALITY", "MUST", "pt-BR", re.compile(r"\b(?:deve|obrigat[oó]ri[oa])\b", re.I)),
+    ("MODALITY", "MAY", "pt-BR", re.compile(r"\bpode\b", re.I)),
+    ("MODALITY", "OPTIONAL", "pt-BR", re.compile(r"\bopcional\b", re.I)),
+    ("NEGATION", "NEGATIVE", "pt-BR", re.compile(r"\b(?:n[aã]o|nunca|jamais|sem)\b", re.I)),
+    ("TEMPORAL_ORDER", "BEFORE", "pt-BR", re.compile(r"\bantes(?:\s+de)?\b", re.I)),
+    ("TEMPORAL_ORDER", "AFTER", "pt-BR", re.compile(r"\b(?:depois|ap[oó]s)(?:\s+de)?\b", re.I)),
+    ("CONSTRAINT", "MAXIMUM", "pt-BR", re.compile(r"\b(?:at[eé]|no\s+m[aá]ximo)\b", re.I)),
+    ("CONSTRAINT", "MINIMUM", "pt-BR", re.compile(r"\bno\s+m[ií]nimo\b", re.I)),
+    ("CONSTRAINT", "ONLY", "pt-BR", re.compile(r"\b(?:somente|apenas)\b", re.I)),
+    ("CONSTRAINT", "EXCEPT", "pt-BR", re.compile(r"\bexceto\b", re.I)),
+    ("TEMPORAL_ORDER", "BEFORE", "en", re.compile(r"\bbefore\b", re.I)),
+    ("TEMPORAL_ORDER", "AFTER", "en", re.compile(r"\bafter\b", re.I)),
+    ("CONSTRAINT", "MAXIMUM", "en", re.compile(r"\b(?:at\s+most|up\s+to)\b", re.I)),
+    ("CONSTRAINT", "MINIMUM", "en", re.compile(r"\bat\s+least\b", re.I)),
+    ("CONSTRAINT", "ONLY", "en", re.compile(r"\bonly\b", re.I)),
+    ("CONSTRAINT", "EXCEPT", "en", re.compile(r"\bexcept\b", re.I)),
+)
+_QUANTITY = re.compile(
+    r"(?<![\w.])(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)"
+    r"\s*(?:ms|s|seg(?:undo)?s?|min(?:uto)?s?|h|horas?|dias?|%)(?!\w)",
+    re.I,
 )
 _PT_HINTS = frozenset(
     {
@@ -302,6 +350,59 @@ def _gherkin_markers(text: str) -> list[GherkinMarker]:
     return markers
 
 
+def detect_surface_signals(text: str) -> list[SurfaceSignal]:
+    """Recognize bounded PT-BR/English cues without interpreting them as authority."""
+
+    signals: list[SurfaceSignal] = []
+    line_starts = [0]
+    line_starts.extend(match.end() for match in re.finditer(r"\n", text))
+
+    def line_for(offset: int) -> int:
+        return sum(start <= offset for start in line_starts)
+
+    occupied: set[tuple[SurfaceSignalCategory, int, int]] = set()
+    for category, role, language, pattern in _SURFACE_PATTERNS:
+        for match in pattern.finditer(text):
+            key = (category, match.start(), match.end())
+            # The longer "não pode" signal owns its span; suppress the nested "pode" marker.
+            if category == "MODALITY" and any(
+                previous.category == category
+                and previous.start <= match.start()
+                and previous.end >= match.end()
+                for previous in signals
+            ):
+                continue
+            if key in occupied:
+                continue
+            occupied.add(key)
+            signals.append(
+                SurfaceSignal(
+                    category=category,
+                    semantic_role=role,
+                    surface_form=match.group(0),
+                    line=line_for(match.start()),
+                    start=match.start(),
+                    end=match.end(),
+                    language=language,
+                )
+            )
+    for match in _QUANTITY.finditer(text):
+        signals.append(
+            SurfaceSignal(
+                category="QUANTITY",
+                semantic_role="MEASURED_QUANTITY",
+                surface_form=match.group(0),
+                line=line_for(match.start()),
+                start=match.start(),
+                end=match.end(),
+                language="neutral",
+            )
+        )
+    return sorted(
+        signals, key=lambda item: (item.start, item.end, item.category, item.semantic_role)
+    )
+
+
 def _surface_guards(statements: list[OriginalStatement]) -> SurfaceGuards:
     text = "\n".join(item.text for item in statements)
     observed = [modality for modality, pattern in _MODAL_PATTERNS if pattern.search(text)]
@@ -317,6 +418,7 @@ def _surface_guards(statements: list[OriginalStatement]) -> SurfaceGuards:
         observed_modality=modality,
         observed_polarity=polarity,
         numeric_literals=numbers,
+        signals=detect_surface_signals(text),
         gherkin_markers=[marker for item in statements for marker in _gherkin_markers(item.text)],
     )
 
@@ -345,6 +447,7 @@ def _comparison_key(meaning: SemanticMeaning, guards: SurfaceGuards) -> str:
             key=lambda item: json.dumps(item, sort_keys=True, ensure_ascii=False),
         ),
         "numeric_literals": guards.numeric_literals,
+        "surface_roles": sorted({(item.category, item.semantic_role) for item in guards.signals}),
         "terms": sorted([(item.role, _compare_text(item.label)) for item in meaning.terms]),
     }
     encoded = json.dumps(
@@ -491,6 +594,27 @@ def normalize_candidate(
             code="NEGATION_LOST",
             message="Normalized meaning loses explicit source negation.",
         )
+    direction_by_operator = {"LE": "MAXIMUM", "LT": "MAXIMUM", "GE": "MINIMUM", "GT": "MINIMUM"}
+    observed_directions = {
+        signal.semantic_role
+        for signal in guards.signals
+        if signal.category == "CONSTRAINT" and signal.semantic_role in {"MAXIMUM", "MINIMUM"}
+    }
+    proposed_directions = {
+        direction_by_operator[item.operator]
+        for item in meaning.constraints
+        if item.operator in direction_by_operator
+    }
+    if (
+        observed_directions
+        and proposed_directions
+        and observed_directions.isdisjoint(proposed_directions)
+    ):
+        return None, NormalizationIssue(
+            candidate=candidate_ref,
+            code="CONSTRAINT_DIRECTION_MISMATCH",
+            message=("Normalized constraint direction conflicts with an explicit source marker."),
+        )
     candidate_hash = canonical_hash(candidate)
     identifier = hashlib.sha256(
         (candidate_hash + _comparison_key(meaning, guards)).encode()
@@ -538,6 +662,7 @@ def normalize_candidate_set(
     source_hash = canonical_hash(candidate_set)
     resolved_project_locale = project_locale or ledger.manifest.project_locale
     resolved_output_language = output_language or ledger.manifest.output_language
+    message_language = resolve_output_language(resolved_project_locale, resolved_output_language)
     identity = json.dumps(
         [source_hash, resolved_project_locale, resolved_output_language],
         separators=(",", ":"),
@@ -582,6 +707,7 @@ def normalize_candidate_set(
         if record:
             records.append(record)
         if issue:
+            issue.message = localize_engine_text(issue.message, message_language)
             issues.append(issue)
     status: NormalizationStatus = (
         "COMPLETE"

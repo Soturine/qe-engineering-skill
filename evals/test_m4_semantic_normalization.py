@@ -1,4 +1,4 @@
-from qe_skill.normalization import normalize_candidate_set
+from qe_skill.normalization import detect_surface_signals, normalize_candidate_set
 from tests.normalization_helpers import (
     constraint,
     grounded_term,
@@ -345,3 +345,34 @@ def test_mixed_portuguese_gherkin_preserves_unicode_and_technical_identifiers() 
         "en",
         "en",
     ]
+
+
+def test_ptbr_requested_mutation_vocabulary_is_semantically_distinct() -> None:
+    samples = {
+        "required": "O campo deve ser preenchido e é obrigatório.",
+        "allowed": "O campo pode ser preenchido.",
+        "forbidden": "O campo não pode ser preenchido.",
+        "optional": "O campo é opcional.",
+        "before": "A ação ocorre antes do evento.",
+        "after": "A ação ocorre depois do evento.",
+        "maximum": "O sistema aceita até 10 itens e no máximo 10 itens.",
+        "minimum": "O sistema aceita no mínimo 10 itens.",
+        "exclusive": "Somente ADMIN pode agir, exceto SUPPORT.",
+        "thirty": "A operação termina em 30 s.",
+        "sixty": "A operação termina em 60 s.",
+    }
+    roles = {
+        name: {(item.category, item.semantic_role) for item in detect_surface_signals(text)}
+        for name, text in samples.items()
+    }
+    assert ("MODALITY", "MUST") in roles["required"]
+    assert ("MODALITY", "MAY") in roles["allowed"]
+    assert ("MODALITY", "MUST_NOT") in roles["forbidden"]
+    assert ("MODALITY", "OPTIONAL") in roles["optional"]
+    assert ("TEMPORAL_ORDER", "BEFORE") in roles["before"]
+    assert ("TEMPORAL_ORDER", "AFTER") in roles["after"]
+    assert ("CONSTRAINT", "MAXIMUM") in roles["maximum"]
+    assert ("CONSTRAINT", "MINIMUM") in roles["minimum"]
+    assert {("CONSTRAINT", "ONLY"), ("CONSTRAINT", "EXCEPT")} <= roles["exclusive"]
+    assert ("QUANTITY", "MEASURED_QUANTITY") in roles["thirty"]
+    assert ("QUANTITY", "MEASURED_QUANTITY") in roles["sixty"]

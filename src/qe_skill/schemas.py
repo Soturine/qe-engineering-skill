@@ -6,6 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from qe_skill.adjudication import AdjudicationResult, SemanticRelation, SemanticRelationGraph
+from qe_skill.clarification import ClarificationQuestion, ClarificationSet
 from qe_skill.domain import (
     Approval,
     Claim,
@@ -86,6 +87,8 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "semantic-meaning": SemanticMeaning,
     "normalized-semantic-record": NormalizedSemanticRecord,
     "semantic-normalization-set": SemanticNormalizationSet,
+    "clarification-question": ClarificationQuestion,
+    "clarification-set": ClarificationSet,
     "semantic-relation": SemanticRelation,
     "semantic-adjudication": AdjudicationResult,
     "semantic-relation-graph": SemanticRelationGraph,

@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from qe_skill import domain as d
 from qe_skill.integrity import artifacts, validate_project_model, validate_test_case
+from qe_skill.localization import localize_engine_text, resolve_output_language
 from qe_skill.m2 import (
     M2AnalysisReport,
     RiskAnalysisRecord,
@@ -100,6 +101,13 @@ def stable_id(prefix: str, project_id: str, snapshot_id: str, *parts: object) ->
     return f"{prefix}.{canonical_hash(payload)[:24]}"
 
 
+def _engine_text(model: d.ProjectModel, value: str) -> str:
+    language = resolve_output_language(
+        model.ledger.manifest.project_locale, model.ledger.manifest.output_language
+    )
+    return localize_engine_text(value, language)
+
+
 def materialize_oracle(
     claim_ref: d.Ref,
     model: d.ProjectModel,
@@ -116,7 +124,9 @@ def materialize_oracle(
     ):
         return OracleMaterialization(
             status="BLOCKED_SOURCE",
-            rationale="The source claim is missing or outside the current project snapshot.",
+            rationale=_engine_text(
+                model, "The source claim is missing or outside the current project snapshot."
+            ),
             source_claim=claim_ref,
         )
     claim_result = validate_claim(claim, model)
@@ -128,13 +138,15 @@ def materialize_oracle(
         )
         return OracleMaterialization(
             status=status,
-            rationale="The current claim does not pass provenance validation.",
+            rationale=_engine_text(model, "The current claim does not pass provenance validation."),
             source_claim=claim_ref,
         )
     if expected_text is not None and expected_text != claim.statement:
         return OracleMaterialization(
             status="UNSUPPORTED",
-            rationale="Expected Result text must exactly preserve the supporting claim.",
+            rationale=_engine_text(
+                model, "Expected Result text must exactly preserve the supporting claim."
+            ),
             source_claim=claim_ref,
         )
     normative = claim.origin in {"CONTRACT", "ORGANIZATIONAL_POLICY"} and not claim.inferred
@@ -164,13 +176,17 @@ def materialize_oracle(
     if not validate_oracle(oracle, check_model).valid:
         return OracleMaterialization(
             status="UNSUPPORTED",
-            rationale="The candidate oracle did not pass the repository trust validator.",
+            rationale=_engine_text(
+                model, "The candidate oracle did not pass the repository trust validator."
+            ),
             source_claim=claim_ref,
         )
     return OracleMaterialization(
         status=status,
         oracle=oracle,
-        rationale="Oracle semantics exactly preserve the validated current claim.",
+        rationale=_engine_text(
+            model, "Oracle semantics exactly preserve the validated current claim."
+        ),
         source_claim=claim_ref,
     )
 
@@ -184,12 +200,16 @@ def reuse_oracle(oracle_ref: d.Ref, model: d.ProjectModel) -> OracleMaterializat
     ):
         return OracleMaterialization(
             status="BLOCKED_SOURCE",
-            rationale="Oracle reuse requires an oracle in the exact current project snapshot.",
+            rationale=_engine_text(
+                model, "Oracle reuse requires an oracle in the exact current project snapshot."
+            ),
         )
     if not validate_oracle(oracle, model).valid:
         return OracleMaterialization(
             status="UNSUPPORTED",
-            rationale="The existing oracle does not pass current provenance validation.",
+            rationale=_engine_text(
+                model, "The existing oracle does not pass current provenance validation."
+            ),
             source_claim=oracle.claim,
         )
     if oracle.normative:
@@ -201,7 +221,9 @@ def reuse_oracle(oracle_ref: d.Ref, model: d.ProjectModel) -> OracleMaterializat
     return OracleMaterialization(
         status=status,
         oracle=oracle,
-        rationale="The existing oracle is current and passes provenance validation.",
+        rationale=_engine_text(
+            model, "The existing oracle is current and passes provenance validation."
+        ),
         source_claim=oracle.claim,
     )
 
@@ -419,6 +441,81 @@ class M3GenerationReport(d.Artifact):
         if self.manifest.input_binding != self.input_binding:
             raise ValueError("manifest input binding differs from report binding")
         return self
+
+
+def _localize_supported_text(value: DraftSupportedText, language: d.OutputLanguage) -> None:
+    """Localize diagnostics only; ``text`` is evidence-backed and must remain literal."""
+
+    value.unresolved_reasons = [
+        localize_engine_text(item, language) for item in value.unresolved_reasons
+    ]
+
+
+def _localize_materialized_test(value: d.TestCase, language: d.OutputLanguage) -> None:
+    value.title = localize_engine_text(value.title, language)
+    value.pass_rule = localize_engine_text(value.pass_rule, language) if value.pass_rule else None
+    value.fail_rule = localize_engine_text(value.fail_rule, language) if value.fail_rule else None
+    value.blocked_rule = localize_engine_text(value.blocked_rule, language)
+    value.blocking_notes = [localize_engine_text(item, language) for item in value.blocking_notes]
+    for step in value.steps:
+        step.evidence_expectation = localize_engine_text(step.evidence_expectation, language)
+
+
+def _localize_generation_report(
+    report: M3GenerationReport, language: d.OutputLanguage
+) -> M3GenerationReport:
+    """Localize engine-owned authoring text while preserving evidence and oracle wording."""
+
+    if language != "pt-BR":
+        return report
+    for case in report.cases:
+        case.title = localize_engine_text(case.title, language)
+        case.priority_rationale = localize_engine_text(case.priority_rationale, language)
+        case.pass_rule = localize_engine_text(case.pass_rule, language) if case.pass_rule else None
+        case.fail_rule = localize_engine_text(case.fail_rule, language) if case.fail_rule else None
+        case.blocked_rule = localize_engine_text(case.blocked_rule, language)
+        case.evidence_expectations = [
+            localize_engine_text(item, language) for item in case.evidence_expectations
+        ]
+        case.blocking_notes = [localize_engine_text(item, language) for item in case.blocking_notes]
+        case.rationale = localize_engine_text(case.rationale, language)
+        for text in [case.objective, case.environment, case.cleanup, case.isolation]:
+            _localize_supported_text(text, language)
+        for text in case.preconditions:
+            _localize_supported_text(text, language)
+        for datum in case.data:
+            # These two values are created by the engine; partition names/technical values remain.
+            if datum.properties.text:
+                datum.properties.text = localize_engine_text(datum.properties.text, language)
+            _localize_supported_text(datum.properties, language)
+            _localize_supported_text(datum.preparation, language)
+        for step in case.steps:
+            _localize_supported_text(step.action, language)
+            if step.evidence_expectation:
+                step.evidence_expectation = localize_engine_text(
+                    step.evidence_expectation, language
+                )
+            step.blocking_reasons = [
+                localize_engine_text(item, language) for item in step.blocking_reasons
+            ]
+        if case.materialized_test:
+            _localize_materialized_test(case.materialized_test, language)
+    for test in report.test_model.test_cases:
+        _localize_materialized_test(test, language)
+    for revision in report.revisions:
+        revision.rationale = localize_engine_text(revision.rationale, language)
+        for field_diff in revision.field_diffs:
+            field_diff.rationale = localize_engine_text(field_diff.rationale, language)
+        for step_diff in revision.step_diffs:
+            step_diff.rationale = localize_engine_text(step_diff.rationale, language)
+    for shared in report.shared_steps:
+        shared.title = localize_engine_text(shared.title, language)
+        shared.rationale = localize_engine_text(shared.rationale, language)
+    for parameter in report.parameters:
+        parameter.rationale = localize_engine_text(parameter.rationale, language)
+        _localize_supported_text(parameter.properties, language)
+    report.limitations = [localize_engine_text(item, language) for item in report.limitations]
+    return report
 
 
 def _ref(record: d.Artifact) -> d.Ref:
@@ -916,24 +1013,36 @@ def revalidate_clone_asset(
         + ([test.actor_id] if test.actor_id else [])
     )
     if any(ref.id not in index for ref in refs_to_check):
-        return "UNKNOWN", "One or more source assumptions do not resolve in destination evidence."
+        return "UNKNOWN", _engine_text(
+            destination, "One or more source assumptions do not resolve in destination evidence."
+        )
     if any(
         ref.project_id != destination.project_id or ref.snapshot_id != destination.snapshot_id
         for ref in refs_to_check
     ):
-        return "UNKNOWN", "Source assumptions are not bound to the destination project snapshot."
+        return "UNKNOWN", _engine_text(
+            destination, "Source assumptions are not bound to the destination project snapshot."
+        )
     for oracle_ref in test.oracle_ids:
         if reuse_oracle(oracle_ref, destination).status != "MATERIALIZED_NORMATIVE":
-            return "CONFLICTING", "The source-project oracle is not normative in the destination."
+            return "CONFLICTING", _engine_text(
+                destination, "The source-project oracle is not normative in the destination."
+            )
     if not test.path_ids or test.actor_id is None or not test.oracle_ids:
-        return "REQUIRES_UPDATE", "Destination path, actor, or oracle assumptions are incomplete."
+        return "REQUIRES_UPDATE", _engine_text(
+            destination, "Destination path, actor, or oracle assumptions are incomplete."
+        )
     paths = [index[ref.id] for ref in test.path_ids]
     if any(
         not isinstance(path, d.VerifiedPath) or path.verification_status != "verified"
         for path in paths
     ):
-        return "REQUIRES_UPDATE", "The destination operational path is not verified."
-    return "REUSABLE", "All modeled assumptions resolve in current destination evidence."
+        return "REQUIRES_UPDATE", _engine_text(
+            destination, "The destination operational path is not verified."
+        )
+    return "REUSABLE", _engine_text(
+        destination, "All modeled assumptions resolve in current destination evidence."
+    )
 
 
 def _clone_revisions(model: d.ProjectModel) -> list[TestRevisionProposal]:
@@ -1263,7 +1372,7 @@ def generate_m3(
         tool_version=config.generator_version,
     )
     limitations = sorted({note for case in cases for note in case.blocking_notes})
-    return M3GenerationReport(
+    report = M3GenerationReport(
         id=stable_id(
             "m3.report", model.project_id, model.snapshot_id, canonical_hash(analysis), config_hash
         ),
@@ -1284,6 +1393,10 @@ def generate_m3(
         manifest=manifest,
         limitations=limitations or ["No selected M2 scenarios were available."],
     )
+    language = resolve_output_language(
+        model.ledger.manifest.project_locale, model.ledger.manifest.output_language
+    )
+    return _localize_generation_report(report, language)
 
 
 def validate_generation_report(

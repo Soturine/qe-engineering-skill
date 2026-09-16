@@ -5,9 +5,21 @@ description: Evidence-first, manual-first quality-engineering workflow for green
 
 # QE Engineering
 
-Status: **scaffold — not production-ready**.
+Status: **Technical Preview scaffold — not production-ready**.
 
-This skill is intentionally thin. The repository policies, schemas, validators and evals are the trust boundary. Do not reproduce or weaken them in prompt text.
+This is the primary product interface. It is intentionally thin: the agent performs discovery,
+semantic understanding, interaction, drafting and orchestration, while repository schemas,
+validators and gates remain the trust authority. Do not reproduce, emulate or weaken those gates
+in prompt text.
+
+```text
+PRIMARY EXPERIENCE    Agent Skill + AI agent
+SECONDARY EXPERIENCE  qe run / qe doctor CLI
+FOUNDATION             deterministic trust engine
+```
+
+Deterministic-only execution is a fallback and validation mode. Provider/agent semantics are
+candidate interpretations and never authority.
 
 ## Supported modes
 
@@ -22,18 +34,23 @@ All modes use the same trust model and may produce detailed manual step-by-step 
 
 ## Operating sequence
 
-1. Establish explicit project scope and selected operating mode.
-2. Inventory all configured/discoverable in-scope sources.
-3. Build/validate the Source Ledger and snapshot.
-4. Build the normalized Project Model.
-5. Audit existing tests/history when provided.
-6. Atomize requirements/criteria and map traceability.
-7. Map risks/scenarios.
-8. Generate or improve manual Test Models only from supported/approved oracles.
-9. Run deterministic quality gates.
-10. Produce preview/diff/proposals.
-11. Require explicit human approval before any external write.
-12. Render locally or through an optional requested adapter.
+1. Discover the project context and establish explicit scope and operating mode with the user.
+2. Use the engine to inventory configured/discoverable in-scope sources and bind a snapshot.
+3. Read literal evidence in its source language; for PT-BR, reason directly in Portuguese without
+   mandatory pre-translation and preserve mixed English technical identifiers.
+4. Draft bounded semantic candidates with exact excerpts/locations and submit them to engine
+   validation; do not promote agent interpretation into contract.
+5. Ask material clarification questions in the configured output language. Never answer them on
+   the user's behalf or fabricate authority.
+6. Orchestrate Project Model, audit, traceability, risk/scenario and manual Test Model stages
+   through the engine rather than reimplementing their policy in prose.
+7. Draft human wording only inside validated evidence/oracle/path bounds. With
+   `output_language=pt-BR`, use PT-BR for questions and generated Test Cases while preserving
+   original evidence, oracles, paths and technical identifiers literally.
+8. Run deterministic quality gates and report `NOT_VALIDATED` if they cannot execute.
+9. Present the local review/preview and explain blockers, evidence and next decisions.
+10. Require explicit human approval before any external write; external write support is not an
+    M4 capability.
 
 ## Manual Test Case behavior
 
@@ -115,7 +132,10 @@ A duplicate/stale/obsolete finding is a review proposal, not an automatic delete
 
 ## Runtime limitation
 
-Until the M0 engine, schemas and validators exist, this scaffold must not claim that the repository's mechanical trust guarantees were enforced. Follow `docs/STATUS.md` and `docs/ROADMAP.md`.
+M0-M3, M4.H1-H4 and D1 are validated, but real-document orchestration, the full clarification
+loop, production `qe run`/`qe doctor` UX and production skill packaging remain M4 work. Never claim
+those capabilities or mechanical validation unless the corresponding engine operation actually
+ran. Follow `docs/STATUS.md` and `docs/ROADMAP.md`.
 
 ## References
 

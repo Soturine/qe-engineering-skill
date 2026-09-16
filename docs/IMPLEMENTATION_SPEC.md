@@ -42,6 +42,12 @@ Do not create empty packages merely to look complete. Add modules when their mil
 
 ## Product-mode constraints
 
+Product experience priority is Agent Skill + AI agent first, `qe run`/`qe doctor` CLI second, and
+the deterministic trust engine as the foundation. The agent owns discovery, semantic
+understanding, interaction, drafting and orchestration; the engine owns evidence integrity,
+provenance, authority, isolation, oracle validation, readiness and safety gates.
+Deterministic-only execution is a fallback and validation mode, not the primary experience.
+
 The architecture must support, without project-specific hard-coding:
 
 - greenfield test design from project evidence;

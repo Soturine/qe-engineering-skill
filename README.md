@@ -2,7 +2,22 @@
 
 Evidence-first, manual-first quality engineering for software, APIs, mobile, data, IoT and industrial systems.
 
-This repository defines a vendor-neutral Agent Skill plus a supporting deterministic engine for **understanding a project from its actual evidence, auditing existing quality assets, mapping behavior and risk, and generating high-confidence manual test cases with explicit provenance**.
+This repository defines an agent-first, vendor-neutral Quality Engineering skill backed by a
+deterministic trust engine for **understanding a project from its actual evidence, auditing existing
+quality assets, mapping behavior and risk, and generating high-confidence manual test cases with
+explicit provenance**.
+
+```text
+PRIMARY EXPERIENCE    Agent Skill + AI agent
+SECONDARY EXPERIENCE  qe run / qe doctor CLI
+FOUNDATION             deterministic trust engine
+```
+
+The agent owns discovery, semantic understanding, interaction, drafting and orchestration. The
+engine owns evidence integrity, provenance, authority, scope isolation, oracle validation,
+readiness and safety gates. Deterministic-only execution is a supported fallback and validation
+mode, not the primary product experience. The agent never becomes an authority and cannot bypass
+the engine's trust decisions.
 
 Automation is a later renderer of the same approved Test Model. It is not the starting point and must never redefine oracle semantics.
 

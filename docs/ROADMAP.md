@@ -165,6 +165,10 @@ Status: **active; H0-H4 and D1 validated, Technical Preview frozen before H5**. 
 M4 adapter allocation. Product positioning: **Evidence-first Quality Engineering runtime for AI agents.**
 Agent reasons. Engine establishes what is defensible. Human governs high-consequence decisions.
 
+Product experience priority is Agent Skill + AI agent first, `qe run`/`qe doctor` second, and the
+deterministic trust engine as the shared foundation. Deterministic-only remains a valid fallback
+and validation mode rather than the primary experience.
+
 The cross-cutting `MULTILINGUAL_POLICY.md` applies to every milestone. M4.H3-H10 must treat PT-BR
 and mixed PT-BR/English project material as first-class without pre-translation or authority drift.
 

@@ -6,6 +6,20 @@ Status: **Target interface contract**
 
 Expose the stable quality-engineering engine through the open Agent Skills pattern without turning `SKILL.md` into a giant prompt or moving trust enforcement out of code.
 
+The product hierarchy is explicit:
+
+```text
+PRIMARY EXPERIENCE    Agent Skill + AI agent
+SECONDARY EXPERIENCE  qe run / qe doctor CLI
+FOUNDATION             deterministic trust engine
+```
+
+The agent is responsible for discovery, semantic understanding, interaction, drafting and
+orchestration. The engine is responsible for evidence integrity, provenance, authority, scope
+isolation, oracle validation, readiness and safety gates. Deterministic-only execution is a
+fallback and validation mode, not the primary product experience. This allocation does not make
+the agent an authority or permit it to claim that validators ran when they did not.
+
 The skill is a general quality-engineering interface. It must not assume a specific project, customer, domain, TMS, repository layout, process template or prior test-plan maturity.
 
 ## Target package
@@ -20,9 +34,9 @@ skill/qe-engineering/
 
 `SKILL.md` is the orchestration interface. Schemas, validators and deterministic policy enforcement remain in the engine.
 
-M4 targets local `qe doctor` and `qe run <project>` with configurable locale/output language,
-PT-BR-first review outputs and a valid deterministic-only mode. These commands are targets, not
-current capabilities. Live TMS connectors and external synchronization belong to M5 after M6.
+M4 targets an agent-first flow plus local `qe doctor` and `qe run <project>` with configurable
+locale/output language, PT-BR-first review outputs and a valid deterministic-only fallback. These
+commands are targets, not current capabilities. Live TMS connectors and external synchronization belong to M5 after M6.
 See `ROADMAP.md`; D1 is a Technical Preview, not production Agent Skill completion.
 
 ## Progressive disclosure

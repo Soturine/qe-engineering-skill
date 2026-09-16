@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "ClarificationAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "answered_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Answered At",
+          "type": "string"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "minItems": 1,
+          "title": "Provenance",
+          "type": "array"
+        },
+        "reviewer": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reviewer",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "provenance",
+        "reviewer",
+        "answered_at"
+      ],
+      "title": "ClarificationAnswer",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:clarification-question",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affected": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "minItems": 1,
+      "title": "Affected",
+      "type": "array"
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClarificationAnswer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "authority_changed": {
+      "const": false,
+      "default": false,
+      "title": "Authority Changed",
+      "type": "boolean"
+    },
+    "blocking": {
+      "title": "Blocking",
+      "type": "boolean"
+    },
+    "category": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Category",
+      "type": "string"
+    },
+    "conflicting_sources": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "title": "Conflicting Sources",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "output_language": {
+      "enum": [
+        "source",
+        "pt-BR",
+        "en"
+      ],
+      "title": "Output Language",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "question": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Question",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Reason",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Ref"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "status": {
+      "default": "OPEN",
+      "enum": [
+        "OPEN",
+        "ANSWERED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "question",
+    "reason",
+    "category",
+    "blocking",
+    "sources",
+    "affected",
+    "output_language"
+  ],
+  "title": "ClarificationQuestion",
+  "type": "object"
+}

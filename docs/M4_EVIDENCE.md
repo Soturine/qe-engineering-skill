@@ -88,3 +88,25 @@ dependency audit and the reproducible demo smoke passed. Wheel SHA-256:
 Final Linux/Windows validation passed at `65528974a72a4994be3490424b303d70ea5de388`, workflow
 `35060484764`. D1 does not implement H5 real-document semantic
 orchestration, `qe run`, `qe doctor`, a live provider or any external write.
+
+## Post-D1 PT-BR cross-cutting increment
+
+- bounded surface signals now retain PT-BR modality, negation, temporal order, maximum/minimum,
+  exclusivity/exception, measured quantities and Gherkin without pre-translation;
+- a candidate cannot reverse an explicit `no máximo`/`no mínimo` direction;
+- semantic-normalization failures can produce unanswered, provenance-bound PT-BR clarification
+  artifacts without fabricating an answer or authority;
+- generated M3 Test Models localize engine-owned titles, rules, rationales, blockers and evidence
+  instructions for `output_language=pt-BR`, while evidence/oracles/paths/technical identifiers
+  remain literal;
+- the product contract now explicitly makes Agent Skill + AI agent the primary experience,
+  CLI secondary and the deterministic trust engine the foundation. This does not claim H5-H11 or
+  the production Agent Skill are complete.
+
+Local validation (2026-09-16): 334 passed, one expected Windows symlink-permission skip; Ruff,
+format check, strict mypy, schema reproduction, `pip check`, dependency audit and an isolated
+installed-wheel PT-BR/CLI smoke passed. The wheel was built with the repository-supported
+`pip wheel --no-build-isolation` path because the optional `build` frontend is not installed in
+the development venv. Wheel SHA-256:
+`749e3b091f7b98a42854823badd6ca9725004aa7bd211c1bc9123491a4434f98`. Remote Linux/Windows CI is
+pending for this increment.

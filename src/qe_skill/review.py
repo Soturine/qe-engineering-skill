@@ -18,6 +18,7 @@ from qe_skill.adjudication import (
     SemanticRelationGraph,
     validate_relation_graph,
 )
+from qe_skill.localization import ENGINE_PT, localize_engine_text
 from qe_skill.m2 import M2AnalysisReport
 from qe_skill.m3 import M3GenerationReport, validate_generation_report
 
@@ -213,6 +214,7 @@ PT = {
     "For a normal Pass, record the observation at the validating step.": "Para uma aprovação normal, registre a observação no passo de validação.",
     "For Fail or Blocked, record the affected step and diagnostic observation.": "Para Falhou ou Bloqueado, registre o passo afetado e a observação diagnóstica.",
     "No selected M2 scenarios were available.": "Nenhum cenário M2 selecionado estava disponível.",
+    **ENGINE_PT,
 }
 ENUM_FIELDS = {
     "readiness",
@@ -264,7 +266,7 @@ def localize_presentation_text(value: str, field: str, language: str) -> str:
         return "Preparar: " + value.removeprefix("Prepare: ")
     if value.startswith("Reusable setup for "):
         return "Preparação reutilizável para " + value.removeprefix("Reusable setup for ")
-    return PT.get(value, value)
+    return localize_engine_text(PT.get(value, value), "pt-BR")
 
 
 CSS = """

@@ -14,6 +14,11 @@ local CLI behavior. Linux and Windows CI passed for the M3 completion candidate;
 The accepted `M4_PRODUCT_KISS_ADDENDUM.md` governs the H3-H11 product shape and KISS
 sequencing. It is a target contract; only capabilities listed below as implemented are current.
 
+The product contract is agent-first: Agent Skill + AI agent is the primary experience,
+`qe run`/`qe doctor` is secondary, and the deterministic trust engine is the foundation.
+Production Agent Skill orchestration remains M4.H5-H11 work; this hierarchy does not imply those
+checkpoints are already implemented.
+
 ## Implemented
 
 - Python 3.12+ typed modular-monolith package; no model/TMS runtime dependency.
@@ -54,6 +59,13 @@ sequencing. It is a target contract; only capabilities listed below as implement
   authority and provider/run provenance; requires grounded canonical labels plus explicit aliases;
   and distinguishes record kind, modality, polarity, constraints and domain terms. PT-BR, English,
   mixed text and bilingual Gherkin have synthetic regression/eval coverage.
+- PT-BR surface guards additionally preserve temporal-order, quantitative-direction,
+  exclusivity/exception and measured-quantity signals; explicit maximum/minimum reversal is
+  rejected. Normalization failures can produce unanswered, provenance-bound clarification
+  artifacts in the configured output language.
+- M3 generation localizes engine-owned Test Case titles, rules, rationales, readiness notes and
+  evidence instructions when `output_language=pt-BR`, while source-backed actions, Expected
+  Results and technical identifiers remain literal.
 - M4.H4 bounded semantic relation/adjudication graphs preserve conflicts and authority context,
   require human review for conflicts/ambiguity/provider disagreement, reject stale or tampered H3
   envelopes, ignore confidence as a winner selector,
@@ -83,6 +95,8 @@ sequencing. It is a target contract; only capabilities listed below as implement
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
 - H3/H4 records remain review artifacts and are not promoted into the Project Model or connected
   to the ingestion CLI. Real-world orchestration and downstream stale propagation begin in M4.H5.
+- Clarification generation currently covers semantic-normalization issues only; answer binding,
+  interactive resume and broader H6 question categories remain deferred.
 - D1 can render H4 conflicts supplied in a validated review context, but the current `generate`
   command does not yet orchestrate H3/H4 from arbitrary natural-language documents (H5).
 

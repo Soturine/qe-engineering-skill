@@ -51,3 +51,15 @@ and English Gherkin markers. Unknown language remains `und` and does not block s
 
 The bounded recognizer is intentionally incomplete. Grounding proves that cited wording exists,
 not that a probabilistic interpretation is correct. Human review and all authority gates remain.
+
+The implemented PT-BR surface guards retain explicit signals for obligation, permission,
+prohibition, optionality, negation, temporal order (`antes`, `depois`), quantitative direction
+(`até`, `no mínimo`, `no máximo`), exclusivity/exception (`somente`, `exceto`), measured quantities
+such as `30 s`/`60 s`, and Portuguese Gherkin markers. These signals protect candidate comparison
+and reject an explicit maximum/minimum reversal; they do not create a requirement or oracle.
+
+When `output_language=pt-BR` (or a PT-BR project resolves `source` to PT-BR), generated Test Model
+text owned by the engine is localized at authoring time. Evidence-backed objectives/actions,
+Expected Results, source excerpts, paths, aliases and technical identifiers remain literal.
+Semantic rejection questions are generated as unanswered PT-BR artifacts with source/candidate
+provenance; only a human answer with its own provenance may resolve them.

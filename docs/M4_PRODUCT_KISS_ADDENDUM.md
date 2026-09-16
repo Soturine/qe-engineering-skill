@@ -450,6 +450,19 @@ The stronger positioning is:
 
 > **Evidence-first Quality Engineering runtime for AI agents.**
 
+The experience hierarchy is:
+
+```text
+PRIMARY EXPERIENCE    Agent Skill + AI agent
+SECONDARY EXPERIENCE  qe run / qe doctor CLI
+FOUNDATION             deterministic trust engine
+```
+
+The agent owns discovery, semantic understanding, interaction, drafting and orchestration. The
+engine owns evidence integrity, provenance, authority, scope isolation, oracle validation,
+readiness and safety gates. Deterministic-only execution remains a fallback and validation mode,
+not the primary experience.
+
 A useful shorthand is:
 
 ```text
