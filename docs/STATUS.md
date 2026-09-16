@@ -2,7 +2,7 @@
 
 ## Current stage
 
-**M3 - Test Generation & Improvement: implemented and validated. M4 is active.**
+**M0-M3 and M4.H0-H4 are validated. M4.D1 is validated and frozen for presentation.**
 
 M0 trust contracts and M1 ingestion boundaries remain binding. M2 adds deterministic audit,
 traceability, atomic coverage, risk/scenario analysis and proposal-only local reports. See
@@ -61,6 +61,7 @@ sequencing. It is a target contract; only capabilities listed below as implement
 - M4.D1 Technical Preview implementation provides an offline self-contained HTML review, PT-BR
   presentation, complete available Test Case fields, searchable/filterable cases, navigable
   evidence/traceability, visible gaps/reviews/H4 conflicts and a reproducible synthetic demo.
+  Linux and Windows CI passed; H5 remains the next checkpoint after presentation.
 
 ## Current limitations
 

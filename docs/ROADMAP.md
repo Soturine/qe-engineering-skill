@@ -161,7 +161,7 @@ No external system is required. Generated output remains proposal-only until exp
 
 ## M4 — Semantic QE & Production Agent Skill
 
-Status: **active; H0-H4 validated, D1 next**. This local-first plan supersedes the earlier
+Status: **active; H0-H4 and D1 validated, Technical Preview frozen before H5**. This local-first plan supersedes the earlier
 M4 adapter allocation. Product positioning: **Evidence-first Quality Engineering runtime for AI agents.**
 Agent reasons. Engine establishes what is defensible. Human governs high-consequence decisions.
 

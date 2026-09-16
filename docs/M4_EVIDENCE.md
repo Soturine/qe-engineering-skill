@@ -1,6 +1,6 @@
 # M4 Evidence
 
-Status: **H1-H4 validated; D1 under development; H5-H11 not implemented**
+Status: **H1-H4 and D1 validated; Technical Preview frozen; H5-H11 not implemented**
 
 This record is cumulative and reports only executable repository behavior.
 
@@ -83,5 +83,6 @@ D1 local validation (2026-09-16): 324 tests/evals passed against source and the 
 with one Windows symlink-permission skip. Ruff, formatting, mypy, schema reproduction, pip check,
 dependency audit and the reproducible demo smoke passed. Wheel SHA-256:
 `8ad4b73cb50f3a6dfe7f681aa158fa0a841066121b202e6309fba7cc6311cd5a`.
-Remote Linux/Windows validation is pending. D1 does not implement H5 real-document semantic
+Remote Linux/Windows validation passed at `ce809e793d2e163f937186740da2253b4ddbabcb`, workflow
+`35059875548`. D1 does not implement H5 real-document semantic
 orchestration, `qe run`, `qe doctor`, a live provider or any external write.
