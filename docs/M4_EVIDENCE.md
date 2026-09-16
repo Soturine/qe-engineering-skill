@@ -85,7 +85,6 @@ D1 local validation (2026-09-16), including the final H4 provider-relation adden
 with one Windows symlink-permission skip. Ruff, formatting, mypy, schema reproduction, pip check,
 dependency audit and the reproducible demo smoke passed. Wheel SHA-256:
 `38b5c73081f7616d293db1a50072c998dc59abf9e6c89f1e5baff116fbad3c45`.
-The D1 implementation before the provider-relation addendum passed Linux/Windows at
-`ce809e793d2e163f937186740da2253b4ddbabcb`, workflow `35059875548`; final remote validation is
-pending. D1 does not implement H5 real-document semantic
+Final Linux/Windows validation passed at `65528974a72a4994be3490424b303d70ea5de388`, workflow
+`35060484764`. D1 does not implement H5 real-document semantic
 orchestration, `qe run`, `qe doctor`, a live provider or any external write.
