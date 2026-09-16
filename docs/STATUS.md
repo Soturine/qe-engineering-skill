@@ -11,6 +11,9 @@ proposal-only manual authoring, non-destructive improvement, candidate derivatio
 local CLI behavior. Linux and Windows CI passed for the M3 completion candidate; see
 `M3_EVIDENCE.md`. No tag/release exists.
 
+The accepted `M4_PRODUCT_KISS_ADDENDUM.md` governs the H3-H11 product shape and KISS
+sequencing. It is a target contract; only capabilities listed below as implemented are current.
+
 ## Implemented
 
 - Python 3.12+ typed modular-monolith package; no model/TMS runtime dependency.

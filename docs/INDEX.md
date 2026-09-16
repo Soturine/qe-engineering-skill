@@ -43,6 +43,7 @@ Use this page as the canonical reading map.
 - `SECURITY_THREAT_MODEL.md`
 - `AGENT_SKILL_SPEC.md`
 - `AZURE_DEVOPS_ADAPTER.md`
+- `M4_PRODUCT_KISS_ADDENDUM.md` - accepted M4 product contract and KISS sequencing for H3-H11.
 
 ## Validation and independent review
 

@@ -163,7 +163,9 @@ No external system is required. Generated output remains proposal-only until exp
 
 Status: **active milestone**. The optional Semantic Reasoning Provider is cataloged here alongside
 production skill packaging and external adapters; no provider or integration was implemented in
-M3. See `SEMANTIC_REASONING_ROADMAP.md`.
+M3. See `SEMANTIC_REASONING_ROADMAP.md`. H3-H11 also follow the accepted product and sequencing
+decisions in `M4_PRODUCT_KISS_ADDENDUM.md`; where alternatives exist, implement the smallest
+useful path that preserves provenance, review, approval and external-write safety.
 
 Make the stable core usable through optional external integrations and a portable Agent Skills interface without coupling the core to any provider or TMS.
 
