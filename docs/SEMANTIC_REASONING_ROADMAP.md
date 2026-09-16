@@ -1,6 +1,6 @@
 # Semantic Reasoning Roadmap
 
-Status: **M4 implementation plan; no semantic provider is implemented at the M4.H0 baseline**
+Status: **M4 implementation plan; H1 provider boundary and H2 candidate/cache contracts implemented locally**
 
 The target architecture is hybrid: deterministic structure first, bounded heuristic discovery
 second, and an optional semantic provider only where natural-language interpretation adds value.
@@ -20,7 +20,7 @@ Never implement `source → model assertion → normative truth`.
 
 ## FSR-02 — Candidate Semantic Records
 
-Status: **DEFERRED_TO_M4**
+Status: **implemented in M4.H2; branch CI and main integration pending**
 
 Candidates retain type, statement/value, source reference/hash/span/symbol, interpretation class
 (`explicit`, `structural`, `heuristic`, `inferred`, `unresolved`), confidence, inferred flag,
@@ -121,7 +121,7 @@ provenance/span accuracy, unsupported-oracle/hallucinated-path rates and efficie
 
 ## FSR-12 — Provider efficiency and cache binding
 
-Status: **DEFERRED_TO_M4**
+Status: **exact candidate cache identity implemented in M4.H2; provider-call orchestration remains incremental**
 
 Use deterministic facts first, heuristics for cheap hints and the provider for genuine semantic
 ambiguity. Cache only with exact source hash, provider/model/version, prompt/template/config and

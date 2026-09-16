@@ -96,6 +96,7 @@ class CacheSourceBinding(d.Record):
 class SemanticCacheBinding(d.Record):
     project_id: d.Text
     snapshot_id: d.Text
+    request_hash: d.Digest
     sources: list[CacheSourceBinding] = Field(min_length=1)
     provider_identity: ProviderIdentity | None
     operation: ReasoningOperation
@@ -129,17 +130,28 @@ def _binding(
     request: ReasoningRequest, result: ReasoningResult, extractor_version: str
 ) -> SemanticCacheBinding:
     unique = {(item.source.id, item.source_hash): item.source for item in request.excerpts}
-    sources = [CacheSourceBinding(source=unique[key], source_hash=key[1]) for key in sorted(unique)]
+    sources = [
+        CacheSourceBinding(source=unique[key].model_copy(deep=True), source_hash=key[1])
+        for key in sorted(unique)
+    ]
     return SemanticCacheBinding(
         project_id=request.project_id,
         snapshot_id=request.snapshot_id,
+        request_hash=canonical_hash(request),
         sources=sources,
-        provider_identity=result.provider_identity,
+        provider_identity=result.provider_identity.model_copy(deep=True)
+        if result.provider_identity
+        else None,
         operation=request.operation,
         prompt_version=request.prompt_version,
         configuration_hash=request.configuration_hash,
         extractor_version=extractor_version,
     )
+
+
+def _candidate_id(result_hash: str, index: int, proposal: d.Record) -> str:
+    seed = json.dumps([result_hash, index, proposal.model_dump(mode="json")], sort_keys=True)
+    return f"semantic-candidate.{hashlib.sha256(seed.encode()).hexdigest()[:24]}"
 
 
 def materialize_provider_candidates(
@@ -154,30 +166,46 @@ def materialize_provider_candidates(
     """Turn a validated provider result into non-normative review candidates."""
 
     binding = _binding(request, result, extractor_version)
-    common = dict(
-        id=f"semantic-candidates.{hashlib.sha256((canonical_hash(result) + semantic_cache_key(binding)).encode()).hexdigest()[:24]}",
-        project_id=request.project_id,
-        snapshot_id=request.snapshot_id,
-        request=d.Ref(
-            id=request.id, project_id=request.project_id, snapshot_id=request.snapshot_id
-        ),
-        request_hash=canonical_hash(request),
-        result=d.Ref(id=result.id, project_id=result.project_id, snapshot_id=result.snapshot_id),
-        result_hash=canonical_hash(result),
-        cache_binding=binding,
-        cache_key=semantic_cache_key(binding),
-    )
+    request_hash = canonical_hash(request)
+    result_hash = canonical_hash(result)
+    cache_key = semantic_cache_key(binding)
+    artifact_seed = result_hash + cache_key
+    artifact_id = f"semantic-candidates.{hashlib.sha256(artifact_seed.encode()).hexdigest()[:24]}"
+
+    def candidate_set(
+        status: CandidateSetStatus,
+        candidates: list[SemanticCandidate],
+        limitations: list[str] | None = None,
+    ) -> SemanticCandidateSet:
+        return SemanticCandidateSet(
+            id=artifact_id,
+            project_id=request.project_id,
+            snapshot_id=request.snapshot_id,
+            request=d.Ref(
+                id=request.id,
+                project_id=request.project_id,
+                snapshot_id=request.snapshot_id,
+            ),
+            request_hash=request_hash,
+            result=d.Ref(
+                id=result.id,
+                project_id=result.project_id,
+                snapshot_id=result.snapshot_id,
+            ),
+            result_hash=result_hash,
+            cache_binding=binding,
+            cache_key=cache_key,
+            status=status,
+            candidates=candidates,
+            limitations=limitations or [],
+        )
+
     if (
         not same_scope(request, result)
         or not same_scope(request, ledger)
-        or result.request_hash != canonical_hash(request)
+        or result.request_hash != request_hash
     ):
-        return SemanticCandidateSet(
-            **common,
-            status="REJECTED",
-            candidates=[],
-            limitations=["Input artifact binding is invalid."],
-        )
+        return candidate_set("REJECTED", [], ["Input artifact binding is invalid."])
     sources = {source.id: source for source in ledger.sources}
     excerpt_by_id = {excerpt.id: excerpt for excerpt in request.excerpts}
     stale = any(
@@ -189,28 +217,17 @@ def materialize_provider_candidates(
         for excerpt in request.excerpts
     )
     if stale or not validate_ledger(ledger).valid:
-        return SemanticCandidateSet(
-            **common,
-            status="STALE_INPUT",
-            candidates=[],
-            limitations=["Source identity, lifecycle, or completeness no longer validates."],
+        return candidate_set(
+            "STALE_INPUT",
+            [],
+            ["Source identity, lifecycle, or completeness no longer validates."],
         )
     if result.status == "NOT_REQUESTED":
-        return SemanticCandidateSet(**common, status="NOT_REQUESTED", candidates=[])
+        return candidate_set("NOT_REQUESTED", [])
     if result.status in {"FAILED", "TIMED_OUT"}:
-        return SemanticCandidateSet(
-            **common,
-            status="BLOCKED_PROVIDER",
-            candidates=[],
-            limitations=[result.failure or "Provider unavailable."],
-        )
+        return candidate_set("BLOCKED_PROVIDER", [], [result.failure or "Provider unavailable."])
     if result.status == "REJECTED":
-        return SemanticCandidateSet(
-            **common,
-            status="REJECTED",
-            candidates=[],
-            limitations=[result.failure or "Provider result rejected."],
-        )
+        return candidate_set("REJECTED", [], [result.failure or "Provider result rejected."])
     candidates: list[SemanticCandidate] = []
     for index, proposal in enumerate(result.proposals):
         evidence: list[CandidateEvidence] = []
@@ -224,20 +241,17 @@ def materialize_provider_candidates(
                         project_id=excerpt.project_id,
                         snapshot_id=excerpt.snapshot_id,
                     ),
-                    source=excerpt.source,
+                    source=excerpt.source.model_copy(deep=True),
                     source_hash=excerpt.source_hash,
                     location=excerpt.location,
-                    span=excerpt.span,
+                    span=excerpt.span.model_copy(deep=True) if excerpt.span else None,
                     authority_class=source.authority_class,
                     source_lifecycle=source.lifecycle,
                 )
             )
-        seed = json.dumps(
-            [common["result_hash"], index, proposal.model_dump(mode="json")], sort_keys=True
-        )
         candidates.append(
             SemanticCandidate(
-                id=f"semantic-candidate.{hashlib.sha256(seed.encode()).hexdigest()[:24]}",
+                id=_candidate_id(result_hash, index, proposal),
                 project_id=request.project_id,
                 snapshot_id=request.snapshot_id,
                 candidate_type=proposal.candidate_type,
@@ -248,7 +262,9 @@ def materialize_provider_candidates(
                 confidence=proposal.confidence,
                 inferred=True,
                 producer="PROVIDER",
-                provider_identity=result.provider_identity,
+                provider_identity=result.provider_identity.model_copy(deep=True)
+                if result.provider_identity
+                else None,
                 operation=request.operation,
                 prompt_version=request.prompt_version,
                 configuration_hash=request.configuration_hash,
@@ -262,9 +278,7 @@ def materialize_provider_candidates(
         )
     status: CandidateSetStatus = "PARTIAL" if result.status == "PARTIAL" else "READY_FOR_REVIEW"
     limitations = [result.failure] if result.failure else []
-    return SemanticCandidateSet(
-        **common, status=status, candidates=candidates, limitations=limitations
-    )
+    return candidate_set(status, candidates, limitations)
 
 
 def validate_candidate_set(
@@ -276,6 +290,20 @@ def validate_candidate_set(
     result = Result()
     if not all(same_scope(artifact, item) for item in (request, result_record, ledger)):
         result.add("SEM_SCOPE", artifact, "Semantic artifacts cross project or snapshot scope.")
+    expected_request = d.Ref(
+        id=request.id, project_id=request.project_id, snapshot_id=request.snapshot_id
+    )
+    expected_result = d.Ref(
+        id=result_record.id,
+        project_id=result_record.project_id,
+        snapshot_id=result_record.snapshot_id,
+    )
+    if artifact.request != expected_request or artifact.result != expected_result:
+        result.add(
+            "SEM_ARTIFACT_BINDING",
+            artifact,
+            "Candidate set references do not match the supplied request and result.",
+        )
     if artifact.request_hash != canonical_hash(request) or artifact.result_hash != canonical_hash(
         result_record
     ):
@@ -285,10 +313,62 @@ def validate_candidate_set(
         expected_binding
     ):
         result.add("SEM_CACHE_BINDING", artifact, "Semantic cache binding is not exact.")
+    expected_status: dict[str, CandidateSetStatus] = {
+        "NOT_REQUESTED": "NOT_REQUESTED",
+        "COMPLETE": "READY_FOR_REVIEW",
+        "PARTIAL": "PARTIAL",
+        "FAILED": "BLOCKED_PROVIDER",
+        "TIMED_OUT": "BLOCKED_PROVIDER",
+        "REJECTED": "REJECTED",
+    }
+    if artifact.status != expected_status[result_record.status]:
+        result.add(
+            "SEM_STATUS_BINDING",
+            artifact,
+            "Candidate set status does not match the validated provider result.",
+        )
     sources = {source.id: source for source in ledger.sources}
-    for candidate in artifact.candidates:
+    excerpts = {excerpt.id: excerpt for excerpt in request.excerpts}
+    if len(artifact.candidates) != len(result_record.proposals):
+        result.add(
+            "SEM_CANDIDATE_BINDING",
+            artifact,
+            "Candidate count does not match the validated provider result.",
+        )
+    for index, candidate in enumerate(artifact.candidates):
+        if not same_scope(artifact, candidate):
+            result.add("SEM_SCOPE", candidate, "Candidate crosses project or snapshot scope.")
+        if (
+            candidate.provider_identity != result_record.provider_identity
+            or candidate.operation != request.operation
+            or candidate.prompt_version != request.prompt_version
+            or candidate.configuration_hash != request.configuration_hash
+        ):
+            result.add(
+                "SEM_PROVIDER_BINDING",
+                candidate,
+                "Candidate provider or invocation metadata is not bound to the result.",
+            )
+        if index >= len(result_record.proposals):
+            continue
+        proposal = result_record.proposals[index]
+        if (
+            candidate.id != _candidate_id(artifact.result_hash, index, proposal)
+            or candidate.candidate_type != proposal.candidate_type
+            or candidate.statement != proposal.statement
+            or candidate.structured_value != proposal.structured_value
+            or candidate.interpretation != proposal.interpretation
+            or candidate.confidence != proposal.confidence
+            or [item.excerpt.id for item in candidate.evidence] != proposal.source_excerpt_ids
+        ):
+            result.add(
+                "SEM_CANDIDATE_BINDING",
+                candidate,
+                "Candidate content does not match the validated provider result.",
+            )
         for evidence in candidate.evidence:
             source = sources.get(evidence.source.id)
+            excerpt = excerpts.get(evidence.excerpt.id)
             if source is None or source.content_hash != evidence.source_hash:
                 result.add("SEM_SOURCE_STALE", candidate, "Candidate source identity is stale.")
             elif (evidence.authority_class, evidence.source_lifecycle) != (
@@ -299,5 +379,16 @@ def validate_candidate_set(
                     "SEM_AUTHORITY_TAMPER",
                     candidate,
                     "Candidate source authority was not copied from the ledger.",
+                )
+            if excerpt is None or (
+                evidence.source != excerpt.source
+                or evidence.source_hash != excerpt.source_hash
+                or evidence.location != excerpt.location
+                or evidence.span != excerpt.span
+            ):
+                result.add(
+                    "SEM_PROVENANCE_BINDING",
+                    candidate,
+                    "Candidate evidence does not match the requested source excerpt.",
                 )
     return result

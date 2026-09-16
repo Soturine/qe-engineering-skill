@@ -117,6 +117,39 @@ def test_cache_binding_changes_for_material_provider_and_prompt_inputs() -> None
     assert semantic_cache_key(changed) != original
 
 
+def test_cache_binding_changes_for_a_different_excerpt_selection() -> None:
+    model, request, result = inputs()
+    artifact = materialize_provider_candidates(
+        request,
+        result,
+        model.ledger,
+        run_id="run-1",
+        created_at="2026-01-01T00:00:00Z",
+        extractor_version="1",
+    )
+    changed_request = request.model_copy(deep=True)
+    changed_request.excerpts[0].location = "clause 2"
+    changed_request.excerpts[0].text = "A different bounded selection from the same source."
+    assert changed_request.model_dump(mode="json") != request.model_dump(mode="json")
+    assert result.provider_identity is not None
+    changed_result = run_reasoning(
+        changed_request,
+        StaticReasoningProvider(
+            result.provider_identity,
+            {"EXTRACT": ProviderResponse(status="COMPLETE", proposals=result.proposals)},
+        ),
+    )
+    changed = materialize_provider_candidates(
+        changed_request,
+        changed_result,
+        model.ledger,
+        run_id="run-1",
+        created_at="2026-01-01T00:00:00Z",
+        extractor_version="1",
+    )
+    assert changed.cache_key != artifact.cache_key
+
+
 def test_validator_detects_authority_and_hash_tampering() -> None:
     model, request, result, artifact = materialized()
     artifact.candidates[0].evidence[0].authority_class = "IMPLEMENTATION"
@@ -125,6 +158,53 @@ def test_validator_detects_authority_and_hash_tampering() -> None:
         item.code for item in validate_candidate_set(artifact, request, result, model.ledger).issues
     }
     assert codes == {"SEM_AUTHORITY_TAMPER", "SEM_CACHE_BINDING"}
+
+
+def test_validator_detects_excerpt_and_provider_binding_tampering() -> None:
+    model, request, result, artifact = materialized()
+    artifact.candidates[0].evidence[0].location = "unrelated clause"
+    assert artifact.candidates[0].provider_identity is not None
+    artifact.candidates[0].provider_identity.model_version = "other"
+    codes = {
+        item.code for item in validate_candidate_set(artifact, request, result, model.ledger).issues
+    }
+    assert codes == {"SEM_PROVENANCE_BINDING", "SEM_PROVIDER_BINDING"}
+
+
+def test_validator_detects_candidate_content_tampering() -> None:
+    model, request, result, artifact = materialized()
+    artifact.candidates[0].statement = "A stronger unsupported requirement."
+    codes = {
+        item.code for item in validate_candidate_set(artifact, request, result, model.ledger).issues
+    }
+    assert codes == {"SEM_CANDIDATE_BINDING"}
+
+
+def test_validator_detects_artifact_reference_and_status_tampering() -> None:
+    model, request, result, artifact = materialized()
+    artifact.request.id = "other-request"
+    artifact.status = "PARTIAL"
+    codes = {
+        item.code for item in validate_candidate_set(artifact, request, result, model.ledger).issues
+    }
+    assert codes == {"SEM_ARTIFACT_BINDING", "SEM_STATUS_BINDING"}
+
+
+def test_foreign_ledger_cannot_materialize_candidates() -> None:
+    model, request, result = inputs()
+    foreign = model.ledger.model_copy(
+        update={"project_id": "other-project", "snapshot_id": "other-snapshot"}, deep=True
+    )
+    artifact = materialize_provider_candidates(
+        request,
+        result,
+        foreign,
+        run_id="run-1",
+        created_at="2026-01-01T00:00:00Z",
+        extractor_version="1",
+    )
+    assert artifact.status == "REJECTED"
+    assert artifact.candidates == []
 
 
 def test_deterministic_only_result_creates_no_semantic_candidate() -> None:

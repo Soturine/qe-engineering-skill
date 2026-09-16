@@ -47,11 +47,27 @@
           "title": "Candidate Type",
           "type": "string"
         },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
         "inferred": {
           "const": true,
           "default": true,
           "title": "Inferred",
           "type": "boolean"
+        },
+        "interpretation": {
+          "default": "inferred",
+          "enum": [
+            "inferred",
+            "unresolved"
+          ],
+          "title": "Interpretation",
+          "type": "string"
         },
         "source_excerpt_ids": {
           "items": {
