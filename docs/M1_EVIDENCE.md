@@ -105,7 +105,7 @@ the same behavior is exercised on a symlink-capable CI runner.
   a future refinement.
 - Existing tests/results are evidence nodes only. Audit, coverage, risk/scenario analysis and
   improvement proposals are M2.
-- Manual test generation is M3; TMS/Azure/MCP writes are M4; automation is M5; RAG/GraphRAG and
+- Manual test generation is M3; TMS/Azure/MCP writes and automation are M5 after M6; RAG/GraphRAG and
   change impact are M6.
 
 M1 is not a claim that arbitrary projects are fully understood. It is a deterministic,

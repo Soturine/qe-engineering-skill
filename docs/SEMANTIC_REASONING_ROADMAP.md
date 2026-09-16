@@ -108,8 +108,8 @@ the same behavior and may not silently replace or reinterpret Expected Results.
 | Optional wording provider | Improve only supported procedure wording |
 | Validators | Reject invention, stale/cross-scope and bypass conditions |
 | Renderer | Canonical JSON to review formats without reasoning |
-| M4 | Provider integration, production skill and TMS adapters |
-| M5 | Approved-model automation/execution |
+| M4 | Local semantic QE, production skill and human outputs |
+| M5 | Approved-model automation/execution and external TMS adapters, after M6 |
 | M6 | Change impact, benchmarks, independent audit and hardening |
 
 The LLM may interpret or synthesize, but authority remains evidence, provenance, source authority,
@@ -138,7 +138,7 @@ Status: **DEFERRED_TO_M4**
 
 The long-term flow accepts project documents, repositories, APIs, tests and history without
 requiring users to hand-author every `qe_model` record. Candidate semantics remain provenance-bound
-before M2 audit, M3 generation, M4 sync, M5 automation and M6 change impact/hardening.
+before M2 audit, M3 generation, M4 local output, M6 change impact and later M5 sync/automation.
 
 ## FSR-14 — Retrospective provider audit
 

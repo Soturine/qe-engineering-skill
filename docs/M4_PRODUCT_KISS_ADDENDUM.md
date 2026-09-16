@@ -175,7 +175,8 @@ High confidence is descriptive metadata and must not resolve disagreement by its
 
 ### 7. Minimal stale/change propagation
 
-Full change-impact analysis remains later work, but M4 needs enough invalidation to support safe semantic reasoning and synchronization.
+Full change-impact analysis remains M6 work, but M4 needs enough invalidation to support safe
+semantic reasoning and reproducible local outputs. Future M5 synchronization consumes these gates.
 
 At minimum:
 
@@ -187,7 +188,7 @@ source hash/snapshot changes
 
 Do not build the full M6 dependency/change-impact engine in M4.
 
-### 8. Transactional adapter model
+### 8. Transactional adapter model (M5, after M6)
 
 Treat external integration as a governed transaction, not as raw CRUD.
 
@@ -207,7 +208,7 @@ discover
 
 Azure DevOps is the first adapter, not the architecture.
 
-### 9. Approval hardening at real write time
+### 9. Approval hardening at real write time (M5)
 
 The existing Approval contract already binds important properties such as actor, proposal hash, source/target snapshots, operation set and timestamp.
 
@@ -402,7 +403,8 @@ Suggested fit with the existing M4 sequence:
 - H3-H5: semantic distinctions, relation/adjudication, real-world ingestion, stale propagation;
 - H6: formal question artifacts / Scenario Grilling integration;
 - H7: oracle/executability wording gates where appropriate;
-- H8: transactional adapter lifecycle and approval/read-back semantics;
+- D1 after H4: offline PT-BR Technical Preview UX and demo; freeze before H5;
+- H8: local orchestration/output/export; transactional adapters move to M5 after M6;
 - H9: runtime state, `qe run`, `qe doctor`, portable production skill/agent wrappers, capability maturity;
 - H10: semantic mutation, disagreement, run/workspace, end-to-end synthetic evals;
 - H11: simplify, remove accidental complexity, validate packaging/first-run flow, harden docs.
@@ -470,10 +472,11 @@ install
 -> surface conflicts/questions
 -> audit/design/generate
 -> validate
--> preview external changes
--> require explicit approval
--> optionally sync
--> read back and record evidence
+-> local PT-BR HTML/Markdown/JSON review
+-> preserve conflicts/questions and evidence
 ```
 
 The internal architecture may be sophisticated. The normal user experience should not be.
+
+`ROADMAP.md` owns the revised execution order M4 → M6 → M5. External preview/approval/sync/
+read-back remains a binding future M5 safety contract, not a M4 exit requirement.

@@ -59,9 +59,11 @@ Generation/audit/rewrite are proposal-producing operations. They do not imply CR
 - **M1 — Source Ingestion & Project Model:** inventory, parsing, extraction and normalized evidence-backed project understanding.
 - **M2 — Audit, Traceability & Risk Analysis:** existing-test audit, atomic traceability, risk/scenario analysis and coverage optimization.
 - **M3 — Test Generation & Improvement:** greenfield generation plus missing-case and step-by-step rewrite proposals.
-- **M4 — Integrations & Production Agent Skill:** optional TMS/Azure adapters and portable Agent Skill packaging.
-- **M5 — Automation & Execution Assistance:** approved-model renderers and optional bounded execution assistance.
+- **M4 — Semantic QE & Production Agent Skill:** local-first semantics, portable skill and human outputs; D1 Technical Preview follows H4, then freeze before H5. No live TMS requirement.
+- **M5 — Automation & External Integrations:** approved-model execution and optional TMS/Azure adapters, after M6.
 - **M6 — Advanced Retrieval & Change Impact:** retrieval experiments, richer dependency analysis and regression/change-impact selection.
+
+Execution priority is M4 → M6 → M5. `ROADMAP.md` owns checkpoint allocation and completion gates.
 
 ## M0 implementation order
 

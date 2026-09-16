@@ -46,6 +46,7 @@ from qe_skill.normalization import (
 from qe_skill.parsers import ParseResult
 from qe_skill.project_builder import ProjectBuild
 from qe_skill.reasoning import ReasoningRequest, ReasoningResult
+from qe_skill.review import ReviewContext
 from qe_skill.semantic import SemanticCacheBinding, SemanticCandidate, SemanticCandidateSet
 
 CONTRACTS: dict[str, type[BaseModel]] = {
@@ -88,6 +89,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "semantic-relation": SemanticRelation,
     "semantic-adjudication": AdjudicationResult,
     "semantic-relation-graph": SemanticRelationGraph,
+    "review-context": ReviewContext,
 }
 
 

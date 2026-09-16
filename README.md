@@ -363,9 +363,9 @@ The project is deliberately incremental. The earlier fine-grained M0-M10 plan wa
 - **M1** — Source Ingestion & Project Model
 - **M2** — Audit, Traceability & Risk Analysis ✅
 - **M3** — Test Generation & Improvement ✓
-- **M4** — Integrations & Production Agent Skill (active)
-- **M5** — Automation & Execution Assistance
-- **M6** — Advanced Retrieval & Change Impact
+- **M4** — Semantic QE & Production Agent Skill (active, local-first; D1 preview before H5)
+- **M6** — Advanced Retrieval & Change Impact (after M4)
+- **M5** — Automation & External Integrations (after M6)
 
 M0-M3 form the standalone core product: local evidence can be ingested, modeled, audited and turned into reviewable manual Test Models without Azure DevOps, MCP or another TMS. Later milestones add optional integration, automation and advanced retrieval/change-impact capabilities.
 
@@ -425,7 +425,7 @@ Validation/research:
 
 ## Current implementation status
 
-**M0–M3 are implemented and validated. M4 Integrations & Production Agent Skill is the active milestone.**
+**M0–M3 are implemented and validated. M4 Semantic QE & Production Agent Skill is active.**
 
 The executable package includes M0/M1 trust and ingestion behavior plus deterministic audit and
 traceability contracts, nominal versus atomic coverage, conservative existing-test/oracle/history
@@ -441,6 +441,16 @@ M3 produces provenance-backed manual Test Model proposals and deterministic JSON
 HTML reviews without external writes. M4.H1 provides the provider-neutral reasoning boundary and
 M4.H2 provides non-normative, provenance-bound semantic candidate/cache contracts. M4.H3 adds
 grounded multilingual normalization with PT-BR/mixed-language coverage and no authority promotion;
-live providers, real-document orchestration, external integrations/publication and production skill
-packaging remain incremental M4 work. Automation is M5; whole-system audit, change impact and
+H4 adds evidence-validated non-authoritative relations. Real-document orchestration and production
+skill packaging remain M4 work after D1 Technical Preview. External integrations/automation are M5,
+after M6; whole-system audit, change impact and
 advanced retrieval remain M6. Read `docs/STATUS.md` for the authoritative current state.
+
+Build the current offline PT-BR Technical Preview from repository-local synthetic evidence:
+
+```powershell
+.\.venv\Scripts\python.exe -m tools.build_technical_preview
+```
+
+Then open `examples/technical-preview/output/test-plan.html`. This demonstrates validated local
+rendering and H4 conflict visibility; it does not claim H5 arbitrary-document orchestration.

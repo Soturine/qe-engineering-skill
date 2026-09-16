@@ -77,19 +77,26 @@ Use `--format json`, `--format json,html`, or `--format all` (the default) to se
 formats. The canonical `m3-generation-report.json` is always written after successful generation.
 The command rejects stale or foreign M2 input and writes only local proposal artifacts: Test Model
 JSON/YAML, requested Markdown/static HTML reviews, improvements, Shared Step/Parameter candidates,
-traceability, and manifest.
+traceability, manifest and a validated `review-context.json` binding the Project Model and M2
+analysis used by the human review.
 
 Render an existing canonical report without rerunning authoring or semantic reasoning:
 
 ```powershell
 .\.venv\Scripts\python.exe -m qe_skill.cli render `
-  .\m3-output\m3-generation-report.json --output-dir .\review --format html,markdown
+  .\m3-output\m3-generation-report.json `
+  --review-context .\m3-output\review-context.json `
+  --project-locale pt-BR --output-language pt-BR `
+  --output-dir .\review --format html,markdown
 ```
 
 Supported renderer formats are `json`, `yaml`, `markdown`, and `html`. The renderer is
 deterministic, offline, safely escapes HTML, tolerates compatible additive version-1 fields, and
-rejects incompatible schema majors. Explicit `ReportTheme` configuration is available through the
-Python renderer API and affects presentation only. Current limitations are in `M3_EVIDENCE.md`.
+rejects incompatible schema majors. The optional review context must reconstruct against its
+bound Project Model/M2/H4 inputs; stale, tampered or cross-scope contexts fail closed. PT-BR
+projects default to PT-BR presentation while source evidence and technical identifiers remain
+literal. The self-contained HTML includes search, status/review filters, internal traceability,
+visible gaps/conflicts and collapsible technical details. See `examples/technical-preview/README.md`.
 
 ## Supported semantic input
 

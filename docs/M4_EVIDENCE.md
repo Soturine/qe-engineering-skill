@@ -1,6 +1,6 @@
 # M4 Evidence
 
-Status: **H1-H3 validated; H4 implementation under validation; D1/H5-H11 not implemented**
+Status: **H1-H4 validated; D1 under development; H5-H11 not implemented**
 
 This record is cumulative and reports only executable repository behavior.
 
@@ -61,4 +61,23 @@ Project Model, ingest real documents or propagate downstream staleness; those ar
 H4 local validation (2026-09-16): 319 tests/evals passed, one Windows symlink-permission skip;
 the same suite passed against the installed wheel. Ruff, formatting, mypy, pip check and dependency
 audit passed. Wheel SHA-256: `e7231e872e6868aaeff8d462822bbcc822f4e6ad99361d1265dac9bbe54a0c8a`.
-Remote Linux/Windows validation is pending at this checkpoint. No tag or release created.
+Remote Linux/Windows validation passed at `8ed0bdb7c6233e6db6c5e0e0d2695f06932f6ef3`, workflow
+`35058770837`. No tag or release created.
+
+## D1 - Technical Preview UX
+
+- static single-file HTML with embedded CSS/JavaScript, no server/CDN/framework/network;
+- project/output language resolution with PT-BR default for PT-BR projects;
+- presentation labels and engine-owned messages localized without translating evidence, oracle
+  wording or technical identifiers;
+- overview counts without invented percentages; complete available Test Case proposal fields;
+- case search, readiness/review filters, responsive layout, visible focus and non-color labels;
+- internal requirement/criterion/risk/scenario/evidence/case links where exact references exist;
+- validated review context rejects stale/tampered/cross-scope Project Model, M2 or H4 inputs;
+- conflicts show both candidate statements, authority context, adjudication, human-review state and
+  the honest limitation that affected tests are not linked by H4 yet;
+- synthetic PT-BR demo builder and concise reproduction instructions under
+  `examples/technical-preview/`.
+
+D1 is implemented locally; full/package/remote evidence is pending. It does not implement H5
+real-document semantic orchestration, `qe run`, `qe doctor`, a live provider or any external write.

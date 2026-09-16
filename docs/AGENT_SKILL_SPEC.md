@@ -20,6 +20,11 @@ skill/qe-engineering/
 
 `SKILL.md` is the orchestration interface. Schemas, validators and deterministic policy enforcement remain in the engine.
 
+M4 targets local `qe doctor` and `qe run <project>` with configurable locale/output language,
+PT-BR-first review outputs and a valid deterministic-only mode. These commands are targets, not
+current capabilities. Live TMS connectors and external synchronization belong to M5 after M6.
+See `ROADMAP.md`; D1 is a Technical Preview, not production Agent Skill completion.
+
 ## Progressive disclosure
 
 The skill should use concise activation metadata, load the minimum procedure needed, load reference material only for the active task, call deterministic scripts/validators when available, avoid copying the entire project corpus into model context, and produce structured artifacts plus a human-readable summary.

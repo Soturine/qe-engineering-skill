@@ -15,7 +15,9 @@ Technical identifiers remain literal and are never translated.
 - original evidence, Unicode, accents, source/span/hash and authority metadata are always preserved.
 - translation, summaries and canonical labels never replace primary evidence.
 
-A normal PT-BR project may set `project_locale = pt-BR` and `output_language = pt-BR` while code,
+A PT-BR project defaults to `output_language = pt-BR` when no explicit output override is set,
+including the `source` presentation setting. It may explicitly select English. A project can
+set `project_locale = pt-BR` and `output_language = pt-BR` while code,
 APIs, fields, enums, classes and other identifiers remain English or mixed.
 
 ## Milestone invariants
@@ -26,7 +28,7 @@ APIs, fields, enums, classes and other identifiers remain English or mixed.
   assume English. Provider-assisted interpretation remains candidate-only.
 - **M3:** human-authored Action/Expected Result/oracle text may remain PT-BR; renderers must not
   force translation or reinterpret an approved oracle.
-- **M4:** normalization, adjudication, questions, wording, adapters and production skill UX support
+- **M4:** normalization, adjudication, questions, wording, local outputs and production skill UX support
   PT-BR/mixed inputs and independently configured output language.
 - **M5:** automation consumes the approved Test Model without language-driven reinterpretation.
 - **M6:** retrieval/change impact must evaluate cross-language meaning drift, including modality,

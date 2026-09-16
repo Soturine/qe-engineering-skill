@@ -48,6 +48,7 @@ def test_generate_cli_writes_only_local_review_artifacts(tmp_path: Path) -> None
         "parameter-candidates.json",
         "generation-traceability.json",
         "generation-manifest.json",
+        "review-context.json",
     }
     assert {path.name for path in output.iterdir()} == expected
     test_model = yaml.safe_load((output / "test-model.yaml").read_text(encoding="utf-8"))
@@ -103,8 +104,55 @@ def test_render_cli_reuses_canonical_report_without_authoring(tmp_path: Path) ->
                 str(rendered),
                 "--format",
                 "html,markdown",
+                "--review-context",
+                str(generated / "review-context.json"),
+                "--project-locale",
+                "pt-BR",
+                "--output-language",
+                "pt-BR",
             ]
         )
         == 0
     )
     assert {path.name for path in rendered.iterdir()} == {"m3-report.html", "m3-report.md"}
+    page = (rendered / "m3-report.html").read_text(encoding="utf-8")
+    assert '<html lang="pt-BR">' in page and "Rastreabilidade" in page
+
+
+def test_render_cli_rejects_stale_review_context(tmp_path: Path) -> None:
+    model_path, analysis_path = write_inputs(tmp_path)
+    generated = tmp_path / "generated"
+    assert (
+        main(
+            [
+                "generate",
+                str(model_path),
+                "--analysis",
+                str(analysis_path),
+                "--output-dir",
+                str(generated),
+                "--format",
+                "json",
+            ]
+        )
+        == 0
+    )
+    context_path = generated / "review-context.json"
+    context = json.loads(context_path.read_text(encoding="utf-8"))
+    context["project_model"]["claims"][0]["statement"] = "Tampered after generation."
+    context_path.write_text(json.dumps(context), encoding="utf-8")
+    assert (
+        main(
+            [
+                "render",
+                str(generated / "m3-generation-report.json"),
+                "--review-context",
+                str(context_path),
+                "--output-dir",
+                str(tmp_path / "rendered"),
+                "--format",
+                "html",
+            ]
+        )
+        == 1
+    )

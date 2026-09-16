@@ -55,8 +55,12 @@ sequencing. It is a target contract; only capabilities listed below as implement
   and distinguishes record kind, modality, polarity, constraints and domain terms. PT-BR, English,
   mixed text and bilingual Gherkin have synthetic regression/eval coverage.
 - M4.H4 bounded semantic relation/adjudication graphs preserve conflicts and authority context,
-  require human review for ambiguity/provider disagreement, ignore confidence as a winner selector,
+  require human review for conflicts/ambiguity/provider disagreement, reject stale or tampered H3
+  envelopes, ignore confidence as a winner selector,
   and never promote facts or self-authorize providers.
+- M4.D1 Technical Preview implementation provides an offline self-contained HTML review, PT-BR
+  presentation, complete available Test Case fields, searchable/filterable cases, navigable
+  evidence/traceability, visible gaps/reviews/H4 conflicts and a reproducible synthetic demo.
 
 ## Current limitations
 
@@ -76,14 +80,15 @@ sequencing. It is a target contract; only capabilities listed below as implement
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
 - H3/H4 records remain review artifacts and are not promoted into the Project Model or connected
   to the ingestion CLI. Real-world orchestration and downstream stale propagation begin in M4.H5.
+- D1 can render H4 conflicts supplied in a validated review context, but the current `generate`
+  command does not yet orchestrate H3/H4 from arbitrary natural-language documents (H5).
 
 ## Deferred by milestone
 
-- **M4 - Integrations & Production Agent Skill:** Azure/MCP/TMS adapters, preview/sync,
-  target-drift/read-back/idempotency execution, production Agent Skill packaging, and the optional
-  Semantic Reasoning Provider cataloged in `SEMANTIC_REASONING_ROADMAP.md`.
-- **M5 - Automation & Execution Assistance:** automation renderers and optional bounded
-  execution/evidence-capture assistance.
+- **M4 - Semantic QE & Production Agent Skill:** D1 local Technical Preview before presentation;
+  H5-H11 real-document orchestration, questions/oracle quality, local outputs and production skill.
+- **M5 - Automation & External Integrations (after M6):** TMS/Azure adapters, preview/sync,
+  explicit approval, drift/read-back/idempotency and bounded execution/evidence-capture assistance.
 - **M6 - Advanced Retrieval & Change Impact:** RAG/GraphRAG evaluation, richer code dependency
   graphs, PR/diff impact analysis and regression selection.
 

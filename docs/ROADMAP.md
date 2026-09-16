@@ -159,50 +159,66 @@ This milestone must support:
 
 No external system is required. Generated output remains proposal-only until explicitly approved for an external write.
 
-## M4 — Integrations & Production Agent Skill
+## M4 — Semantic QE & Production Agent Skill
 
-Status: **active milestone**. The optional Semantic Reasoning Provider is cataloged here alongside
-production skill packaging and external adapters; no provider or integration was implemented in
-M3. See `SEMANTIC_REASONING_ROADMAP.md`. H3-H11 also follow the accepted product and sequencing
-decisions in `M4_PRODUCT_KISS_ADDENDUM.md`; where alternatives exist, implement the smallest
-useful path that preserves provenance, review, approval and external-write safety.
+Status: **active; H0-H4 validated, D1 next**. This local-first plan supersedes the earlier
+M4 adapter allocation. Product positioning: **Evidence-first Quality Engineering runtime for AI agents.**
+Agent reasons. Engine establishes what is defensible. Human governs high-consequence decisions.
 
 The cross-cutting `MULTILINGUAL_POLICY.md` applies to every milestone. M4.H3-H10 must treat PT-BR
 and mixed PT-BR/English project material as first-class without pre-translation or authority drift.
 
-Make the stable core usable through optional external integrations and a portable Agent Skills interface without coupling the core to any provider or TMS.
+Deliver a usable local, portable skill: evidence → deterministic extraction → bounded heuristics →
+optional provider → candidate semantics → provenance/authority/trust → Project Model → audit/risk/
+scenarios → Test Model → validation → clear human outputs. Confidence never grants authority.
 
-Deliver optional TMS integration, Azure DevOps first:
+### Checkpoints
 
-- read/inventory adapter capabilities;
-- native Test Case rendering;
-- configurable requirement/work-item mapping;
-- Shared Steps suggestions;
-- Shared Parameters/data mapping;
-- `AUDIT_ONLY`, `PREVIEW`, and explicitly approved sync modes;
-- preview/dry-run/diff;
-- stable mapping/idempotency;
-- optimistic-concurrency/stale-target detection;
-- explicit human approval scoped to exact operation set/snapshot;
-- non-destructive create/update/link/append behavior;
-- destructive operations disabled by default;
-- read-back verification;
-- execution-result/comment/evidence ingestion without deleting history.
+- H0: scope/trust direction — complete.
+- H1: provider-neutral bounded reasoning boundary — complete.
+- H2: provenance-bound semantic candidates/cache — complete.
+- H3: grounded multilingual normalization — complete, bounded capabilities documented.
+- H4: semantic relations/conflicts and non-authoritative adjudication — validated; unsupported
+  replacement/deployment links require review, never inferred from lifecycle alone.
+- **D1: Technical Preview UX** — offline, self-contained HTML, PT-BR labels, full available case
+  content, navigable provenance, visible conflicts/gaps/reviews, search/filter, responsive keyboard
+  navigation and a reproducible synthetic demo. No frontend framework/server/CDN. Does not close M4.
+- H5: real-world semantic ingestion with original text/span/locator, PT-BR/mixed inputs, minimal
+  stale propagation and explicit unsupported formats; no mandatory translation/parser framework.
+- H6: formal questions for missing evidence/authority, ambiguous rules, conflicts, unsupported
+  oracles and unverified paths; bounded Scenario Grilling, never invented answers.
+- H7: oracle quality/manual executability, preparation/data/steps/evidence/cleanup/isolation,
+  optional faithful wording assistance; modality/polarity/conditions remain unchanged.
+- H8: **local orchestration/output/export**, JSON/YAML/Markdown/HTML, locale, stable local run
+  artifacts, validation before publication, no credential requirement or external write.
+- H9: production runtime-neutral Agent Skill, `qe doctor`, `qe run <project>`, progressive
+  disclosure, capability discovery, useful failures; deterministic-only mode fully valid.
+- H10: whole-flow semantic/E2E evals, provider disagreement, mixed sources and mutations:
+  deve→pode, pode→não pode, 30 s→60 s, antes→depois, somente ADMIN→qualquer usuário,
+  até 10→no mínimo 10.
+- H11: KISS hardening, packaging/install smoke/wheel/Linux/Windows, honest capability matrix,
+  known limitations and local release evidence. No false production-ready claim.
 
-REST and/or MCP may be implemented behind adapters. The core must not require either.
+Freeze after green D1 for presentation. **Do not start H5 automatically.** Use feedback before
+continuing H5-H11. H9-lite is optional only after H4 and HTML are green and only if cheap/safe.
 
-Deliver production Agent Skill packaging:
+### M4 completion gate
 
-- progressive disclosure;
-- minimal tool permissions;
-- operating-mode selection;
-- TMS-independent audit/generation;
-- human-approval boundary before any external write;
-- packaged references/scripts/assets;
-- runtime failure transparency;
-- portability/provider-neutral tests.
+Install → `qe doctor` → `qe run <project>` → source accounting/model/semantics/conflicts/questions/
+audit/risks/scenarios/manual tests/validation/traceability/PT-BR HTML/Markdown/JSON. Thin agent
+wrappers must not duplicate QE policy. Useful without Azure/Jira/TestRail/MCP/cloud credentials or
+an LLM provider. Until M4 closes, call this **Technical Preview / MVP / v0.4.x**, not v1.0.0.
 
-## M5 — Automation & Execution Assistance
+No live TMS connectors, CRUD, external approval execution/read-back or remote execution are
+required or implemented in M4. Existing safety contracts remain binding; concrete adapters move
+to M5. No vector DB, GraphRAG, swarm, microservices or speculative plugin platform.
+
+## M5 — Automation & External Integrations
+
+Execution priority: **after M6**, without renumbering historical IDs. Future adapters include
+Azure DevOps/Jira/TestRail, preview/diff/sync, explicit exact human approval, optimistic concurrency,
+idempotency and read-back. Preserve existing results/comments/evidence/history; destructive
+operations remain disabled. REST/MCP are optional boundaries, never core dependencies.
 
 Use approved Test Models as the source for automation and controlled execution support. Automation must not redefine oracle semantics.
 
@@ -218,7 +234,10 @@ After manual-generation trust is demonstrated, optionally add:
 
 Execution autonomy is optional and must remain bounded by approved cases, evidence and safety policy.
 
-## M6 — Advanced Retrieval & Change Impact
+## M6 — Advanced Retrieval, Change Impact & Deep Audit
+
+Execution priority: **immediately after M4, before M5**. Improve understanding of project changes
+and affected requirements/tests before giving the system external execution capabilities.
 
 Evaluate advanced intelligence only after the deterministic core, audit and generation workflows are measurable and stable:
 
@@ -228,6 +247,8 @@ Evaluate advanced intelligence only after the deterministic core, audit and gene
 - PR/diff impact analysis;
 - regression selection;
 - incremental source re-indexing.
+- requirement impact, stale artifact propagation and obsolete-test discovery;
+- cross-language semantic drift and richer source/code dependency links.
 
 Adopt only when evals show measurable gain without weakening provenance/completeness. Retrieval-derived claims must still resolve back to primary evidence before influencing a normative oracle.
 
@@ -238,9 +259,9 @@ M0  Foundations & Trust Model                  ✅ implemented
 M1  Source Ingestion & Project Model             ✓ implemented
 M2  Audit, Traceability & Risk Analysis             ✓ implemented
 M3  Test Generation & Improvement                   ✓ implemented
-M4  Integrations & Production Agent Skill           next active milestone
-M5  Automation & Execution Assistance
-M6  Advanced Retrieval & Change Impact
+M4  Semantic QE & Production Agent Skill             active: H4 → D1 → freeze → H5-H11
+M6  Advanced Retrieval, Change Impact & Deep Audit   after M4
+M5  Automation & External Integrations               after M6
 ```
 
 A useful standalone product exists before optional live integrations or automation: M0-M3 must be able to ingest local evidence, understand the project, audit coverage and generate reviewable manual Test Models without Azure DevOps/MCP.

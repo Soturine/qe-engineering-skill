@@ -1253,7 +1253,11 @@ def generate_m3(
         snapshot_id=model.snapshot_id,
         mode=analysis.mode,
         input_binding=binding,
-        configuration={key: str(value) for key, value in config.model_dump(mode="json").items()},
+        configuration={
+            **{key: str(value) for key, value in config.model_dump(mode="json").items()},
+            "project_locale": model.ledger.manifest.project_locale,
+            "output_language": model.ledger.manifest.output_language,
+        },
         artifact_refs=artifact_refs,
         created_at=config.generated_at,
         tool_version=config.generator_version,

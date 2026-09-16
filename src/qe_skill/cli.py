@@ -26,6 +26,7 @@ from qe_skill.m2 import (
 )
 from qe_skill.m3 import AuthoringConfig, M3GenerationReport, generate_m3, validate_generation_report
 from qe_skill.m3_render import (
+    ReportTheme,
     render_canonical,
     render_html,
     render_json,
@@ -33,6 +34,7 @@ from qe_skill.m3_render import (
     render_yaml,
 )
 from qe_skill.parsers import ParserLimits
+from qe_skill.review import ReviewContext
 from qe_skill.schemas import schema_text
 from qe_skill.validation import Issue, Result, TrustContext, timestamp_valid, validate_ledger
 
@@ -255,7 +257,13 @@ def ensure_local_output_dir(output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
 
 
-def write_m3_outputs(output: Path, report: M3GenerationReport, formats: set[str]) -> None:
+def write_m3_outputs(
+    output: Path,
+    report: M3GenerationReport,
+    formats: set[str],
+    context: ReviewContext | None = None,
+    theme: ReportTheme | None = None,
+) -> None:
     try:
         ensure_local_output_dir(output)
         (output / "m3-generation-report.json").write_text(render_json(report), encoding="utf-8")
@@ -270,11 +278,11 @@ def write_m3_outputs(output: Path, report: M3GenerationReport, formats: set[str]
                 render_yaml(report.test_model.model_dump(mode="json")), encoding="utf-8"
             )
         if "markdown" in formats:
-            markdown = render_markdown(report)
+            markdown = render_markdown(report, theme)
             (output / "test-plan.md").write_text(markdown, encoding="utf-8")
             (output / "improvement-report.md").write_text(markdown, encoding="utf-8")
         if "html" in formats:
-            page = render_html(report)
+            page = render_html(report, theme, context=context)
             (output / "test-plan.html").write_text(page, encoding="utf-8")
             (output / "improvement-report.html").write_text(page, encoding="utf-8")
         write_json(
@@ -294,6 +302,8 @@ def write_m3_outputs(output: Path, report: M3GenerationReport, formats: set[str]
             [item.model_dump(mode="json") for item in report.traceability],
         )
         write_json(output / "generation-manifest.json", report.manifest.model_dump(mode="json"))
+        if context:
+            write_json(output / "review-context.json", context.model_dump(mode="json"))
     except OSError as error:
         raise InputFailure("SRC_OUTPUT", "Local M3 output could not be written.") from error
 
@@ -359,8 +369,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-pairwise-combinations", type=int, default=24)
     parser.add_argument("--analysis", type=Path, help="M2 analysis report required by generate")
     parser.add_argument("--format", dest="output_formats", default="all")
+    parser.add_argument(
+        "--review-context", type=Path, help="Validated local model/analysis/relations envelope"
+    )
+    parser.add_argument("--project-locale", choices=["pt-BR", "en", "mixed", "und"])
+    parser.add_argument("--output-language", choices=["pt-BR", "en", "source"])
     args = parser.parse_args(argv)
     try:
+        theme = ReportTheme(
+            project_locale=args.project_locale, output_language=args.output_language
+        )
         if args.command == "render":
             if args.output_dir is None:
                 raise InputFailure("MODEL_COMMAND", "render requires --output-dir.")
@@ -368,11 +386,21 @@ def main(argv: list[str] | None = None) -> int:
             if not isinstance(value, dict):
                 raise InputFailure("MODEL_SCHEMA", "Canonical M3 report must be a JSON object.")
             formats = requested_formats(args.output_formats)
+            context = (
+                ReviewContext.model_validate(read_json(args.review_context))
+                if args.review_context
+                else None
+            )
+            if context:
+                try:
+                    context.validate_for(M3GenerationReport.model_validate(value))
+                except ValueError as error:
+                    raise InputFailure("REVIEW_CONTEXT", str(error)) from error
             ensure_local_output_dir(args.output_dir)
             extensions = {"json": "json", "yaml": "yaml", "markdown": "md", "html": "html"}
             for output_format in sorted(formats):
                 try:
-                    rendered = render_canonical(value, output_format)  # type: ignore[arg-type]
+                    rendered = render_canonical(value, output_format, theme, context=context)  # type: ignore[arg-type]
                 except ValueError as error:
                     raise InputFailure("MODEL_SCHEMA", str(error)) from error
                 (args.output_dir / f"m3-report.{extensions[output_format]}").write_text(
@@ -426,7 +454,13 @@ def main(argv: list[str] | None = None) -> int:
                 raise InputFailure("M3_STALE_INPUT", str(error)) from error
             validation = validate_generation_report(m3_report, model, analysis)
             if validation.valid:
-                write_m3_outputs(args.output_dir, m3_report, requested_formats(args.output_formats))
+                write_m3_outputs(
+                    args.output_dir,
+                    m3_report,
+                    requested_formats(args.output_formats),
+                    ReviewContext(project_model=model, analysis=analysis),
+                    theme,
+                )
             emit_json(
                 {
                     "schema_version": "1.0",

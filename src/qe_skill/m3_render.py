@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import html
 import json
 from collections.abc import Mapping
 from typing import Literal
@@ -15,6 +14,7 @@ from pydantic import Field
 
 from qe_skill import domain as d
 from qe_skill.m3 import M3GenerationReport
+from qe_skill.review import PT, ReviewContext, localize_presentation_text, review_html
 
 RenderFormat = Literal["json", "yaml", "markdown", "html"]
 
@@ -23,6 +23,8 @@ class ReportTheme(d.Record):
     project_name: str | None = None
     accent: str = Field(default="#2563eb", pattern=r"^#[0-9a-fA-F]{6}$")
     density: Literal["compact", "comfortable"] = "comfortable"
+    project_locale: d.LanguageCode | None = None
+    output_language: d.OutputLanguage | None = None
 
 
 def _payload(report: M3GenerationReport | Mapping[str, object]) -> dict[str, object]:
@@ -114,8 +116,25 @@ def _markdown_cases(data: dict[str, object]) -> list[str]:
     return lines
 
 
-def render_markdown(report: M3GenerationReport | Mapping[str, object]) -> str:
+def render_markdown(
+    report: M3GenerationReport | Mapping[str, object], theme: ReportTheme | None = None
+) -> str:
     data = _payload(report)
+    if resolve_language(data, theme or ReportTheme()) == "pt-BR":
+
+        def localized(value: object, depth: int = 0, field: str = "") -> list[str]:
+            if isinstance(value, dict):
+                output = []
+                for key, child in value.items():
+                    output.append("  " * depth + f"- {PT.get(key, key)}:")
+                    output.extend(localized(child, depth + 1, key))
+                return output
+            if isinstance(value, list):
+                return [line for child in value for line in localized(child, depth, field)]
+            text = localize_presentation_text(str(value), field, "pt-BR")
+            return ["  " * depth + "- " + text]
+
+        return "# Plano de Testes\n\n" + "\n".join(localized(data)) + "\n"
     lines = [
         "# M3 Test Generation Report",
         "",
@@ -158,177 +177,54 @@ def render_markdown(report: M3GenerationReport | Mapping[str, object]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def _esc(value: object) -> str:
-    return html.escape(str(value), quote=True)
-
-
-def _html_section(identifier: str, title: str, body: str) -> str:
-    return (
-        f'<section id="{_esc(identifier)}"><h2>{_esc(title)}</h2>{body}</section>' if body else ""
-    )
-
-
-def _html_cases(
-    data: dict[str, object],
-    shared_by_id: dict[str, dict[str, object]],
-    parameter_by_id: dict[str, dict[str, object]],
-) -> str:
-    output: list[str] = []
-    for case in _items(data.get("cases")):
-        case_id = str(case.get("id", "case"))
-        steps = "".join(
-            f'<li><span class="phase">{_esc(step.get("phase") or "STEP")}</span> '
-            f"{_esc(_text(step.get('action'), 'Blocked action'))}"
-            + (
-                f"<div><strong>Expected:</strong> {_esc(step.get('expected_result'))}</div>"
-                if step.get("expected_result")
-                else ""
-            )
-            + "</li>"
-            for step in _items(case.get("steps"))
-        )
-        shared_cards = (
-            "".join(
-                f'<a class="chip" href="#shared-{_esc(ref_id)}">{_esc(ref_id)} — {_esc(shared_by_id.get(ref_id, {}).get("title", "Shared Step"))}</a>'
-                for ref_id in (
-                    _ref_id(item)
-                    for item in _list(case.get("shared_step_candidates"))
-                    if isinstance(item, Mapping)
-                )
-            )
-            if isinstance(case.get("shared_step_candidates"), list)
-            else ""
-        )
-        parameter_cards = (
-            "".join(
-                f'<a class="chip" href="#parameter-{_esc(ref_id)}">{{{_esc(parameter_by_id.get(ref_id, {}).get("name", ref_id))}}}</a>'
-                for ref_id in (
-                    _ref_id(item)
-                    for item in _list(case.get("parameter_candidates"))
-                    if isinstance(item, Mapping)
-                )
-            )
-            if isinstance(case.get("parameter_candidates"), list)
-            else ""
-        )
-        notes = "".join(f"<li>{_esc(item)}</li>" for item in _list(case.get("blocking_notes")))
-        output.append(
-            f'<article id="case-{_esc(case_id)}"><h3>{_esc(case.get("title", "Untitled"))}</h3>'
-            f'<span class="status">{_esc(case.get("readiness", "UNKNOWN"))}</span>'
-            f"<p><strong>Objective:</strong> {_esc(_text(case.get('objective')))}</p><ol>{steps}</ol>"
-            f"{shared_cards}{parameter_cards}{('<h4>Blockers</h4><ul>' + notes + '</ul>') if notes else ''}</article>"
-        )
-    return "".join(output)
-
-
 def render_html(
-    report: M3GenerationReport | Mapping[str, object], theme: ReportTheme | None = None
+    report: M3GenerationReport | Mapping[str, object],
+    theme: ReportTheme | None = None,
+    *,
+    context: ReviewContext | None = None,
 ) -> str:
     data = _payload(report)
     theme = theme or ReportTheme()
-    shared = _items(data.get("shared_steps"))
-    parameters = _items(data.get("parameters"))
-    revisions = _items(data.get("revisions"))
-    traceability = _items(data.get("traceability"))
-    shared_by_id = {str(item.get("id")): item for item in shared}
-    parameter_by_id = {str(item.get("id")): item for item in parameters}
-    shared_html = "".join(
-        f'<article id="shared-{_esc(item.get("id"))}"><h3>{_esc(item.get("title"))}</h3>'
-        f"<p>{_esc(item.get('readiness'))}; definition reusable, execution results remain per Test Case.</p>"
-        + "<ol>"
-        + "".join(
-            f"<li>{_esc(_text(step.get('action'), 'Blocked action'))}</li>"
-            for step in _items(item.get("steps"))
-        )
-        + "</ol>"
-        + f"<p>Evidence: {', '.join(_esc(_ref_id(ref)) for ref in _list(item.get('supporting_evidence'))) or 'Unresolved'}</p>"
-        + f"<p>Paths: {', '.join(_esc(_ref_id(ref)) for ref in _list(item.get('path_refs'))) or 'Unresolved'}</p>"
-        + f"<p>Claims: {', '.join(_esc(_ref_id(ref)) for ref in _list(item.get('claim_refs'))) or 'Unresolved'}</p>"
-        + f"<p>Used by: {', '.join(_esc(_ref_id(ref)) for ref in _list(item.get('used_by')))}</p></article>"
-        for item in shared
+    if context:
+        context.validate_for(M3GenerationReport.model_validate(data))
+    language = resolve_language(data, theme, context)
+    title = theme.project_name or ("Plano de Testes" if language == "pt-BR" else "Test Plan")
+    return review_html(
+        data,
+        language=language,
+        title=title,
+        accent=theme.accent,
+        density=theme.density,
+        context=context,
     )
-    parameter_html = "".join(
-        f'<article id="parameter-{_esc(item.get("id"))}"><h3>{_esc(item.get("name"))}</h3>'
-        f"<p>Properties: {_esc(_text(item.get('properties')))}</p>"
-        f"<p>Constraints: {_esc(', '.join(_ref_id(value) for value in _list(item.get('constraints'))) or 'Unresolved')}</p>"
-        f"<p>Partitions: {_esc(', '.join(str(value) for value in _list(item.get('partitions'))) or 'Unresolved')}</p>"
-        f"<p>Values: {_esc(', '.join(str(value) for value in _list(item.get('candidate_values'))) or 'No value invented')}</p>"
-        f"<p>Sources: {_esc(', '.join(_ref_id(value) for value in _list(item.get('source_evidence'))) or 'Unresolved')}</p>"
-        f"<p>Used by: {_esc(', '.join(_ref_id(value) for value in _list(item.get('used_by'))) or 'Unresolved')}</p></article>"
-        for item in parameters
+
+
+def resolve_language(
+    data: dict[str, object], theme: ReportTheme, context: ReviewContext | None = None
+) -> str:
+    config = _mapping(_mapping(data.get("manifest")).get("configuration"))
+    manifest = context.project_model.ledger.manifest if context else None
+    locale = theme.project_locale or (
+        manifest.project_locale if manifest else config.get("project_locale")
     )
-    revision_html = "".join(
-        f'<article><h3>{_esc(_ref_id(item.get("original_test")))}</h3><div class="compare">'
-        f"<div><h4>Original</h4><pre>{_esc(item.get('original_text', 'Unavailable'))}</pre></div>"
-        f"<div><h4>Proposed</h4><p>{_esc(item.get('action'))} — {_esc(item.get('readiness'))}</p></div></div>"
-        "<p><strong>Historical asset modified? NO</strong></p>"
-        + "".join(
-            f"<p>{_esc(diff.get('field'))}: {_esc(diff.get('rationale'))}</p>"
-            for diff in _items(item.get("field_diffs"))
-        )
-        + "</article>"
-        for item in revisions
+    output = theme.output_language or (
+        manifest.output_language if manifest else config.get("output_language")
     )
-    trace_html = "".join(
-        f'<li><a href="#case-{_esc(_ref_id(item.get("target")))}">{_esc(_ref_id(item.get("source")))} → {_esc(_ref_id(item.get("target")))}</a> ({_esc(item.get("relation"))})</li>'
-        for item in traceability
-    )
-    gaps = "".join(f"<li>{_esc(item)}</li>" for item in _list(data.get("limitations")))
-    binding = _mapping(data.get("input_binding"))
-    manifest = _mapping(data.get("manifest"))
-    configuration = _mapping(manifest.get("configuration"))
-    generation = "".join(
-        f"<li>{_esc(key)}: <code>{_esc(value)}</code></li>"
-        for key, value in sorted(binding.items())
-    )
-    generation += "".join(
-        f"<li>configuration.{_esc(key)}: <code>{_esc(value)}</code></li>"
-        for key, value in sorted(configuration.items())
-    )
-    generation += "".join(
-        f"<li>{_esc(key)}: <code>{_esc(manifest.get(key))}</code></li>"
-        for key in ("created_at", "tool_version")
-        if manifest.get(key) is not None
-    )
-    nav_items = [("cases", "Test Cases")]
-    nav_items += [("shared", "Shared Steps")] if shared else []
-    nav_items += [("parameters", "Parameters")] if parameters else []
-    nav_items += [("changes", "Brownfield Changes")] if revisions else []
-    nav_items += [("trace", "Traceability")] if traceability else []
-    nav_items += [("gaps", "Risks & Gaps")] if gaps else []
-    nav_items += [("generation", "Generation Info")]
-    navigation = "".join(f'<a href="#{key}">{title}</a>' for key, title in nav_items)
-    title = theme.project_name or "M3 Test Generation Report"
-    return (
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        f"<title>{_esc(title)}</title><style>:root{{--accent:{theme.accent}}}"
-        "body{font:16px system-ui;max-width:76rem;margin:auto;padding:2rem;line-height:1.5}"
-        "nav{display:flex;gap:1rem;flex-wrap:wrap}section{border-top:1px solid #ccc;margin-top:2rem}"
-        "article{padding:1rem 0}.status,.chip{display:inline-block;padding:.2rem .5rem;margin:.2rem;"
-        "border:1px solid var(--accent);border-radius:.3rem}.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem}"
-        "body[data-density=compact] article{padding:.35rem 0}pre{white-space:pre-wrap}"
-        "@media(max-width:700px){.compare{grid-template-columns:1fr}}</style></head>"
-        f'<body data-density="{_esc(theme.density)}">'
-        f"<header><h1>{_esc(title)}</h1><p>Mode: {_esc(data.get('mode'))} | Snapshot: {_esc(data.get('snapshot_id'))} | Status: {_esc(data.get('status'))}</p><nav>{navigation}</nav></header>"
-        + _html_section("cases", "Test Cases", _html_cases(data, shared_by_id, parameter_by_id))
-        + _html_section("shared", "Shared Steps", shared_html)
-        + _html_section("parameters", "Parameters", parameter_html)
-        + _html_section("changes", "Brownfield Changes", revision_html)
-        + _html_section("trace", "Traceability", f"<ul>{trace_html}</ul>" if trace_html else "")
-        + _html_section("gaps", "Risks & Gaps", f"<ul>{gaps}</ul>" if gaps else "")
-        + _html_section(
-            "generation",
-            "Generation Info",
-            f"<ul><li>project_id: {_esc(data.get('project_id'))}</li><li>snapshot_id: {_esc(data.get('snapshot_id'))}</li>{generation}</ul>",
-        )
-        + "</body></html>\n"
-    )
+    return str(output) if output in {"pt-BR", "en"} else ("pt-BR" if locale == "pt-BR" else "en")
 
 
 def render_canonical(
-    report: Mapping[str, object], output_format: RenderFormat, theme: ReportTheme | None = None
+    report: Mapping[str, object],
+    output_format: RenderFormat,
+    theme: ReportTheme | None = None,
+    *,
+    context: ReviewContext | None = None,
 ) -> str:
-    renderers = {"json": render_json, "yaml": render_yaml, "markdown": render_markdown}
+    if output_format == "markdown":
+        return render_markdown(report, theme)
+    renderers = {"json": render_json, "yaml": render_yaml}
     return (
-        render_html(report, theme) if output_format == "html" else renderers[output_format](report)
+        render_html(report, theme, context=context)
+        if output_format == "html"
+        else renderers[output_format](report)
     )

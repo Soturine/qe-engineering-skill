@@ -54,12 +54,13 @@ For generation/risk/retrieval/TMS work also read the relevant policy documents.
 
 ## Current build rule
 
-**M0, M1, M2 and M3 are complete and validated. The active implementation milestone is M4 — Integrations & Production Agent Skill.**
+**M0, M1, M2 and M3 are complete and validated. The active milestone is M4 — Semantic QE & Production Agent Skill.**
 
-Follow the consolidated `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M4 may add optional
-Semantic Reasoning Provider and Azure/MCP/TMS adapter boundaries, production skill packaging,
-preview/approval/sync, idempotency and read-back behavior. It must not jump ahead into M5
-automation/execution or M6 change impact, benchmarks and advanced retrieval.
+Follow `docs/ROADMAP.md` and `docs/IMPLEMENTATION_SPEC.md`. M4 is local-first semantic QE,
+production skill packaging and human outputs. After green H4, deliver D1 Technical Preview and
+freeze before H5 for presentation. Do not implement live TMS connectors in M4. Execution priority
+is M4 → M6 → M5; external integrations/automation belong to M5 after M6. Existing adapter safety
+contracts remain binding, but concrete sync/idempotency/read-back execution is future M5 work.
 
 M0 trust contracts, M1 ingestion boundaries, M2 audit/scenario semantics and M3 generation/
 history-preservation guarantees remain binding throughout M4 and later milestones. Provider output

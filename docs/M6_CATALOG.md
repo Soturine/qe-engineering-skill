@@ -109,7 +109,7 @@ Status: **DEFERRED_TO_M6**
 
 M6 requalifies the complete M0→M5 system, not only M6 code. Tier 1 covers M3 generation,
 M0 trust, M5 oracle-preserving automation and cross-layer behavior. Tier 2 covers M2 analysis,
-M1 ingestion and M4 integration/approval/sync behavior. M3 receives the heaviest review because
+M1 ingestion and the future M5 integration/approval/sync behavior. M3 receives the heaviest review because
 it first converts analysis into operational Test Cases.
 
 ## M6-M — Independent audit must try to break M3

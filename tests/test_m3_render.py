@@ -3,6 +3,7 @@ import json
 import yaml
 
 from qe_skill import domain as d
+from qe_skill.adjudication import RelationInput, build_relation_graph
 from qe_skill.m2 import analyze_project
 from qe_skill.m3 import (
     DraftSupportedText,
@@ -19,8 +20,11 @@ from qe_skill.m3_render import (
     render_markdown,
     render_yaml,
 )
+from qe_skill.normalization import normalize_candidate_set
+from qe_skill.review import ReviewContext
 
 from .helpers import representative
+from .normalization_helpers import prepared, simple_meaning
 
 
 def test_renderers_preserve_canonical_core_facts_deterministically() -> None:
@@ -77,6 +81,69 @@ def test_renderer_is_offline_and_theme_changes_presentation_only() -> None:
     assert "Synthetic Review" in page and "#123456" in page
     assert "http://" not in page and "https://" not in page
     assert render_json(report) == canonical
+
+
+def test_ptbr_project_defaults_to_localized_review_without_translating_content() -> None:
+    model, analysis, report = _report()
+    model.ledger.manifest.project_locale = "pt-BR"
+    model.ledger.manifest.output_language = "source"
+    report = generate_m3(model, analyze_project(model))
+    page = render_html(
+        report, context=ReviewContext(project_model=model, analysis=analyze_project(model))
+    )
+    assert '<html lang="pt-BR">' in page
+    for label in ("Plano de Testes", "Visão Geral", "Casos de Teste", "Resultado Esperado"):
+        assert label in page
+    assert "The synthetic record is retained." in page
+    assert "access_token" not in page
+    assert "https://" not in page and "http://" not in page
+    assert "@media(max-width:700px)" in page and 'id="search"' in page
+    assert "focus-visible" in page and 'aria-live="polite"' in page
+    markdown = render_markdown(report, ReportTheme(output_language="pt-BR"))
+    assert "# Plano de Testes" in markdown and "Revisar cenário" in markdown
+
+
+def test_review_context_exposes_validated_evidence_and_h4_conflict() -> None:
+    model, analysis, report = _report()
+    inputs: list[RelationInput] = []
+    for text, modality, source in (
+        ("O cliente deve confirmar por SMS.", "MUST", "prd"),
+        ("O cliente não pode confirmar por SMS.", "MUST_NOT", "adr"),
+    ):
+        semantic_model, request, result, candidates = prepared(
+            text,
+            simple_meaning(
+                actor_label="customer",
+                actor_surface="cliente",
+                capability_label="confirm_sms",
+                capability_surface="confirmar por SMS",
+                modality=modality,
+                polarity="NEGATIVE" if modality == "MUST_NOT" else "POSITIVE",
+            ),
+            source_id=source,
+            source_language="pt-BR",
+        )
+        inputs.append(
+            RelationInput(
+                normalization=normalize_candidate_set(
+                    candidates, request, result, semantic_model.ledger
+                ),
+                candidates=candidates,
+                request=request,
+                result=result,
+                ledger=semantic_model.ledger,
+            )
+        )
+    graph = build_relation_graph(inputs)
+    context = ReviewContext(
+        project_model=model, analysis=analysis, semantic_inputs=inputs, relations=graph
+    )
+    page = render_html(report, ReportTheme(output_language="pt-BR"), context=context)
+    assert "Conflitos" in page and "Conflitante" in page
+    assert "Revisão humana necessária" in page
+    assert "O cliente deve confirmar por SMS." in page
+    assert "sem vencedor normativo" in page
+    assert f'href="#case-{report.cases[0].id}"' in page
 
 
 def test_brownfield_original_and_proposed_are_visible() -> None:

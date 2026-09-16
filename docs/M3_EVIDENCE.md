@@ -74,6 +74,6 @@ PDF/DOCX semantic parsing and full OpenAPI reference resolution are absent; sour
 not authenticated; duplicate semantics remain conservative. M3 neither publishes nor executes
 tests and implements only direct upstream-hash stale detection, not full change impact.
 
-Azure/MCP/TMS adapters and the optional Semantic Reasoning Provider are deferred to M4. Automation
-and execution are M5. Whole-system audit, semantic-mode benchmarks, advanced retrieval, and change
-impact remain M6 work cataloged in `M6_CATALOG.md` and `SEMANTIC_REASONING_ROADMAP.md`.
+The optional Semantic Reasoning Provider remains M4 work. The revised roadmap places whole-system
+audit, advanced retrieval and change impact in M6 immediately after M4, followed by Azure/MCP/TMS
+adapters and automation/execution in M5. See `ROADMAP.md` for current allocation.
