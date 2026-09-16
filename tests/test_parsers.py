@@ -1,4 +1,8 @@
+import zipfile
 from pathlib import Path
+
+from pypdf import PdfWriter
+from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
 from qe_skill.inventory import inventory_sources
 from qe_skill.parsers import ParserLimits, parse_entry
@@ -32,6 +36,92 @@ def test_unclosed_markdown_fence_is_partial_not_silently_complete(tmp_path: Path
     result = parse_file(tmp_path, "partial.md", "# Heading\n```\nunclosed")
     assert result.status == "PARTIAL"
     assert result.issues
+
+
+def test_html_extracts_visible_text_without_active_content(tmp_path: Path) -> None:
+    result = parse_file(
+        tmp_path,
+        "requirements.html",
+        "<h1>Requisitos</h1><script>run_shell()</script>"
+        "<p>O cliente deve manter order_id literal.</p>",
+    )
+    assert result.status == "PARSED"
+    assert [item.text for item in result.extractions] == [
+        "Requisitos",
+        "O cliente deve manter order_id literal.",
+    ]
+
+
+def test_docx_extracts_bounded_paragraphs_with_stable_locators(tmp_path: Path) -> None:
+    document = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+        "<w:body><w:p><w:r><w:t>O cliente pode cancelar.</w:t></w:r></w:p>"
+        "<w:p><w:r><w:t>GET /orders/{id}</w:t></w:r></w:p></w:body></w:document>"
+    )
+    path = tmp_path / "requirements.docx"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("word/document.xml", document)
+    report = inventory_sources(tmp_path, project_id="synthetic", snapshot_id="v1")
+    result = parse_entry(tmp_path, report.entries[0])
+    assert result.status == "PARSED"
+    assert [(item.location, item.text) for item in result.extractions] == [
+        ("word/document.xml paragraph 1", "O cliente pode cancelar."),
+        ("word/document.xml paragraph 2", "GET /orders/{id}"),
+    ]
+
+
+def test_docx_rejects_unsafe_container_members(tmp_path: Path) -> None:
+    path = tmp_path / "unsafe.docx"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("../outside.xml", "not written")
+        archive.writestr("word/document.xml", "<document />")
+    report = inventory_sources(tmp_path, project_id="synthetic", snapshot_id="v1")
+    result = parse_entry(tmp_path, report.entries[0])
+    assert result.status == "FAILED"
+    assert result.extractions == []
+    assert result.issues == ["Parser rejected source: ParseFailure."]
+
+
+def test_textual_pdf_extracts_page_text_and_blank_pdf_is_partial(tmp_path: Path) -> None:
+    writer = PdfWriter()
+    page = writer.add_blank_page(width=300, height=300)
+    font = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Font"),
+            NameObject("/Subtype"): NameObject("/Type1"),
+            NameObject("/BaseFont"): NameObject("/Helvetica"),
+        }
+    )
+    page[NameObject("/Resources")] = DictionaryObject(
+        {
+            NameObject("/Font"): DictionaryObject(
+                {NameObject("/F1"): writer._add_object(font)}  # noqa: SLF001
+            )
+        }
+    )
+    stream = DecodedStreamObject()
+    stream.set_data(b"BT /F1 12 Tf 20 250 Td (The client must retain order_id.) Tj ET")
+    page[NameObject("/Contents")] = writer._add_object(stream)  # noqa: SLF001
+    path = tmp_path / "requirement.pdf"
+    with path.open("wb") as output:
+        writer.write(output)
+    report = inventory_sources(tmp_path, project_id="synthetic", snapshot_id="v1")
+    result = parse_entry(tmp_path, report.entries[0])
+    assert result.status == "PARSED"
+    assert result.extractions[0].location == "page 1"
+    assert "order_id" in result.extractions[0].text
+
+    blank_writer = PdfWriter()
+    blank_writer.add_blank_page(width=100, height=100)
+    blank = tmp_path / "blank.pdf"
+    with blank.open("wb") as output:
+        blank_writer.write(output)
+    blank_inventory = inventory_sources(tmp_path, project_id="synthetic", snapshot_id="v2")
+    blank_entry = next(item for item in blank_inventory.entries if item.path == "blank.pdf")
+    blank_result = parse_entry(tmp_path, blank_entry)
+    assert blank_result.status == "PARTIAL"
+    assert "OCR was not attempted" in blank_result.issues[-1]
 
 
 def test_json_data_duplicate_malformed_depth_and_count_limits(tmp_path: Path) -> None:

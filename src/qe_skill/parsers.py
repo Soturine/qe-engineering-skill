@@ -5,14 +5,19 @@ from __future__ import annotations
 import ast
 import datetime as dt
 import hashlib
+import io
 import json
 import re
+import zipfile
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Literal, NoReturn, cast
+from xml.etree import ElementTree
 
 import yaml
 from pydantic import Field, JsonValue
+from pypdf import PdfReader
 from yaml.nodes import MappingNode, Node, ScalarNode, SequenceNode
 
 from qe_skill.domain import Artifact, Digest, Ref
@@ -50,6 +55,9 @@ class ExtractionRecord(Artifact):
         "paragraph",
         "list_item",
         "code_fence",
+        "document_page",
+        "document_paragraph",
+        "document_section",
         "structured_value",
         "openapi_operation",
         "openapi_parameter",
@@ -88,6 +96,33 @@ class ParseResult(Artifact):
 
 class ParseFailure(ValueError):
     pass
+
+
+class _BoundedHTMLTextParser(HTMLParser):
+    """Extract visible text only; active content and attributes are ignored."""
+
+    def __init__(self, max_records: int) -> None:
+        super().__init__(convert_charrefs=True)
+        self.max_records = max_records
+        self.records: list[tuple[str, int]] = []
+        self._ignored_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        del attrs
+        if tag.casefold() in {"script", "style", "template"}:
+            self._ignored_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.casefold() in {"script", "style", "template"} and self._ignored_depth:
+            self._ignored_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        text = " ".join(data.split())
+        if self._ignored_depth or not text:
+            return
+        if len(self.records) >= self.max_records:
+            raise ParseFailure("HTML text record count exceeds the configured parser limit.")
+        self.records.append((text, self.getpos()[0]))
 
 
 def _inside(root: Path, candidate: Path) -> bool:
@@ -777,6 +812,111 @@ def _project_model_records(
     return records
 
 
+def _html_records(entry: InventoryEntry, text: str, limits: ParserLimits) -> list[ExtractionRecord]:
+    parser = _BoundedHTMLTextParser(limits.max_records)
+    parser.feed(text)
+    parser.close()
+    return [
+        _record(
+            entry,
+            kind="document_paragraph",
+            location=f"html text {index}",
+            text=value,
+            line_start=line,
+            line_end=line,
+            method="html-visible-text",
+            interpretation="structural",
+        )
+        for index, (value, line) in enumerate(parser.records, 1)
+    ]
+
+
+def _docx_records(
+    entry: InventoryEntry, data: bytes, limits: ParserLimits
+) -> list[ExtractionRecord]:
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            members = archive.infolist()
+            if len(members) > limits.max_records:
+                raise ParseFailure("DOCX member count exceeds the configured parser limit.")
+            total_size = 0
+            for member in members:
+                path = Path(member.filename)
+                if path.is_absolute() or ".." in path.parts:
+                    raise ParseFailure("DOCX contains an unsafe member path.")
+                total_size += member.file_size
+                if total_size > limits.max_bytes * 20:
+                    raise ParseFailure("DOCX expanded size exceeds the configured parser limit.")
+            try:
+                document = archive.read("word/document.xml")
+            except KeyError as error:
+                raise ParseFailure("DOCX has no word/document.xml part.") from error
+    except zipfile.BadZipFile as error:
+        raise ParseFailure("DOCX container is malformed.") from error
+    try:
+        root = ElementTree.fromstring(document)
+    except ElementTree.ParseError as error:
+        raise ParseFailure("DOCX document XML is malformed.") from error
+    namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    records: list[ExtractionRecord] = []
+    for index, paragraph in enumerate(root.iter(f"{namespace}p"), 1):
+        text = "".join(node.text or "" for node in paragraph.iter(f"{namespace}t")).strip()
+        if not text:
+            continue
+        records.append(
+            _record(
+                entry,
+                kind="document_paragraph",
+                location=f"word/document.xml paragraph {index}",
+                text=text,
+                method="docx-openxml-text",
+                interpretation="structural",
+            )
+        )
+        if len(records) > limits.max_records:
+            raise ParseFailure("DOCX paragraph count exceeds the configured parser limit.")
+    return records
+
+
+def _pdf_records(
+    entry: InventoryEntry, data: bytes, limits: ParserLimits
+) -> tuple[list[ExtractionRecord], list[str]]:
+    try:
+        reader = PdfReader(io.BytesIO(data), strict=True)
+        if reader.is_encrypted:
+            raise ParseFailure("Encrypted PDF text extraction is unsupported.")
+        if len(reader.pages) > limits.max_records:
+            raise ParseFailure("PDF page count exceeds the configured parser limit.")
+        records: list[ExtractionRecord] = []
+        issues: list[str] = []
+        extracted_chars = 0
+        for page_number, page in enumerate(reader.pages, 1):
+            text = (page.extract_text() or "").strip()
+            if not text:
+                issues.append(f"PDF page {page_number} has no extractable text.")
+                continue
+            extracted_chars += len(text)
+            if extracted_chars > limits.max_bytes:
+                raise ParseFailure("PDF extracted text exceeds the configured parser limit.")
+            records.append(
+                _record(
+                    entry,
+                    kind="document_page",
+                    location=f"page {page_number}",
+                    text=text,
+                    method="pypdf-text",
+                    interpretation="structural",
+                )
+            )
+        if not records:
+            issues.append("PDF contains no reliably extractable text; OCR was not attempted.")
+        return records, issues
+    except ParseFailure:
+        raise
+    except Exception as error:
+        raise ParseFailure(f"PDF parser rejected source: {type(error).__name__}.") from error
+
+
 def parse_entry(
     root: Path,
     entry: InventoryEntry,
@@ -804,47 +944,57 @@ def parse_entry(
     current_hash = hashlib.sha256(data).hexdigest()
     if current_hash != entry.content_hash:
         return _failure(entry, "MUTATED", parser, "Source changed after inventory.")
-    try:
-        text = data.decode("utf-8-sig")
-    except UnicodeError:
-        return _failure(entry, "FAILED", parser, "Source is not valid UTF-8 text.")
-    line_count = max(len(text.splitlines()), 1)
     issues: list[str] = []
     try:
-        if entry.source_type in {"markdown", "text"}:
-            records = _markdown_records(entry, text, entry.source_type == "markdown")
-            if any(
-                record.kind == "code_fence" and record.interpretation == "unresolved"
-                for record in records
-            ):
-                issues.append("Markdown contains an unclosed fenced-code block.")
-        elif entry.source_type == "python":
-            records = _python_records(entry, text)
-        elif entry.source_type in {"json", "yaml"}:
-            if entry.source_type == "json":
-                value = json.loads(
-                    text, object_pairs_hook=_unique_object, parse_constant=_reject_constant
-                )
-                method = "json-data"
-            else:
-                yaml_node = yaml.compose(text, Loader=yaml.SafeLoader)
-                if yaml_node is None:
-                    value = None
-                else:
-                    _check_yaml_nodes(yaml_node, limits)
-                    value = yaml.load(text, Loader=yaml.SafeLoader)
-                method = "yaml-safe-data"
-            bounded = _bounded_value(value, limits)
-            records = _structured_records(entry, bounded, method, line_count, limits)
-            records.extend(_openapi_records(entry, bounded, line_count))
-            records.extend(_project_model_records(entry, bounded, line_count))
-            remote = _remote_references(bounded)
-            if remote:
-                issues.append(
-                    f"Remote references were recorded but not fetched ({len(remote)} blocked)."
-                )
+        if entry.source_type == "docx":
+            records = _docx_records(entry, data, limits)
+        elif entry.source_type == "pdf":
+            records, pdf_issues = _pdf_records(entry, data, limits)
+            issues.extend(pdf_issues)
         else:
-            return _failure(entry, "UNSUPPORTED", parser, "No parser supports this source type.")
+            try:
+                text = data.decode("utf-8-sig")
+            except UnicodeError as error:
+                raise ParseFailure("Source is not valid UTF-8 text.") from error
+            line_count = max(len(text.splitlines()), 1)
+            if entry.source_type in {"markdown", "text"}:
+                records = _markdown_records(entry, text, entry.source_type == "markdown")
+                if any(
+                    record.kind == "code_fence" and record.interpretation == "unresolved"
+                    for record in records
+                ):
+                    issues.append("Markdown contains an unclosed fenced-code block.")
+            elif entry.source_type == "html":
+                records = _html_records(entry, text, limits)
+            elif entry.source_type == "python":
+                records = _python_records(entry, text)
+            elif entry.source_type in {"json", "yaml"}:
+                if entry.source_type == "json":
+                    value = json.loads(
+                        text, object_pairs_hook=_unique_object, parse_constant=_reject_constant
+                    )
+                    method = "json-data"
+                else:
+                    yaml_node = yaml.compose(text, Loader=yaml.SafeLoader)
+                    if yaml_node is None:
+                        value = None
+                    else:
+                        _check_yaml_nodes(yaml_node, limits)
+                        value = yaml.load(text, Loader=yaml.SafeLoader)
+                    method = "yaml-safe-data"
+                bounded = _bounded_value(value, limits)
+                records = _structured_records(entry, bounded, method, line_count, limits)
+                records.extend(_openapi_records(entry, bounded, line_count))
+                records.extend(_project_model_records(entry, bounded, line_count))
+                remote = _remote_references(bounded)
+                if remote:
+                    issues.append(
+                        f"Remote references were recorded but not fetched ({len(remote)} blocked)."
+                    )
+            else:
+                return _failure(
+                    entry, "UNSUPPORTED", parser, "No parser supports this source type."
+                )
     except (
         ParseFailure,
         json.JSONDecodeError,

@@ -32,8 +32,12 @@ unsupported content, limits, symlink escape and mutation remain visible. Discove
 | OpenAPI JSON/YAML | paths/methods, operations, parameters, request/response schema refs, statuses, security, schemas/properties/required fields | structural API evidence, not business requirements |
 | Python | standard-library AST modules/classes/functions/async functions/imports/decorators/signatures/spans | never imported; decorators are syntax, not verified routes |
 
-Archives, binaries, PDF/DOCX and other code languages remain explicitly unsupported for semantic
-parsing. No archive extraction occurs.
+M1 originally left archives, binaries, PDF/DOCX and other code languages unsupported. M4.H5 now
+adds bounded, inert extraction for HTML visible text, DOCX OpenXML paragraphs and text-bearing PDF
+pages. DOCX is treated as a narrowly scoped document container, not as a general archive: member
+paths, count and expanded size are bounded, macros/relationships are never executed or fetched.
+Scanned/image-only PDF remains explicitly partial because OCR is not attempted. Other archives,
+binaries and code languages remain unsupported.
 
 ## Project Model capability
 
@@ -60,8 +64,9 @@ are rejected. M1 creates no normative oracles and no generated tests.
 - local output only when the operator supplies `--output-dir`;
 - project/snapshot/source-hash validation before semantic normalization.
 
-PyYAML 6.0.3 is the sole new runtime dependency. `types-PyYAML` is pinned for strict typing.
-Both are in the complete development lock and supply-chain gates. The published PyPI advisory
+PyYAML 6.0.3 is the original M1 runtime dependency; M4.H5 additionally pins pypdf 6.19.0 for
+bounded local PDF text extraction. `types-PyYAML` is pinned for strict typing. All are in the
+complete development lock and supply-chain gates. The published PyPI advisory
 audit is point-in-time evidence, not a guarantee that no vulnerability exists.
 
 ## Automated evidence

@@ -456,8 +456,9 @@ M3 produces provenance-backed manual Test Model proposals and deterministic JSON
 HTML reviews without external writes. M4.H1 provides the provider-neutral reasoning boundary and
 M4.H2 provides non-normative, provenance-bound semantic candidate/cache contracts. M4.H3 adds
 grounded multilingual normalization with PT-BR/mixed-language coverage and no authority promotion;
-H4 adds evidence-validated non-authoritative relations. Real-document orchestration and production
-skill packaging remain M4 work after D1 Technical Preview. External integrations/automation are M5,
+H4 adds evidence-validated non-authoritative relations. M4.H5 adds bounded HTML, DOCX and textual
+PDF extraction while preserving literal source text and explicit partial states for image-only PDF.
+Semantic agent orchestration and production skill packaging remain active M4 work. External integrations/automation are M5,
 after M6; whole-system audit, change impact and
 advanced retrieval remain M6. Read `docs/STATUS.md` for the authoritative current state.
 
@@ -468,4 +469,4 @@ Build the current offline PT-BR Technical Preview from repository-local syntheti
 ```
 
 Then open `examples/technical-preview/output/test-plan.html`. This demonstrates validated local
-rendering and H4 conflict visibility; it does not claim H5 arbitrary-document orchestration.
+rendering and H4 conflict visibility; it is not the production `qe run` flow.

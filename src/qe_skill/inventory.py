@@ -29,6 +29,7 @@ DEFAULT_IGNORED_DIRECTORIES = frozenset(
         ".git",
         ".hg",
         ".mypy_cache",
+        ".qe",
         ".pytest_cache",
         ".ruff_cache",
         ".svn",
@@ -41,7 +42,21 @@ DEFAULT_IGNORED_DIRECTORIES = frozenset(
         "output",
     }
 )
-SUPPORTED_EXTENSIONS = frozenset({".json", ".md", ".markdown", ".py", ".txt", ".yaml", ".yml"})
+SUPPORTED_EXTENSIONS = frozenset(
+    {
+        ".docx",
+        ".htm",
+        ".html",
+        ".json",
+        ".md",
+        ".markdown",
+        ".pdf",
+        ".py",
+        ".txt",
+        ".yaml",
+        ".yml",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -98,8 +113,12 @@ class InventoryChange(Artifact):
 def _source_type(extension: str) -> str:
     return {
         ".json": "json",
+        ".docx": "docx",
+        ".htm": "html",
+        ".html": "html",
         ".md": "markdown",
         ".markdown": "markdown",
+        ".pdf": "pdf",
         ".py": "python",
         ".txt": "text",
         ".yaml": "yaml",

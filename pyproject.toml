@@ -7,7 +7,12 @@ name = "qe-engineering-skill"
 version = "0.4.0"
 description = "Deterministic evidence and trust contracts for manual quality engineering"
 requires-python = ">=3.12"
-dependencies = ["pydantic==2.10.6", "jsonschema==4.23.0", "PyYAML==6.0.3"]
+dependencies = [
+    "pydantic==2.10.6",
+    "jsonschema==4.23.0",
+    "PyYAML==6.0.3",
+    "pypdf==6.19.0",
+]
 
 [project.scripts]
 qe = "qe_skill.cli:main"
