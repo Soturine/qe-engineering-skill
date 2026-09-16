@@ -57,6 +57,8 @@ class ProviderProposal(d.Record):
     statement: d.Text | None = None
     structured_value: dict[str, JsonValue] = Field(default_factory=dict)
     source_excerpt_ids: list[d.Text] = Field(min_length=1)
+    interpretation: Literal["inferred", "unresolved"] = "inferred"
+    confidence: float = Field(default=0.5, ge=0, le=1)
     inferred: Literal[True] = True
 
     @model_validator(mode="after")
@@ -76,6 +78,9 @@ class ReasoningRequest(d.Artifact):
 
     @model_validator(mode="after")
     def validate_scope_and_bounds(self) -> ReasoningRequest:
+        excerpt_ids = [excerpt.id for excerpt in self.excerpts]
+        if len(excerpt_ids) != len(set(excerpt_ids)):
+            raise ValueError("reasoning excerpt ids must be unique")
         if len(self.excerpts) > self.limits.max_excerpts:
             raise ValueError("reasoning excerpt count exceeds configured bound")
         if any(len(excerpt.text) > self.limits.max_chars_per_excerpt for excerpt in self.excerpts):

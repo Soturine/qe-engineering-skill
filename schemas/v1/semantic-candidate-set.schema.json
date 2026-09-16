@@ -1,0 +1,531 @@
+{
+  "$defs": {
+    "CacheSourceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "source_hash"
+      ],
+      "title": "CacheSourceBinding",
+      "type": "object"
+    },
+    "CandidateEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_class": {
+          "enum": [
+            "CONTRACT",
+            "TECHNICAL_CONTRACT",
+            "ORGANIZATIONAL_POLICY",
+            "IMPLEMENTATION",
+            "HISTORICAL",
+            "GUIDANCE"
+          ],
+          "title": "Authority Class",
+          "type": "string"
+        },
+        "excerpt": {
+          "$ref": "#/$defs/Ref"
+        },
+        "location": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Location",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Ref"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_lifecycle": {
+          "enum": [
+            "draft",
+            "approved",
+            "active",
+            "superseded",
+            "deprecated",
+            "archived",
+            "unknown"
+          ],
+          "title": "Source Lifecycle",
+          "type": "string"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "excerpt",
+        "source",
+        "source_hash",
+        "location",
+        "authority_class",
+        "source_lifecycle"
+      ],
+      "title": "CandidateEvidence",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ProviderIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model",
+          "type": "string"
+        },
+        "model_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model Version",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "model_version",
+        "adapter_version"
+      ],
+      "title": "ProviderIdentity",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "SemanticCacheBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "extractor_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "EXTRACT",
+            "RELATE",
+            "SYNTHESIZE",
+            "PROBE_SCENARIOS"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "provider_identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/CacheSourceBinding"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "snapshot_id",
+        "request_hash",
+        "sources",
+        "provider_identity",
+        "operation",
+        "prompt_version",
+        "configuration_hash",
+        "extractor_version"
+      ],
+      "title": "SemanticCacheBinding",
+      "type": "object"
+    },
+    "SemanticCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_promoted": {
+          "const": false,
+          "default": false,
+          "title": "Authority Promoted",
+          "type": "boolean"
+        },
+        "candidate_type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Candidate Type",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/CandidateEvidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "extractor_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "interpretation": {
+          "enum": [
+            "explicit",
+            "structural",
+            "heuristic",
+            "inferred",
+            "unresolved"
+          ],
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "normative": {
+          "const": false,
+          "default": false,
+          "title": "Normative",
+          "type": "boolean"
+        },
+        "operation": {
+          "enum": [
+            "EXTRACT",
+            "RELATE",
+            "SYNTHESIZE",
+            "PROBE_SCENARIOS"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "producer": {
+          "enum": [
+            "DETERMINISTIC",
+            "HEURISTIC",
+            "PROVIDER"
+          ],
+          "title": "Producer",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "provider_identity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_state": {
+          "enum": [
+            "PENDING_REVIEW",
+            "REVIEW_REQUIRED",
+            "BLOCKED_SOURCE"
+          ],
+          "title": "Review State",
+          "type": "string"
+        },
+        "run_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statement"
+        },
+        "structured_value": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Structured Value",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "candidate_type",
+        "evidence",
+        "interpretation",
+        "confidence",
+        "inferred",
+        "producer",
+        "operation",
+        "prompt_version",
+        "configuration_hash",
+        "extractor_version",
+        "run_id",
+        "created_at",
+        "review_state"
+      ],
+      "title": "SemanticCandidate",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:semantic-candidate-set",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_changed": {
+      "const": false,
+      "default": false,
+      "title": "Authority Changed",
+      "type": "boolean"
+    },
+    "cache_binding": {
+      "$ref": "#/$defs/SemanticCacheBinding"
+    },
+    "cache_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/SemanticCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "request": {
+      "$ref": "#/$defs/Ref"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "result": {
+      "$ref": "#/$defs/Ref"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "NOT_REQUESTED",
+        "READY_FOR_REVIEW",
+        "PARTIAL",
+        "BLOCKED_PROVIDER",
+        "STALE_INPUT",
+        "REJECTED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "request",
+    "request_hash",
+    "result",
+    "result_hash",
+    "cache_binding",
+    "cache_key",
+    "status",
+    "candidates"
+  ],
+  "title": "SemanticCandidateSet",
+  "type": "object"
+}

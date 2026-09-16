@@ -41,6 +41,12 @@ local CLI behavior. Linux and Windows CI passed for the M3 completion candidate;
   greenfield/brownfield/clone proposals, revision diffs, Shared Step/Parameter candidates,
   risk-proportional evidence, canonical artifacts, static renderers and local `generate`/`render`
   CLI commands.
+- M4.H1 typed provider-neutral reasoning requests/results with deterministic-only operation,
+  explicit provider failure states, bounded fake-provider tests and no live-provider dependency.
+- M4.H2 non-normative Candidate Semantic Records with exact request/result/source/provider/prompt/
+  configuration/extractor cache binding, source mutation invalidation, provenance/authority tamper
+  detection and cross-project isolation. This checkpoint is implemented and validated on Linux
+  and Windows.
 
 ## Current limitations
 
@@ -58,6 +64,8 @@ local CLI behavior. Linux and Windows CI passed for the M3 completion candidate;
 - Existing-test audit consumes explicit structured audit facts; it does not infer semantics from
   arbitrary historical prose.
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
+- H2 candidates are review artifacts only and are not yet normalized into the Project Model or
+  connected to the ingestion CLI. Natural-language normalization begins in M4.H3.
 
 ## Deferred by milestone
 

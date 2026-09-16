@@ -102,6 +102,13 @@ def test_request_rejects_cross_project_and_resource_overflow() -> None:
         )
 
 
+def test_request_rejects_duplicate_excerpt_ids() -> None:
+    value = request().model_dump(mode="json")
+    value["excerpts"].append(value["excerpts"][0].copy())
+    with pytest.raises(ValidationError, match="excerpt ids must be unique"):
+        ReasoningRequest.model_validate(value)
+
+
 class FailingProvider(StaticReasoningProvider):
     def extract(self, request: ReasoningRequest) -> ProviderResponse:
         raise RuntimeError("synthetic secret must not be copied")

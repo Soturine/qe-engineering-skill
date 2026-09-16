@@ -438,6 +438,8 @@ inventory, ingestion, analysis, generation and rendering commands. See `docs/CLI
 for contracts, reproduction evidence and limitations.
 
 M3 produces provenance-backed manual Test Model proposals and deterministic JSON/YAML/Markdown/
-HTML reviews without external writes. External integrations/publication and the optional Semantic
-Reasoning Provider are deferred to M4; automation is M5; whole-system audit, benchmarks, change
-impact and advanced retrieval remain M6. Read `docs/STATUS.md` for the authoritative current state.
+HTML reviews without external writes. M4.H1 provides the provider-neutral reasoning boundary and
+M4.H2 provides non-normative, provenance-bound semantic candidate/cache contracts; live providers,
+natural-language normalization, external integrations/publication and production skill packaging
+remain incremental M4 work. Automation is M5; whole-system audit, benchmarks, change impact and
+advanced retrieval remain M6. Read `docs/STATUS.md` for the authoritative current state.
