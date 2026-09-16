@@ -8,4 +8,5 @@ pytest-cache-files-*/
 .ruff_cache/
 build/
 dist/
+examples/technical-preview/output/
 .coverage
