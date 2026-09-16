@@ -1,6 +1,7 @@
 from qe_skill.adjudication import RelationInput, build_relation_graph, validate_relation_graph
 from qe_skill.normalization import normalize_candidate_set
 from tests.normalization_helpers import grounded_term, meaning, prepared, simple_meaning
+from tests.test_semantic_adjudication import provider_relation
 
 
 def normalized_set(text: str, value: dict, **kwargs):
@@ -140,3 +141,35 @@ def test_adjudication_tamper_is_detected_by_exact_reconstruction() -> None:
     graph = build_relation_graph([left, right])
     graph.adjudications[0].human_review_required = True
     assert not validate_relation_graph(graph, [left, right]).valid
+
+
+def test_ptbr_provider_relation_stays_candidate_only() -> None:
+    before = normalized_set(
+        "O cliente pode cancelar o pedido antes do faturamento.",
+        simple_meaning(
+            actor_label="customer",
+            actor_surface="cliente",
+            capability_label="cancel_order",
+            capability_surface="cancelar o pedido",
+            modality="MAY",
+        ),
+        source_id="before",
+    )
+    paid = normalized_set(
+        "Pedidos com pagamento confirmado não podem ser cancelados.",
+        simple_meaning(
+            actor_label=None,
+            actor_surface=None,
+            capability_label="cancel_order",
+            capability_surface="cancelados",
+            modality="MUST_NOT",
+            polarity="NEGATIVE",
+        ),
+        source_id="paid",
+    )
+    candidate = provider_relation(before, paid, "CONFLICTING")
+    graph = build_relation_graph([before, paid], relation_candidates=[candidate])
+    assert graph.relations[0].provider_candidate_relation == "CONFLICTING"
+    assert graph.relations[0].relation == "HUMAN_DECISION_REQUIRED"
+    assert graph.adjudications[0].human_review_required
+    assert graph.adjudications[0].winner is None

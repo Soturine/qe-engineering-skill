@@ -20,3 +20,10 @@ Incomplete or stale inputs fail closed. Conflicts always require human review.
 `SUPERSEDED` and `DEPLOYMENT_INSTANCE` are reserved vocabulary, not automatically emitted:
 source lifecycle alone does not identify a replacement, and implementation agreement does not
 prove a deployment relationship. Explicit relationship evidence is required for future support.
+
+Optional `RELATE` provider output is accepted only through a fully reconstructed H2 candidate
+envelope. Its pair IDs must resolve to current H3 records and its evidence must cite the sources of
+both records. The proposed relation remains visibly separate from the deterministic relation. It
+can turn an otherwise ambiguous pair into `HUMAN_DECISION_REQUIRED`, but cannot override a
+mechanically proven relation, select a winner or alter authority. Provider/deterministic
+disagreement is explicit and requires review.

@@ -130,6 +130,51 @@
       "title": "Project Id",
       "type": "string"
     },
+    "provider_candidate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Ref"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "provider_candidate_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Candidate Hash"
+    },
+    "provider_candidate_relation": {
+      "anyOf": [
+        {
+          "enum": [
+            "CONSISTENT",
+            "CONFLICTING",
+            "REFINEMENT",
+            "SUPERSEDED",
+            "DEPLOYMENT_INSTANCE",
+            "AMBIGUOUS",
+            "HUMAN_DECISION_REQUIRED"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Candidate Relation"
+    },
     "rationale_codes": {
       "items": {
         "minLength": 1,

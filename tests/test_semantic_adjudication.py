@@ -1,5 +1,20 @@
-from qe_skill.adjudication import RelationInput, build_relation_graph, validate_relation_graph
+from qe_skill import domain as d
+from qe_skill.adjudication import (
+    RelationCandidateInput,
+    RelationInput,
+    build_relation_graph,
+    validate_relation_graph,
+)
 from qe_skill.normalization import normalize_candidate_set
+from qe_skill.reasoning import (
+    ProviderIdentity,
+    ProviderProposal,
+    ProviderResponse,
+    ReasoningRequest,
+    StaticReasoningProvider,
+    run_reasoning,
+)
+from qe_skill.semantic import materialize_provider_candidates
 from tests.normalization_helpers import (
     grounded_term,
     meaning,
@@ -23,6 +38,63 @@ def relation(left, right):
     graph = build_relation_graph([left, right])
     assert graph.status == "COMPLETE" and len(graph.relations) == 1
     return graph, graph.relations[0], graph.adjudications[0]
+
+
+def provider_relation(left: RelationInput, right: RelationInput, proposed: str):
+    ledger = left.ledger.model_copy(deep=True)
+    ledger.sources.append(right.ledger.sources[0].model_copy(deep=True))
+    ledger.manifest.scope.append(right.ledger.manifest.scope[0].model_copy(deep=True))
+    excerpts = []
+    for name, source in (("left", left), ("right", right)):
+        excerpt = source.request.excerpts[0].model_copy(deep=True)
+        excerpt.id = f"relation-{name}"
+        excerpts.append(excerpt)
+    records = (left.normalization.records[0], right.normalization.records[0])
+    request = ReasoningRequest(
+        id="relation-request",
+        project_id="synthetic",
+        snapshot_id="v1",
+        operation="RELATE",
+        excerpts=excerpts,
+        supported_facts=[
+            d.Ref(id=item.id, project_id=item.project_id, snapshot_id=item.snapshot_id)
+            for item in records
+        ],
+        prompt_version="relation-v1",
+        configuration_hash="c" * 64,
+    )
+    response = ProviderResponse(
+        status="COMPLETE",
+        proposals=[
+            ProviderProposal(
+                candidate_type="semantic_relation_candidate",
+                structured_value={
+                    "semantic_relation": {
+                        "left_record_id": records[0].id,
+                        "right_record_id": records[1].id,
+                        "relation": proposed,
+                    }
+                },
+                source_excerpt_ids=[item.id for item in excerpts],
+                confidence=0.99,
+            )
+        ],
+    )
+    identity = ProviderIdentity(
+        provider="static-relation", model="fixture", model_version="1", adapter_version="1"
+    )
+    result = run_reasoning(request, StaticReasoningProvider(identity, {"RELATE": response}))
+    candidates = materialize_provider_candidates(
+        request,
+        result,
+        ledger,
+        run_id="run-h4-relate",
+        created_at="2026-09-16T00:00:00Z",
+        extractor_version="h4-v1",
+    )
+    return RelationCandidateInput(
+        candidates=candidates, request=request, result=result, ledger=ledger
+    )
 
 
 def test_agreement_preserves_both_records_and_ignores_confidence() -> None:
@@ -260,3 +332,55 @@ def test_numeric_difference_is_detected_without_a_relation_provider() -> None:
     _, edge, decision = relation(left, right)
     assert edge.relation == "CONFLICTING"
     assert decision.human_review_required and decision.winner is None
+
+
+def test_provider_relation_candidate_is_visible_but_requires_human_decision() -> None:
+    customer = normalized_set(
+        "The customer may cancel the order.",
+        simple_meaning(
+            actor_label="customer",
+            actor_surface="customer",
+            capability_label="cancel_order",
+            capability_surface="cancel the order",
+            modality="MAY",
+        ),
+        source_id="customer-rule",
+    )
+    admin = normalized_set(
+        "The administrator may approve the order.",
+        simple_meaning(
+            actor_label="administrator",
+            actor_surface="administrator",
+            capability_label="approve_order",
+            capability_surface="approve the order",
+            modality="MAY",
+        ),
+        source_id="admin-rule",
+    )
+    candidate = provider_relation(customer, admin, "REFINEMENT")
+    graph = build_relation_graph([customer, admin], relation_candidates=[candidate])
+    edge, decision = graph.relations[0], graph.adjudications[0]
+    assert edge.relation == "HUMAN_DECISION_REQUIRED"
+    assert edge.provider_candidate_relation == "REFINEMENT"
+    assert edge.provider_candidate is not None and edge.provider_candidate_hash is not None
+    assert decision.human_review_required and decision.winner is None
+    assert validate_relation_graph(graph, [customer, admin], [candidate]).valid
+
+
+def test_provider_cannot_override_deterministic_relation_or_omit_evidence() -> None:
+    left = normalized_set(
+        "The customer must authenticate within 5 seconds.", meaning(), source_id="left"
+    )
+    right = normalized_set(
+        "Within 5 seconds, the customer is required to authenticate.",
+        meaning(),
+        source_id="right",
+    )
+    candidate = provider_relation(left, right, "CONFLICTING")
+    graph = build_relation_graph([left, right], relation_candidates=[candidate])
+    assert graph.relations[0].relation == "CONSISTENT"
+    assert graph.relations[0].provider_candidate_relation == "CONFLICTING"
+    assert graph.adjudications[0].human_review_required
+    candidate.candidates.candidates[0].evidence.pop()
+    rejected = build_relation_graph([left, right], relation_candidates=[candidate])
+    assert rejected.status == "REJECTED" and not rejected.relations

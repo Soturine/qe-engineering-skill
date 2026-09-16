@@ -58,6 +58,8 @@ sequencing. It is a target contract; only capabilities listed below as implement
   require human review for conflicts/ambiguity/provider disagreement, reject stale or tampered H3
   envelopes, ignore confidence as a winner selector,
   and never promote facts or self-authorize providers.
+  Optional provider `RELATE` candidates are provenance-bound, visible and review-only; deterministic
+  relations remain authoritative for mechanically verifiable comparisons.
 - M4.D1 Technical Preview implementation provides an offline self-contained HTML review, PT-BR
   presentation, complete available Test Case fields, searchable/filterable cases, navigable
   evidence/traceability, visible gaps/reviews/H4 conflicts and a reproducible synthetic demo.

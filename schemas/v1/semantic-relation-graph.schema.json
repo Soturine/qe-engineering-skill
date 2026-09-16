@@ -86,6 +86,25 @@
       "title": "AdjudicationResult",
       "type": "object"
     },
+    "CandidateSetBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_set": {
+          "$ref": "#/$defs/Ref"
+        },
+        "candidate_set_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Candidate Set Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_set",
+        "candidate_set_hash"
+      ],
+      "title": "CandidateSetBinding",
+      "type": "object"
+    },
     "NormalizationBinding": {
       "additionalProperties": false,
       "properties": {
@@ -233,6 +252,51 @@
           "title": "Project Id",
           "type": "string"
         },
+        "provider_candidate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "provider_candidate_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Candidate Hash"
+        },
+        "provider_candidate_relation": {
+          "anyOf": [
+            {
+              "enum": [
+                "CONSISTENT",
+                "CONFLICTING",
+                "REFINEMENT",
+                "SUPERSEDED",
+                "DEPLOYMENT_INSTANCE",
+                "AMBIGUOUS",
+                "HUMAN_DECISION_REQUIRED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Candidate Relation"
+        },
         "rationale_codes": {
           "items": {
             "minLength": 1,
@@ -331,6 +395,13 @@
       "default": false,
       "title": "Authority Changed",
       "type": "boolean"
+    },
+    "candidate_inputs": {
+      "items": {
+        "$ref": "#/$defs/CandidateSetBinding"
+      },
+      "title": "Candidate Inputs",
+      "type": "array"
     },
     "external_writes": {
       "const": false,

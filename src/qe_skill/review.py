@@ -12,7 +12,12 @@ from collections.abc import Mapping
 from pydantic import Field
 
 from qe_skill import domain as d
-from qe_skill.adjudication import RelationInput, SemanticRelationGraph, validate_relation_graph
+from qe_skill.adjudication import (
+    RelationCandidateInput,
+    RelationInput,
+    SemanticRelationGraph,
+    validate_relation_graph,
+)
 from qe_skill.m2 import M2AnalysisReport
 from qe_skill.m3 import M3GenerationReport, validate_generation_report
 
@@ -21,6 +26,7 @@ class ReviewContext(d.Record):
     project_model: d.ProjectModel
     analysis: M2AnalysisReport
     semantic_inputs: list[RelationInput] = Field(default_factory=list)
+    relation_candidate_inputs: list[RelationCandidateInput] = Field(default_factory=list)
     relations: SemanticRelationGraph | None = None
 
     def validate_for(self, report: M3GenerationReport) -> None:
@@ -30,7 +36,9 @@ class ReviewContext(d.Record):
             if (
                 self.relations.project_id != report.project_id
                 or self.relations.snapshot_id != report.snapshot_id
-                or not validate_relation_graph(self.relations, self.semantic_inputs).valid
+                or not validate_relation_graph(
+                    self.relations, self.semantic_inputs, self.relation_candidate_inputs
+                ).valid
                 or self.relations.status != "COMPLETE"
             ):
                 raise ValueError("Semantic review context is stale, invalid or cross-scope.")

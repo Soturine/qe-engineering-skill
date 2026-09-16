@@ -50,6 +50,8 @@ oracle/Expected Result rendering.
 - exact normalized-record/set hash bindings and deterministic reconstruction validation;
 - source authority/lifecycle context remains visible and cannot be downgraded without detection;
 - provider disagreement and ambiguity require human review; confidence never selects a winner;
+- optional `RELATE` provider candidates retain their exact H2 envelope/hash, must cite both record
+  sources, remain separate from deterministic classification and cannot override it;
 - conflicts are preserved, no facts are promoted and providers cannot self-authorize;
 - PT-BR conflict/state evals verify that higher authority does not erase implementation divergence.
 
@@ -79,10 +81,11 @@ Remote Linux/Windows validation passed at `8ed0bdb7c6233e6db6c5e0e0d2695f06932f6
 - synthetic PT-BR demo builder and concise reproduction instructions under
   `examples/technical-preview/`.
 
-D1 local validation (2026-09-16): 324 tests/evals passed against source and the installed wheel,
+D1 local validation (2026-09-16), including the final H4 provider-relation addendum: 327 tests/evals passed against source and the installed wheel,
 with one Windows symlink-permission skip. Ruff, formatting, mypy, schema reproduction, pip check,
 dependency audit and the reproducible demo smoke passed. Wheel SHA-256:
-`8ad4b73cb50f3a6dfe7f681aa158fa0a841066121b202e6309fba7cc6311cd5a`.
-Remote Linux/Windows validation passed at `ce809e793d2e163f937186740da2253b4ddbabcb`, workflow
-`35059875548`. D1 does not implement H5 real-document semantic
+`38b5c73081f7616d293db1a50072c998dc59abf9e6c89f1e5baff116fbad3c45`.
+The D1 implementation before the provider-relation addendum passed Linux/Windows at
+`ce809e793d2e163f937186740da2253b4ddbabcb`, workflow `35059875548`; final remote validation is
+pending. D1 does not implement H5 real-document semantic
 orchestration, `qe run`, `qe doctor`, a live provider or any external write.
