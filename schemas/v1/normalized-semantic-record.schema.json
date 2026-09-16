@@ -592,6 +592,12 @@
       "title": "Comparison Key",
       "type": "string"
     },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
     "configuration_hash": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Configuration Hash",
@@ -715,6 +721,7 @@
     "surface_guards",
     "comparison_key",
     "interpretation",
+    "confidence",
     "inferred",
     "producer",
     "prompt_version",

@@ -1,6 +1,6 @@
 # M4 Evidence
 
-Status: **H1-H3 implemented and validated; H4-H11 not implemented**
+Status: **H1-H3 validated; H4 implementation under validation; D1/H5-H11 not implemented**
 
 This record is cumulative and reports only executable repository behavior.
 
@@ -38,5 +38,27 @@ oracle/Expected Result rendering.
 - Language/modal detection is bounded; unknown forms stay unspecified rather than guessed.
 - H3 accepts typed candidates but does not yet orchestrate arbitrary PRD/ADR/manual/backlog files;
   H5 owns that path.
-- H4 relation/adjudication, H6 questions, H7 wording gates, H8 adapters, H9 production UX and
+- H6 questions, H7 wording gates, H8 local outputs, H9 production UX and
   H10-H11 end-to-end hardening remain unimplemented.
+
+## H4 - semantic relations and adjudication
+
+- bounded typed pairwise graph; no GraphRAG, vector database or hidden merge;
+- consistent, conflicting, refinement, ambiguous and human-decision-required classifications;
+- superseded/deployment-instance vocabulary reserved: lifecycle or matching implementation alone
+  cannot prove a replacement/deployment link;
+- exact normalized-record/set hash bindings and deterministic reconstruction validation;
+- source authority/lifecycle context remains visible and cannot be downgraded without detection;
+- provider disagreement and ambiguity require human review; confidence never selects a winner;
+- conflicts are preserved, no facts are promoted and providers cannot self-authorize;
+- PT-BR conflict/state evals verify that higher authority does not erase implementation divergence.
+
+H4 reconstructs H3 inputs against their request, result, candidate set and current ledger.
+Tampered authority, historical lifecycle edits, stale sources and cross-scope inputs are rejected.
+Conflicts require human review. It does not yet promote accepted candidates into the
+Project Model, ingest real documents or propagate downstream staleness; those are H5 boundaries.
+
+H4 local validation (2026-09-16): 319 tests/evals passed, one Windows symlink-permission skip;
+the same suite passed against the installed wheel. Ruff, formatting, mypy, pip check and dependency
+audit passed. Wheel SHA-256: `e7231e872e6868aaeff8d462822bbcc822f4e6ad99361d1265dac9bbe54a0c8a`.
+Remote Linux/Windows validation is pending at this checkpoint. No tag or release created.

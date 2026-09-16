@@ -54,6 +54,9 @@ sequencing. It is a target contract; only capabilities listed below as implement
   authority and provider/run provenance; requires grounded canonical labels plus explicit aliases;
   and distinguishes record kind, modality, polarity, constraints and domain terms. PT-BR, English,
   mixed text and bilingual Gherkin have synthetic regression/eval coverage.
+- M4.H4 bounded semantic relation/adjudication graphs preserve conflicts and authority context,
+  require human review for ambiguity/provider disagreement, ignore confidence as a winner selector,
+  and never promote facts or self-authorize providers.
 
 ## Current limitations
 
@@ -71,8 +74,8 @@ sequencing. It is a target contract; only capabilities listed below as implement
 - Existing-test audit consumes explicit structured audit facts; it does not infer semantics from
   arbitrary historical prose.
 - Conflict preservation is implemented; M1 does not choose authority or synthesize resolutions.
-- H3 normalized records remain review artifacts and are not promoted into the Project Model or
-  connected to the ingestion CLI. Relation/adjudication begins in M4.H4.
+- H3/H4 records remain review artifacts and are not promoted into the Project Model or connected
+  to the ingestion CLI. Real-world orchestration and downstream stale propagation begin in M4.H5.
 
 ## Deferred by milestone
 

@@ -148,6 +148,7 @@ class NormalizedSemanticRecord(d.Artifact):
     surface_guards: SurfaceGuards
     comparison_key: d.Digest
     interpretation: Literal["explicit", "structural", "heuristic", "inferred", "unresolved"]
+    confidence: float = Field(ge=0, le=1)
     inferred: bool
     producer: Literal["DETERMINISTIC", "HEURISTIC", "PROVIDER"]
     provider_identity: ProviderIdentity | None = None
@@ -177,7 +178,7 @@ _MODAL_PATTERNS: tuple[tuple[Modality, re.Pattern[str]], ...] = (
         "MUST_NOT",
         re.compile(
             r"\b(?:must\s+not|shall\s+not|mustn't|n[aã]o\s+(?:pode|deve|dever[aá])|"
-            r"é\s+proibido|n[aã]o\s+é\s+permitido)\b",
+            r"n[aã]o\s+ser[aá]|é\s+proibido|n[aã]o\s+é\s+permitido)\b",
             re.I,
         ),
     ),
@@ -507,6 +508,7 @@ def normalize_candidate(
             surface_guards=guards,
             comparison_key=_comparison_key(meaning, guards),
             interpretation=candidate.interpretation,
+            confidence=candidate.confidence,
             inferred=candidate.inferred,
             producer=candidate.producer,
             provider_identity=candidate.provider_identity.model_copy(deep=True)

@@ -1,0 +1,423 @@
+{
+  "$defs": {
+    "AdjudicationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict_preserved": {
+          "title": "Conflict Preserved",
+          "type": "boolean"
+        },
+        "facts_promoted": {
+          "const": false,
+          "default": false,
+          "title": "Facts Promoted",
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "title": "Human Review Required",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "PRESERVE_BOTH",
+            "PRESERVE_CONFLICT",
+            "RECORD_REFINEMENT",
+            "RECORD_SUPERSESSION",
+            "RECORD_DEPLOYMENT_INSTANCE",
+            "HUMAN_REVIEW_REQUIRED"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "provider_self_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Provider Self Authorized",
+          "type": "boolean"
+        },
+        "relation": {
+          "$ref": "#/$defs/Ref"
+        },
+        "relation_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Relation Hash",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "winner": {
+          "default": null,
+          "title": "Winner",
+          "type": "null"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "relation",
+        "relation_hash",
+        "outcome",
+        "human_review_required",
+        "conflict_preserved"
+      ],
+      "title": "AdjudicationResult",
+      "type": "object"
+    },
+    "NormalizationBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "normalization_set": {
+          "$ref": "#/$defs/Ref"
+        },
+        "normalization_set_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Normalization Set Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "normalization_set",
+        "normalization_set_hash"
+      ],
+      "title": "NormalizationBinding",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "RelationAuthorityContext": {
+      "additionalProperties": false,
+      "properties": {
+        "left_authority": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Left Authority",
+          "type": "array"
+        },
+        "left_lifecycle": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Left Lifecycle",
+          "type": "array"
+        },
+        "right_authority": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Right Authority",
+          "type": "array"
+        },
+        "right_lifecycle": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Right Lifecycle",
+          "type": "array"
+        }
+      },
+      "required": [
+        "left_authority",
+        "right_authority",
+        "left_lifecycle",
+        "right_lifecycle"
+      ],
+      "title": "RelationAuthorityContext",
+      "type": "object"
+    },
+    "SemanticRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_changed": {
+          "const": false,
+          "default": false,
+          "title": "Authority Changed",
+          "type": "boolean"
+        },
+        "authority_context": {
+          "$ref": "#/$defs/RelationAuthorityContext"
+        },
+        "confidence_used_to_select_winner": {
+          "const": false,
+          "default": false,
+          "title": "Confidence Used To Select Winner",
+          "type": "boolean"
+        },
+        "deployment_record": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/Ref"
+        },
+        "left_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Left Hash",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "rationale_codes": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Rationale Codes",
+          "type": "array"
+        },
+        "refinement_record": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relation": {
+          "enum": [
+            "CONSISTENT",
+            "CONFLICTING",
+            "REFINEMENT",
+            "SUPERSEDED",
+            "DEPLOYMENT_INSTANCE",
+            "AMBIGUOUS",
+            "HUMAN_DECISION_REQUIRED"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/Ref"
+        },
+        "right_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Right Hash",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "superseded_record": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "project_id",
+        "snapshot_id",
+        "left",
+        "left_hash",
+        "right",
+        "right_hash",
+        "relation",
+        "rationale_codes",
+        "authority_context"
+      ],
+      "title": "SemanticRelation",
+      "type": "object"
+    }
+  },
+  "$id": "urn:qe-skill:1.0:semantic-relation-graph",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "adjudications": {
+      "items": {
+        "$ref": "#/$defs/AdjudicationResult"
+      },
+      "title": "Adjudications",
+      "type": "array"
+    },
+    "authority_changed": {
+      "const": false,
+      "default": false,
+      "title": "Authority Changed",
+      "type": "boolean"
+    },
+    "external_writes": {
+      "const": false,
+      "default": false,
+      "title": "External Writes",
+      "type": "boolean"
+    },
+    "facts_promoted": {
+      "const": false,
+      "default": false,
+      "title": "Facts Promoted",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Id",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/NormalizationBinding"
+      },
+      "minItems": 1,
+      "title": "Inputs",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "pattern": "\\S",
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "max_records": {
+      "maximum": 1000,
+      "minimum": 2,
+      "title": "Max Records",
+      "type": "integer"
+    },
+    "project_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "relations": {
+      "items": {
+        "$ref": "#/$defs/SemanticRelation"
+      },
+      "title": "Relations",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "EMPTY",
+        "REJECTED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "project_id",
+    "snapshot_id",
+    "inputs",
+    "max_records",
+    "status",
+    "relations",
+    "adjudications"
+  ],
+  "title": "SemanticRelationGraph",
+  "type": "object"
+}

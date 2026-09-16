@@ -118,8 +118,22 @@ def meaning(
     }
 
 
-def prepared(text: str, normalized: dict[str, Any] | None, *, source_language: str = "und"):
+def prepared(
+    text: str,
+    normalized: dict[str, Any] | None,
+    *,
+    source_language: str = "und",
+    source_id: str = "source",
+    authority_class: str = "CONTRACT",
+    lifecycle: str = "approved",
+    provider_name: str = "static",
+    confidence: float = 0.5,
+):
     model = minimal()
+    model.ledger.sources[0].id = source_id
+    model.ledger.sources[0].authority_class = authority_class  # type: ignore[assignment]
+    model.ledger.sources[0].lifecycle = lifecycle  # type: ignore[assignment]
+    model.ledger.manifest.scope[0].source.id = source_id
     excerpt = EvidenceExcerpt(
         id="excerpt",
         project_id="synthetic",
@@ -140,7 +154,7 @@ def prepared(text: str, normalized: dict[str, Any] | None, *, source_language: s
         configuration_hash="b" * 64,
     )
     identity = ProviderIdentity(
-        provider="static", model="fixture", model_version="1", adapter_version="1"
+        provider=provider_name, model="fixture", model_version="1", adapter_version="1"
     )
     structured_value = {"normalization": normalized} if normalized is not None else {}
     response = ProviderResponse(
@@ -151,6 +165,7 @@ def prepared(text: str, normalized: dict[str, Any] | None, *, source_language: s
                 statement=text,
                 structured_value=structured_value,
                 source_excerpt_ids=["excerpt"],
+                confidence=confidence,
             )
         ],
     )

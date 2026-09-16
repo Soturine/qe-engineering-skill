@@ -44,6 +44,9 @@ Implemented schemas in `v1/`:
 - `semantic-meaning.schema.json`
 - `normalized-semantic-record.schema.json`
 - `semantic-normalization-set.schema.json`
+- `semantic-relation.schema.json`
+- `semantic-adjudication.schema.json`
+- `semantic-relation-graph.schema.json`
 
 JSON Schema handles shape/basic constraints. Cross-artifact invariants are implemented
 in `qe_skill.validation` and `qe_skill.integrity`, with negative tests and evals.

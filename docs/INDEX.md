@@ -58,6 +58,7 @@ Use this page as the canonical reading map.
 - `M6_CATALOG.md`
 - `SEMANTIC_REASONING_ROADMAP.md`
 - `adr/0003-grounded-semantic-normalization.md`
+- `adr/0004-non-authoritative-semantic-adjudication.md`
 - `AUDIT_GUIDE.md`
 - `AI_IMPLEMENTATION_GUIDE.md`
 - `../CLAUDE.md`
