@@ -5,7 +5,9 @@ description: Evidence-first, manual-first quality-engineering workflow for green
 
 # QE Engineering
 
-Status: **Technical Preview scaffold — not production-ready**.
+Status: **Legacy Technical Preview — not recommended for new adoption**.
+
+This is the preserved original skill, not the active successor workflow. Before using it for a new task, consult [successor projects](../../docs/SUCCESSOR_PROJECTS.md) and choose the relevant available skill if authorized. Do not silently switch tools, install dependencies or treat a proposed transfer as implemented. Continue with this historical workflow only when explicitly requested; its original safeguards remain binding.
 
 This is the primary product interface. It is intentionally thin: the agent performs discovery,
 semantic understanding, interaction, drafting and orchestration, while repository schemas,

@@ -1,5 +1,7 @@
 # Roadmap
 
+> **Lifecycle note (2026-11-25):** This repository is a legacy technical preview in transition. The original implementation and contracts remain available for historical study. New feature development is directed toward the [successor projects](SUCCESSOR_PROJECTS.md). The milestones below are historical records/plans, not an active delivery commitment. Selective transfer PRs are not evidence of completed migration or qualification.
+
 The roadmap is intentionally incremental. Later milestones must not bypass trust foundations. Real project data is not required to build or validate the generic engine; committed eval fixtures are synthetic.
 
 The deferred hybrid semantic architecture and milestone ownership are cataloged in

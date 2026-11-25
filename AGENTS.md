@@ -2,6 +2,10 @@
 
 Operating contract for coding agents working on this repository.
 
+## Lifecycle override (2026-11-25)
+
+This is a legacy technical preview in transition, not an active feature-development target. Preserve the original code, historical evidence, branches and contracts. Do not resume old milestones, install this skill into new projects by default, migrate code wholesale, delete history or archive the repository without explicit owner direction. For new engineering tasks, consult [successor projects](docs/SUCCESSOR_PROJECTS.md) and use only the relevant authorized tool. The remaining implementation contract below applies when the owner explicitly requests historical reproduction or maintenance.
+
 ## Mission
 
 Build an evidence-first, vendor-neutral quality-engineering system that audits heterogeneous project sources and generates high-confidence **manual** test cases without silently inventing behavior. Future automation must consume the same approved Test Model rather than redefine requirements.

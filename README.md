@@ -1,5 +1,32 @@
 # QE Engineering Skill
 
+> **Lifecycle status: legacy technical preview — transition to specialized successor projects.**
+>
+> QE Engineering was my first Agent Skill and an early exploration of evidence-first quality engineering. Its lessons helped shape a more agent-led, native-first, tool-native and runtime-verified approach. New feature development is directed toward the successor projects below. This repository preserves the original implementation, history, contracts and experiments; it is not a recommended production dependency. The selective transfer proposals are open for review, not yet merged or qualified. The repository has not been archived.
+
+## Where development continues
+
+| Project | Focus | Access at transition |
+| --- | --- | --- |
+| [Derivanta](https://github.com/Soturine/Derivanta) | Adaptive engineering principles, methodology and governance | Restricted |
+| [Derivanta Engine](https://github.com/Soturine/Derivanta-Engine) | Deterministic engineering inspection and assurance | Restricted |
+| [Assertiva](https://github.com/Soturine/Assertiva) | Test effectiveness and independent quality audit | Public |
+| [Product Backlog Designer](https://github.com/Soturine/product-backlog-designer) | Evidence-backed backlog design | Restricted |
+| [Functional Test Designer](https://github.com/Soturine/functional-test-designer) | Functional test design, coverage and traceability | Public |
+| [Functional Test Executor](https://github.com/Soturine/functional-test-executor) | Agent-led execution, automation and evidence | Restricted |
+
+These are independent projects with distinct scopes, not required dependencies or drop-in replacements. Restricted links may require authorization; no private project artifacts are reproduced here. Availability and maturity vary.
+
+- [Lessons learned](docs/LESSONS_LEARNED.md)
+- [Architectural evolution](docs/ARCHITECTURAL_EVOLUTION.md)
+- [Successor projects and transfer ledger](docs/SUCCESSOR_PROJECTS.md)
+
+---
+
+## Historical technical preview
+
+The original technical documentation follows. Its operating modes, milestones and future-work descriptions record the design at the time, not a commitment to resume development.
+
 Evidence-first, manual-first quality engineering for software, APIs, mobile, data, IoT and industrial systems.
 
 This repository defines an agent-first, vendor-neutral Quality Engineering skill backed by a

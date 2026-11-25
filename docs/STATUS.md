@@ -1,5 +1,7 @@
 # Implementation Status
 
+> **Lifecycle note (2026-11-25):** This repository is a legacy technical preview in transition. The original implementation and contracts remain available for historical study. New feature development is directed toward the [successor projects](SUCCESSOR_PROJECTS.md). The milestones below are historical records/plans, not an active delivery commitment. Selective transfer PRs are not evidence of completed migration or qualification.
+
 ## Current stage
 
 **M0-M3 and M4.H0-H4 are validated. M4.D1 is validated and frozen for presentation.**
