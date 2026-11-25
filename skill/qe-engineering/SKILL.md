@@ -38,6 +38,10 @@ All modes use the same trust model and may produce detailed manual step-by-step 
 2. Use the engine to inventory configured/discoverable in-scope sources and bind a snapshot.
 3. Read literal evidence in its source language; for PT-BR, reason directly in Portuguese without
    mandatory pre-translation and preserve mixed English technical identifiers.
+   Read originals natively first (host file, PDF and vision tools, including tables, figures and
+   diagrams); use engine parser records to locate and verify excerpts, and as a declared fallback
+   only. A PDF text layer is never proof that a document was read; label anything seen only in
+   figures, diagrams or scanned pages as your transcription/observation.
 4. Draft bounded semantic candidates with exact excerpts/locations and submit them to engine
    validation; do not promote agent interpretation into contract.
 5. Ask material clarification questions in the configured output language. Never answer them on
