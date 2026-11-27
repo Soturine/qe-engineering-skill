@@ -30,6 +30,8 @@ Discovers configured repositories/documents/TMS/work items/contracts/configurati
 ### 2. Safe Ingestion & Parsers
 Deterministic parsers for structured formats; bounded/sandboxed handling for hostile content; language-aware AST/symbol/dependency analysis for supported code.
 
+**Native-first reading.** Parsers are a verification and fallback layer, not the agent's primary reader. The agent reads each in-scope original with the host's own tools (file reader, native PDF/vision reader) and interprets text, tables, figures, flowcharts, diagrams and code. Parser records (for example `document_page` records from the PDF text layer, `method: pypdf-text`) bind excerpts and locations to the snapshot so candidates can be validated mechanically; they are never proof that a document was read completely. A PDF page without a text layer, a figure or a diagram is read natively by the agent and enters as an explicitly labelled agent transcription or observation, never as mechanically verified evidence. When the host cannot open a format, the parser output is the fallback and the limitation is reported. No OCR or document interpreter is added to the engine for this.
+
 ### 3. Authority, Provenance & Lifecycle
 Tracks every claim to primary evidence, source authority/freshness/supersession, uncertainty and conflicts.
 
